@@ -253,9 +253,11 @@ class HTML_QuickForm_date extends HTML_QuickForm_group
                         );
                         break;
                     case 'y':
+                        $this->_options['minYear'] = (int)substr($this->_options['minYear'], -2);
+                        $this->_options['maxYear'] = (int)substr($this->_options['maxYear'], -2);
                         $options = $this->_createOptionList(
-                            substr($this->_options['minYear'], -2),
-                            substr($this->_options['maxYear'], -2), 
+                            $this->_options['minYear'],
+                            $this->_options['maxYear'],
                             $this->_options['minYear'] > $this->_options['maxYear']? -1: 1
                         );
                         break;
