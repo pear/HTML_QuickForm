@@ -257,10 +257,12 @@ class HTML_QuickForm_Renderer_ITStatic extends HTML_QuickForm_Renderer
     */
     function renderHidden(&$element)
     {
-        if ($this->_tpl->placeholderExists($this->_formName . '_hidden')) {
+        if ($this->_tpl->placeholderExists($this->_formName .'_hidden')) {
             $this->_hidden .= $element->toHtml();
         } else {
-            $this->_tpl->setVariable($this->_formName.'_'.$element->getName().'_html', $element->toHtml());
+            $name = $element->getName();
+            $name = str_replace(array('[', ']'), array('_', ''), $name);
+            $this->_tpl->setVariable($this->_formName.'_'.$name.'_html', $element->toHtml());
         }
     } // end func renderHidden
 
