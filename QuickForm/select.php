@@ -310,7 +310,7 @@ class HTML_QuickForm_select extends HTML_QuickForm_element {
             $attributes = array('value' => $value);
         } else {
             $attributes = $this->_parseAttributes($attributes);
-            if (isset($attributes['selected']) || null !== ($this->_getAttrKey('selected', $attributes))) {
+            if (isset($attributes['selected'])) {
                 // the 'selected' attribute will be set in toHtml()
                 $this->_removeAttr('selected', $attributes);
                 if (!in_array($value, $this->_values)) {
@@ -496,7 +496,7 @@ class HTML_QuickForm_select extends HTML_QuickForm_element {
 
             foreach ($this->_options as $option) {
                 if (is_array($this->_values) && in_array($option['attr']['value'], $this->_values)) {
-                    $this->_updateAttrArray($option['attr'], array('selected'));
+                    $this->_updateAttrArray($option['attr'], array('selected' => 'selected'));
                 }
                 $strHtml .= $tabs . "\t<option" . $this->_getAttrString($option['attr']) . '>' .
                             $option['text'] . "</option>\n";
