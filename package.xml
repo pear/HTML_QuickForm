@@ -70,6 +70,7 @@ Features:
   on the element's name (see #1506)
 - Default template of Default Renderer now allows XHTML-compliant output
   of hidden elements (see #1124)
+- Added Esperanto translation for date element ()
 
 * Bugfixes
 - Fixed #1235 (setChecked() and setValue() did not work on advcheckbox)
