@@ -68,7 +68,7 @@ $form->addRule(array('cmpPasswd', 'cmpRepeat'), 'The passwords do not match', 'c
 
 // File rules
 $form->addElement('header', null, 'Uploaded file rules');
-$form->addElement('file', 'tstUpload', array('Upload file:', 'Rule types: \'uploadedfile\', \'maxfilesize\' with $format = 10240, \'mimetype\' with $format = \'text/xml\', filename with $format = \'/\\.xml$/\'<br />Validation for files is obviuosly <b>server-side only</b>'));
+$form->addElement('file', 'tstUpload', array('Upload file:', 'Rule types: \'uploadedfile\', \'maxfilesize\' with $format = 10240, \'mimetype\' with $format = \'text/xml\', filename with $format = \'/\\.xml$/\'<br />Validation for files is obviously <b>server-side only</b>'));
 $form->addRule('tstUpload', 'Upload is required', 'uploadedfile');
 $form->addRule('tstUpload', 'File size should be less than 10kb', 'maxfilesize', 10240);
 $form->addRule('tstUpload', 'File type should be text/xml', 'mimetype', 'text/xml');
