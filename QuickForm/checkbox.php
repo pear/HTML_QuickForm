@@ -118,7 +118,8 @@ class HTML_QuickForm_checkbox extends HTML_QuickForm_input {
     function toHtml()
     {
         return HTML_QuickForm_input::toHtml() . 
-               '<label for="' . $this->getAttribute('id') . '">' . $this->_text . "</label>";
+               ($this->_flagFrozen? $this->_text:
+               '<label for="' . $this->getAttribute('id') . '">' . $this->_text . '</label>');
     } //end func toHtml
     
     // }}}

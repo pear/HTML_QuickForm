@@ -125,8 +125,9 @@ class HTML_QuickForm_radio extends HTML_QuickForm_input {
      */
     function toHtml()
     {
-        return HTML_QuickForm_input::toHtml() . 
-               '<label for="' . $this->getAttribute('id') . '">' . $this->_text . "</label>";
+        return HTML_QuickForm_input::toHtml() .
+               ($this->_flagFrozen? $this->_text: 
+               '<label for="' . $this->getAttribute('id') . '">' . $this->_text . '</label>');
     } //end func toHtml
     
     // }}}
