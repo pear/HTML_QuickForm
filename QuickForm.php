@@ -79,6 +79,7 @@ define('QUICKFORM_INVALID_FILTER',         -4);
 define('QUICKFORM_UNREGISTERED_ELEMENT',   -5);
 define('QUICKFORM_INVALID_ELEMENT_NAME',   -6);
 define('QUICKFORM_INVALID_PROCESS',        -7);
+define('QUICKFORM_DEPRECATED',             -8);
 
 // }}}
 
@@ -406,6 +407,8 @@ class HTML_QuickForm extends HTML_Common {
      */
     function moveUploadedFile($element, $dest, $fileName='')
     {
+        PEAR::raiseError(null, QUICKFORM_DEPRECATED, null, E_USER_WARNING, "Method HTML_QuickForm::moveUploadedFile() is now deprecated in file ".$_SERVER['PHP_SELF'], 'HTML_QuickForm_Error', true);
+
         $file =& $this->_submitFiles[$element];
         if ($dest != ''  && substr($dest, -1) != '/')
             $dest .= '/';
@@ -470,6 +473,8 @@ class HTML_QuickForm extends HTML_Common {
      */
     function isUploadedFile($element)
     {
+        PEAR::raiseError(null, QUICKFORM_DEPRECATED, null, E_USER_WARNING, "Method HTML_QuickForm::isUploadedFile() is now deprecated in file ".$_SERVER['PHP_SELF'], 'HTML_QuickForm_Error', true);
+
         if (!$this->elementExists($element) || 'file' != $this->getElementType($element)) {
             return false;
         } else {
@@ -490,6 +495,8 @@ class HTML_QuickForm extends HTML_Common {
      */
     function getUploadedFile($element)
     {
+        PEAR::raiseError(null, QUICKFORM_DEPRECATED, null, E_USER_WARNING, "Method HTML_QuickForm::getUploadedFile() is now deprecated in file ".$_SERVER['PHP_SELF'], 'HTML_QuickForm_Error', true);
+
         return isset($this->_submitFiles[$element])? $this->_submitFiles[$element]['tmp_name']: null;
     } // end func getUploadedFile
 
@@ -641,6 +648,8 @@ class HTML_QuickForm extends HTML_Common {
      */
     function &addElementGroup($elements, $groupLabel='', $name=null, $separator=null)
     {
+        PEAR::raiseError(null, QUICKFORM_DEPRECATED, null, E_USER_WARNING, "Method HTML_QuickForm::addElementGroup() is now deprecated in file ".$_SERVER['PHP_SELF'], 'HTML_QuickForm_Error', true);
+
         return $this->addGroup($elements, $name, $groupLabel, $separator);
     } // end func addElementGroup
     
@@ -842,6 +851,8 @@ class HTML_QuickForm extends HTML_Common {
      */
     function &addHeader($label)
     {
+        PEAR::raiseError(null, QUICKFORM_DEPRECATED, null, E_USER_WARNING, "Method HTML_QuickForm::addHeader() is now deprecated in file ".$_SERVER['PHP_SELF'], 'HTML_QuickForm_Error', true);
+
         return $this->addElement('header', null, $label);
     } // end func addHeader
 
@@ -1018,6 +1029,8 @@ class HTML_QuickForm extends HTML_Common {
      */
     function &addData($data)
     {
+        PEAR::raiseError(null, QUICKFORM_DEPRECATED, null, E_USER_WARNING, "Method HTML_QuickForm::addData() is now deprecated in file ".$_SERVER['PHP_SELF'], 'HTML_QuickForm_Error', true);
+
         return $this->addElement('html', $data);
     }
 
@@ -1231,6 +1244,8 @@ class HTML_QuickForm extends HTML_Common {
      */
     function setElementTemplate($html, $element = null)
     {
+        PEAR::raiseError(null, QUICKFORM_DEPRECATED, null, E_USER_WARNING, "Method HTML_QuickForm::setElementTemplate() is now deprecated in file ".$_SERVER['PHP_SELF'], 'HTML_QuickForm_Error', true);
+
         $renderer =& $this->defaultRenderer();
         return $renderer->setElementTemplate($html, $element);
     } // end func setElementTemplate
@@ -1249,6 +1264,8 @@ class HTML_QuickForm extends HTML_Common {
      */
     function setHeaderTemplate($html)
     {
+        PEAR::raiseError(null, QUICKFORM_DEPRECATED, null, E_USER_WARNING, "Method HTML_QuickForm::setHeaderTemplate() is now deprecated in file ".$_SERVER['PHP_SELF'], 'HTML_QuickForm_Error', true);
+
         $renderer =& $this->defaultRenderer();
         return $renderer->setHeaderTemplate($html);
     } // end func setHeaderTemplate
@@ -1267,6 +1284,8 @@ class HTML_QuickForm extends HTML_Common {
      */
     function setFormTemplate($html)
     {
+        PEAR::raiseError(null, QUICKFORM_DEPRECATED, null, E_USER_WARNING, "Method HTML_QuickForm::setFormTemplate() is now deprecated in file ".$_SERVER['PHP_SELF'], 'HTML_QuickForm_Error', true);
+
         $renderer =& $this->defaultRenderer();
         return $renderer->setFormTemplate($html);
     } // end func setFormTemplate
@@ -1285,6 +1304,8 @@ class HTML_QuickForm extends HTML_Common {
      */
     function setRequiredNoteTemplate($html)
     {
+        PEAR::raiseError(null, QUICKFORM_DEPRECATED, null, E_USER_WARNING, "Method HTML_QuickForm::setRequiredNoteTemplate() is now deprecated in file ".$_SERVER['PHP_SELF'], 'HTML_QuickForm_Error', true);
+
         $renderer =& $this->defaultRenderer();
         return $renderer->setRequiredNoteTemplate($html);
     } // end func setElementTemplate
@@ -1303,6 +1324,8 @@ class HTML_QuickForm extends HTML_Common {
      */
     function clearAllTemplates()
     {
+        PEAR::raiseError(null, QUICKFORM_DEPRECATED, null, E_USER_WARNING, "Method HTML_QuickForm::clearAllTemplates() is now deprecated in file ".$_SERVER['PHP_SELF'], 'HTML_QuickForm_Error', true);
+
         $renderer =& $this->defaultRenderer();
         return $renderer->clearAllTemplates();
     }
@@ -1808,6 +1831,8 @@ class HTML_QuickForm extends HTML_Common {
      */
     function getAttributesString()
     {
+        PEAR::raiseError(null, QUICKFORM_DEPRECATED, null, E_USER_WARNING, "Method HTML_QuickForm::getAttributesString() is now deprecated in file ".$_SERVER['PHP_SELF'], 'HTML_QuickForm_Error', true);
+        
         return $this->getAttributes(true);
     } // end func getAttributesString
 
@@ -1966,7 +1991,8 @@ class HTML_QuickForm extends HTML_Common {
                 QUICKFORM_INVALID_FILTER        => 'invalid filter',
                 QUICKFORM_UNREGISTERED_ELEMENT  => 'unregistered element',
                 QUICKFORM_INVALID_ELEMENT_NAME  => 'element already exists',
-                QUICKFORM_INVALID_PROCESS       => 'process callback does not exist'
+                QUICKFORM_INVALID_PROCESS       => 'process callback does not exist',
+                QUICKFORM_DEPRECATED            => 'method is deprecated'
             );
         }
 
