@@ -299,12 +299,14 @@ class HTML_QuickForm extends HTML_Common {
      * @param    array       $attributes        (optional)Associative array of form tag extra attributes
      * @access   public
      */
-    function HTML_QuickForm($formName='', $method='POST', $action='', $target='_self', $attributes=null)
+    function HTML_QuickForm($formName='', $method='post', $action='', $target='_self', $attributes=null)
     {
         HTML_Common::HTML_Common($attributes);
-        $method = (strtoupper($method) == 'GET') ? 'GET' : 'POST';
+        $method = (strtoupper($method) == 'GET') ? 'get' : 'post';
         $action = ($action == '') ? $_SERVER['PHP_SELF'] : $action;
-        $this->updateAttributes(array('action'=>$action, 'method'=>$method, 'name'=>$formName, 'target'=>$target));
+        $target = (empty($target) || $target == '_self') ? array() : array('target' => $target);
+        $attributes = array('action'=>$action, 'method'=>$method, 'name'=>$formName, 'id'=>$formName) + $target;
+        $this->updateAttributes($attributes);
         $this->_registeredTypes =& $GLOBALS['HTML_QUICKFORM_ELEMENT_TYPES'];
         $this->_submitValues = $GLOBALS['_' . $method];
         $this->_submitFiles =& $_FILES;
