@@ -30,7 +30,7 @@ require_once 'HTML/QuickForm/Renderer.php';
  * The form array structure is the following:
  * array(
  *   'validationScript' => 'javascript for client-side validation',
- *   'atributes'        => 'attributes for <form> tag',
+ *   'attributes'       => 'attributes for <form> tag',
  *   'requiredNote      => 'note about the required elements',
  *   // if there were some validation errors:
  *   'errors' => array(
@@ -105,12 +105,6 @@ class HTML_QuickForm_Renderer_Array extends HTML_QuickForm_Renderer
     * @var integer
     */
     var $_currentSection;
-
-   /**
-    * Current element index
-    * @var integer
-    */
-    var $_elementIdx;
 
    /**
     * Array representing current group
@@ -216,10 +210,6 @@ class HTML_QuickForm_Renderer_Array extends HTML_QuickForm_Renderer
         } else {
             $ret['html']     = $element->toHtml();
         }
-        if (empty($ret['name'])) {
-            $ret['name'] = 'element_' . $this->_elementIdx;
-        }
-        $this->_elementIdx++;
         return $ret;
     }
 

@@ -431,6 +431,7 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
             $element->accept($renderer, $required);
         }
         $renderer->finishGroup($this);
+        $this->_appendName = false;
     } // end func accept
 
     // }}}
