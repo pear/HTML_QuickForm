@@ -64,7 +64,7 @@ class HTML_QuickForm_RuleRegistry
     {
         static $obj;
         if (!isset($obj)) {
-            $obj =& new HTML_QuickForm_RuleRegistry();
+            $obj = new HTML_QuickForm_RuleRegistry();
         }
         return $obj;
     } // end func getInstance

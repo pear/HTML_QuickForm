@@ -677,26 +677,22 @@ class HTML_QuickForm extends HTML_Common {
      */
     function &getElementValue($element)
     {
-        if (isset($this->_elementIndex[$element])) {
-            $value = $this->_elements[$this->_elementIndex[$element]]->getValue();
-            if (isset($this->_duplicateIndex[$element])) {
-                foreach ($this->_duplicateIndex[$element] as $index) {
-                    $v = $this->_elements[$index]->getValue();
-                    if (null !== $v) {
-                        if (is_null($value)) {
-                            $value = $v;
-                        } elseif(!is_array($value)) {
-                            $value = array($value, $v);
-                        } else {
-                            $value[] = $v;
-                        }
+        if (!isset($this->_elementIndex[$element])) {
+            return PEAR::raiseError(null, QUICKFORM_NONEXIST_ELEMENT, null, E_USER_WARNING, "Element '$element' does not exist in HTML_QuickForm::getElementValue()", 'HTML_QuickForm_Error', true);
+        }
+        $value = $this->_elements[$this->_elementIndex[$element]]->getValue();
+        if (isset($this->_duplicateIndex[$element])) {
+            foreach ($this->_duplicateIndex[$element] as $index) {
+                if (null !== ($v = $this->_elements[$index]->getValue())) {
+                    if (is_array($value)) {
+                        $value[] = $v;
+                    } else {
+                        $value = (null === $value)? $v: array($value, $v);
                     }
                 }
             }
-            return $value;
-        } else {
-            return PEAR::raiseError(null, QUICKFORM_NONEXIST_ELEMENT, null, E_USER_WARNING, "Element '$element' does not exist in HTML_QuickForm::getElementValue()", 'HTML_QuickForm_Error', true);
         }
+        return $value;
     } // end func getElementValue
 
     // }}}
@@ -712,30 +708,47 @@ class HTML_QuickForm extends HTML_Common {
      */    
     function getSubmitValue($elementName)
     {
+        $value = null;
         if (isset($this->_submitValues[$elementName])) {
-            return $this->_submitValues[$elementName];
-        }
-        $elementType = $this->getElementType($elementName);
-        if ($elementType == 'file') {
-            return isset($this->_submitFiles[$elementName]) ? $this->_submitFiles[$elementName] : null;
-        } elseif ($elementType == 'group') {
-            $group =& $this->getElement($elementName);
-            $values = null;
+            $value = $this->_submitValues[$elementName];
+            if (is_array($value) && isset($this->_submitFiles[$elementName])) {
+                $value = @array_merge($value, $this->_submitFiles[$elementName]);
+            }
+
+        } elseif ('file' == $this->getElementType($elementName)) {
+            return $this->getElementValue($elementName);
+
+        } elseif ('group' == $this->getElementType($elementName)) {
+            $group    =& $this->getElement($elementName);
             $elements =& $group->getElements();
             foreach (array_keys($elements) as $key) {
                 $name = $group->getElementName($key);
                 if ($name != $elementName) {
                     // filter out radios
-                    $values[$name] = $this->getSubmitValue($name);
+                    $value[$name] = $this->getSubmitValue($name);
                 }
             }
-            return $values;
+
+        } elseif (false !== ($pos = strpos($elementName, '['))) {
+            $base = substr($elementName, 0, $pos);
+            $idx  = "['" . str_replace(array(']', '['), array('', "']['"), substr($elementName, $pos + 1, -1)) . "']";
+            if (isset($this->_submitValues[$base])) {
+                $value = eval("return (isset(\$this->_submitValues['{$base}']{$idx})) ? \$this->_submitValues['{$base}']{$idx} : null;");
+            }
+
+            if (null === $value && isset($this->_submitFiles[$base])) {
+                $props = array('name', 'type', 'size', 'tmp_name', 'error');
+                $code  = "if (!isset(\$this->_submitFiles['{$base}']['name']{$idx})) {\n" .
+                         "    return null;\n" .
+                         "} else {\n" .
+                         "    \$v = array();\n";
+                foreach ($props as $prop) {
+                    $code .= "    \$v['{$prop}'] = \$this->_submitFiles['{$base}']['{$prop}']{$idx};\n";
+                }
+                $value = eval($code . "    return \$v;\n}\n");
+            }
         }
-        if (false !== strpos($elementName, '[')) {
-            $myVar = "['" . str_replace(array(']', '['), array('', "']['"), $elementName) . "']";
-            return eval("return (isset(\$this->_submitValues$myVar)) ? \$this->_submitValues$myVar : null;");
-        }
-        return null;
+        return $value;
     } // end func getSubmitValue
 
     // }}}
@@ -978,7 +991,7 @@ class HTML_QuickForm extends HTML_Common {
                                                         'validation'  => 'server',
                                                         'group'       => $group);
 
-                    if ($type == 'required') {
+                    if ('required' == $type || 'uploadedfile' == $type) {
                         $groupObj->_required[] = $elementIndex;
                         $this->_required[] = $elementName;
                         $required++;
@@ -1814,26 +1827,22 @@ class HTML_QuickForm extends HTML_Common {
      */
     function exportValue($element)
     {
-        if (isset($this->_elementIndex[$element])) {
-            $value = $this->_elements[$this->_elementIndex[$element]]->exportValue($this->_submitValues, false);
-            if (isset($this->_duplicateIndex[$element])) {
-                foreach ($this->_duplicateIndex[$element] as $index) {
-                    $v = $this->_elements[$index]->exportValue($this->_submitValues, false);
-                    if (null !== $v) {
-                        if (is_null($value)) {
-                            $value = $v;
-                        } elseif(!is_array($value)) {
-                            $value = array($value, $v);
-                        } else {
-                            $value[] = $v;
-                        }
+        if (!isset($this->_elementIndex[$element])) {
+            return PEAR::raiseError(null, QUICKFORM_NONEXIST_ELEMENT, null, E_USER_WARNING, "Element '$element' does not exist in HTML_QuickForm::getElementValue()", 'HTML_QuickForm_Error', true);
+        }
+        $value = $this->_elements[$this->_elementIndex[$element]]->exportValue($this->_submitValues, false);
+        if (isset($this->_duplicateIndex[$element])) {
+            foreach ($this->_duplicateIndex[$element] as $index) {
+                if (null !== ($v = $this->_elements[$index]->exportValue($this->_submitValues, false))) {
+                    if (is_array($value)) {
+                        $value[] = $v;
+                    } else {
+                        $value = (null === $value)? $v: array($value, $v);
                     }
                 }
             }
-            return $value;
-        } else {
-            return PEAR::raiseError(null, QUICKFORM_NONEXIST_ELEMENT, null, E_USER_WARNING, "Element '$element' does not exist in HTML_QuickForm::getElementValue()", 'HTML_QuickForm_Error', true);
         }
+        return $value;
     }
 
     // }}}
