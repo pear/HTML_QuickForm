@@ -19,8 +19,8 @@
 //
 // $Id$
 
-require_once("DB.php");
-require_once("HTML/QuickForm/element.php");
+require_once('DB.php');
+require_once('HTML/QuickForm/element.php');
 
 /**
  * Class to dynamically create an HTML SELECT
@@ -114,9 +114,14 @@ class HTML_QuickForm_select extends HTML_QuickForm_element {
         if (is_string($values)) {
             $values = split("[ ]?,[ ]?", $values);
             $this->_values = $values;
-        } else {
-            $this->_values[] = $values;
-        }  
+        }
+
+        if (is_array($values)) {
+            $this->_values = $values;
+        }
+        else {
+            $this->_values = array($values);
+        }
     } //end func setSelected
     
     // }}}
