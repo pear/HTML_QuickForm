@@ -1396,9 +1396,10 @@ class HTML_QuickForm extends HTML_Common {
      */
     function validate()
     {
-        if (count($this->_rules) == 0 && count($this->_submitValues) > 0) {
+        if (count($this->_rules) == 0 && count($this->_formRules) == 0 && 
+            (count($this->_submitValues) > 0 || count($this->_submitFiles) > 0)) {
             return true;
-        } elseif (count($this->_rules) == 0 || count($this->_submitValues) == 0) {
+        } elseif (count($this->_submitValues) == 0 && count($this->_submitFiles) == 0) {
             return false;
         }
 
