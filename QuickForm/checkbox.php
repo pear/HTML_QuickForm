@@ -208,6 +208,31 @@ class HTML_QuickForm_checkbox extends HTML_QuickForm_input {
     } // end func getValue
 
     // }}}
+    // {{{ _findValue()
+
+    /**
+     * Tries to find the element value from the submitted values array
+     * 
+     * @since     2.7
+     * @access    private
+     * @return    string
+     * @throws    
+     */
+    function _findValue(&$values)
+    {
+        if (empty($values)) return;
+        $elementName = $this->getName();
+        if (isset($values[$elementName])) {
+            $value = $values[$elementName];
+            return $value;
+        }
+        $myVar = str_replace(array(']', '['), array('', "']['"), $elementName);
+        $myVar = "['".$myVar."']";
+        $value = eval("return (isset(\$values$myVar)) ? \$values$myVar : null;");
+        return $value;
+    } //end func _findValue
+
+    // }}}
     // {{{ onQuickFormEvent()
 
     /**
@@ -229,18 +254,18 @@ class HTML_QuickForm_checkbox extends HTML_QuickForm_input {
             case 'createElement':
                 $this->$className($arg[0], $arg[1], $arg[2], $arg[3]);
                 // need to set the submit value in case setDefault never gets called
-                $elementName = $this->getName();
-                if (isset($caller->_submitValues) && count($caller->_submitValues) > 0) {
-                    $tmp_checked = isset($caller->_submitValues[$elementName]) ? $caller->_submitValues[$elementName] : false;
-                    $this->setChecked($tmp_checked);
+                $value = $this->_findValue($caller->_submitValues);
+                if (!is_null($value)) {
+                    $this->setChecked($value);
                 }
                 break;
             case 'setDefault':
                 // In form display, default value is always overidden by submitted value
-                $elementName = $this->getName();
                 if (count($caller->_submitValues) > 0) {
-                    $tmp_checked = isset($caller->_submitValues[$elementName]) ? $caller->_submitValues[$elementName] : false;
-                    $this->setChecked($tmp_checked);
+                    $value = $this->_findValue($caller->_submitValues);
+                    if (!is_null($value)) {
+                        $this->setChecked($value);
+                    }
                 } else {
                     $this->setChecked($arg);
                 }
