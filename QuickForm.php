@@ -920,6 +920,7 @@ class HTML_QuickForm extends HTML_Common {
         }
         $groupObj =& $this->getElement($group);
         if (is_array($arg1)) {
+            $required = 0;
             foreach ($arg1 as $elementIndex => $rules) {
                 $elementName = $groupObj->getElementName($elementIndex);
                 if ($elementName !== false) {
@@ -937,11 +938,15 @@ class HTML_QuickForm extends HTML_Common {
                         if ($type == 'required') {
                             $this->_required[] = $elementName;
                             $groupObj->_required[] = $elementName;
+                            $required++;
                         }
                     }
                 } else {
                     return PEAR::raiseError(null, QUICKFORM_UNREGISTERED_ELEMENT, null, E_USER_WARNING, "Element '$elementIndex' not found in group '$group' in HTML_QuickForm::addGroupRule()", 'HTML_QuickForm_Error', true);
                 }
+            }
+            if ($required > 0 && count($groupObj->getElements()) == $required) {
+                $this->_required[] = $group;
             }
         } elseif (is_string($arg1)) {
             if (!$this->isRuleRegistered($type)) {
