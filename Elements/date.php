@@ -23,7 +23,7 @@ require_once("HTML_QuickForm/Elements/element.php");
 require_once("HTML_QuickForm/Elements/select.php");
 
 // Still some features to be implemented and commented.
-// Use with care.
+// Use with care. This is only EXPERIMENTAL.
 
 /**
  * Class to dynamically create an dates in HTML SELECT fields
@@ -115,7 +115,7 @@ class HTML_QuickForm_date extends HTML_QuickForm_element
      * @since     1.0
      * @access    private
      */
-    var $language = "fr";
+    var $language = "en";
     
     /**
      * Frozen flag tells if element is frozen or not
@@ -149,7 +149,19 @@ class HTML_QuickForm_date extends HTML_QuickForm_element
         }
         $this->_parseFormat();
     } //end constructor
-
+    
+    /**
+     * Class constructor
+     * 
+     * @param     string    $elementName    (optional)Input field name attribute
+     * @param     string    $value          (optional)Input field value
+     * @param     mixed     $attributes     (optional)Either a typical HTML attribute string 
+     *                                      or an associative array. Date format is passed along the attributes.
+     * @since     1.0
+     * @access    public
+     * @return    void
+     * @throws    
+     */
     function _parseFormat ()
     {
         $format = $this->_attributes["format"];
@@ -203,6 +215,22 @@ class HTML_QuickForm_date extends HTML_QuickForm_element
         }
 
     }
+
+    /**
+     * Sets the default language for date
+     * 
+     * @param     string    $language  At the moment only 'en', 'de', 'fr'
+     * @since     1.0
+     * @access    public
+     * @return    void
+     * @throws    
+     */
+    function setLanguage($language)
+    {
+        if (!empty($language)) {
+            $this->language = $language;
+        } 
+    } //end func setLanguage
 
     /**
      * Sets the default values of the select box
