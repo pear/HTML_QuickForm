@@ -19,7 +19,7 @@
 //
 // $Id$
 
-require_once("HTML/QuickForm/input.php");
+require_once('HTML/QuickForm/input.php');
 
 /**
  * HTML class for a radio type element
@@ -40,7 +40,7 @@ class HTML_QuickForm_radio extends HTML_QuickForm_input {
      * @since     1.1
      * @access    private
      */
-    var $_text = "";
+    var $_text = '';
 
     // }}}
     // {{{ constructor
@@ -72,10 +72,6 @@ class HTML_QuickForm_radio extends HTML_QuickForm_input {
         $this->_persistantFreeze = true;
         $this->setType('radio');
         $this->_text = $text;
-        $vars = array_merge($_GET, $_POST);
-        if (isset($vars[$this->getName()]) && $vars[$this->getName()] == $this->getValue()) {
-            $this->setChecked(true);
-        }
     } //end constructor
     
     // }}}
@@ -128,7 +124,7 @@ class HTML_QuickForm_radio extends HTML_QuickForm_input {
      */
     function toHtml()
     {
-        return HTML_QuickForm_input::toHtml() . "" . $this->_text;
+        return HTML_QuickForm_input::toHtml() . '' . $this->_text;
     } //end func toHtml
     
     // }}}
@@ -144,12 +140,13 @@ class HTML_QuickForm_radio extends HTML_QuickForm_input {
      */
     function getFrozenHtml()
     {
+        $html = '';
         if ($this->getChecked()) {
-            $html = "<tt>(x)</tt>";
+            $html .= '<tt>(x)</tt>';
         } else {
-            $html = "<tt>( )</tt>";
+            $html .= '<tt>( )</tt>';
         }
-        return $html . "";
+        return $html;
     } //end func getFrozenHtml
 
     // }}}
@@ -166,7 +163,7 @@ class HTML_QuickForm_radio extends HTML_QuickForm_input {
      */
     function setText($text)
     {
-            $this->_text = $text;
+        $this->_text = $text;
     } //end func setText
 
     // }}}
@@ -206,10 +203,16 @@ class HTML_QuickForm_radio extends HTML_QuickForm_input {
             case 'addElement':
             case 'createElement':
                 $this->$className($arg[0], $arg[1], $arg[2], $arg[3], $arg[4]);
+                // need to set the submit value in case setDefault never gets called
+                $elementName = $this->getName();
+                if (isset($caller->_submitValues[$elementName]) && $caller->_submitValues[$elementName] == $this->getValue()) {
+                    $this->setChecked(true);
+                }
                 break;
             case 'setDefault':
-                $vars = array_merge($_GET, $_POST);
-                if (!isset($vars[$this->getName()])) {
+                // In form display, default value is always overidden by submitted value
+                $elementName = $this->getName();
+                if (!isset($caller->_submitValues[$elementName])) {
                     if ($arg == $this->getValue()) {
                         $this->setChecked(true);
                     } else {
@@ -218,6 +221,8 @@ class HTML_QuickForm_radio extends HTML_QuickForm_input {
                 }
                 break;
             case 'setConstant':
+                // In form display, constant value overides submitted value
+                // but submitted value is kept in _submitValues array
                 if ($arg == $this->getValue()) {
                     $this->setChecked(true);
                 } else {
