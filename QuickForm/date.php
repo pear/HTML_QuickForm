@@ -97,6 +97,12 @@ class HTML_QuickForm_date extends HTML_QuickForm_element
                             'weekdays_long' => array ('Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'),
                             'months_short'  => array ('Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'),
                             'months_long'   => array ('Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septimbre', 'Octubre', 'Noviembre', 'Diciembre')
+                        ),
+                        "da"    => array (
+                            "weekdays_short"=> array ("Søn", "Man", "Tir", "Ons", "Tor", "Fre", "Lør"),
+                            "weekdays_long" => array ("Søndag", "Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag"),
+                            "months_short"  => array ("Jan", "Feb", "Mar", "Apr", "Maj", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dec"),
+                            "months_long"   => array ("Januar", "Februar", "Marts", "April", "Maj", "Juni", "Juli", "August", "September", "Oktober", "November", "December")
                         )
                     );
                     
