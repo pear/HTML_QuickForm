@@ -165,20 +165,22 @@ class HTML_QuickForm_file extends HTML_QuickForm_input
     {
         switch ($event) {
             case 'updateValue':
+                if ($caller->getAttribute('method') == 'get') {
+                    $caller->_submitValues = $GLOBALS['_POST'];
+                }
                 $this->_value = $this->_findValue($caller->_submitFiles);
+                $caller->updateAttributes(array('method' => 'post', 'enctype' => 'multipart/form-data'));
+                $caller->setMaxFileSize();
                 break;
             case 'addElement':
                 $this->onQuickFormEvent('createElement', $arg, $caller);
                 $this->onQuickFormEvent('updateValue', null, $caller);
-                if ($caller->getAttribute('method') == 'get') {
-                    $caller->_submitValues = $GLOBALS['_POST'];
-                }
-                $caller->updateAttributes(array('method' => 'post', 'enctype' => 'multipart/form-data'));
-                $caller->setMaxFileSize();
                 break;
             case 'createElement':
                 $className = get_class($this);
                 $this->$className($arg[0], $arg[1], $arg[2]);
+                $caller->updateAttributes(array('method' => 'post', 'enctype' => 'multipart/form-data'));
+                $caller->setMaxFileSize();
                 break;
         }
         return true;
