@@ -1038,9 +1038,7 @@ class HTML_QuickForm extends HTML_Common {
         $html = '';
         $html = str_replace('{attributes}', 
             $this->_getAttrString($this->_attributes), $this->_formTemplate);
-        $tabs = $this->_getTabs();
         $html = str_replace('{content}', $content, $html);
-        $html = str_replace("\n", "\n$tabs\t", $html);
         return $html;
     } // end func _wrapForm
 
