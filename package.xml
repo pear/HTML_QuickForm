@@ -70,7 +70,7 @@ Features:
   on the element's name (see #1506)
 - Default template of Default Renderer now allows XHTML-compliant output
   of hidden elements (see #1124)
-- Added Esperanto translation for date element (Sebastien Montagne)
+- Added Esperanto translation and French accents for date element (Sebastien Montagne)
 
 * Bugfixes
 - Fixed #1235 (setChecked() and setValue() did not work on advcheckbox)
@@ -83,6 +83,8 @@ Features:
 - Fixed #1577 (hierselect's Javascript works with multiselects)
 - Fixed #1516 (Default Renderer should use separators even when 
   setGroupTemplate() is used)
+- Fixed #1694 (ITStatic renders hidden element with brackets correctly,
+  patch provided by milamamu)
     </notes>
     <filelist>
       <dir name="/" baseinstalldir="HTML">
