@@ -2,7 +2,7 @@
 <!DOCTYPE package SYSTEM "../package.dtd">
 <!-- do not use the "Type" attribute here, that one is only for
      generated package.xml files -->
-<package version="1.0">
+<package version="2.0">
   <name>HTML_QuickForm</name>
   <summary>The PEAR::HTML_QuickForm package provides methods for creating, validating, processing HTML forms.</summary>
   <description>
@@ -18,6 +18,7 @@
      * Manages file uploads.
      * Allows you to freeze some elements in your form.
      * Allows you to customize the look of your form in many ways.
+     * Template-like form elements customization...
   </description>
   <maintainers>
     <maintainer>
@@ -32,13 +33,44 @@
       <email>adaniel1@eesus.jnj.com</email>
       <role>lead</role>
     </maintainer>
+    <maintainer>
+      <name>Jason Rust</name>
+      <email>jrust@rustyparts.com</email>
+      <role>helper</role>
+    </maintainer>
   </maintainers>
   <release>
-    <version>1.12</version>
-    <date>2002/03/22</date>
+    <version>2.0</version>
+    <date>2002/04/15</date>
     <state>stable</state>
     <notes>
-      Changed directory structure for package installation.
+      Warning : New API for new version 2.0 !
+      Here is a list of what's new in this version:
+		* Moved all the elements from HTML/QuickForm/Elements/ to HTML/QuickForm/
+		* Added $_elementIndex to keep track of the elements
+		* Changed $_elementValues to $_defaultValues
+		* Removed $_hidden and $_frozen
+		* Added Filter support
+		* Added templates for the _wrap functions
+		* Changed loadDefault() to setDefaults()
+		* Moved most of the logic to the element classes
+		* Created an abstraction between the form class and the elements
+		* Added getElement() and getElementValue()
+		* Added toArray()
+		* Cleaned up a lot of the code
+		* Added the // {{{ markers to all files to make it for easier reading in vim
+		* Added the error handlers and codes to make errors more descriptive
+		* Added new method setConstants() which is like setDefaults() except that it overrides the POST or GET variables.
+		* Added methods setElementTemplate(), setFormTemplate(), setHeaderTemplate() and setRequiredNotTemplate().  They are pretty self-explanatory.
+		* Added method addData().  Same as before.
+		* Added new method clearAllTemplates() which basically strips out all HTML.  This is useful if you want to create a completely custom looking form using addData()
+		* Fixed the toHtml() method so that it is a while statement so that freeze() works.
+		* Fixed a bug in the hidden type, where it was setting the value when you created the element, thus not allowing the value to be set by POST or GET variables.
+		* Took out the is_int test in select.php.
+		* Made the caller a global variable in element.php, so that it can be accessed, if need be, in other element classes.
+		* Changed it so that if an element is frozen and has no value it outputs '&nbsp;' instead of nothing which messes up old browsers like NS4.
+		* Added renderElement() method which will return the html for one element.
+		* Added removeElement() method which removes the element from the elements list. Both methods accept parameters.
     </notes>
     <filelist>
       <dir name="/" baseinstalldir="HTML">
@@ -52,6 +84,7 @@
           <file role="php">hidden.php</file>
           <file role="php">image.php</file>
           <file role="php">input.php</file>
+          <file role="php">link.php</file>
           <file role="php">password.php</file>
           <file role="php">radio.php</file>
           <file role="php">reset.php</file>
@@ -72,6 +105,14 @@
       <date>2001-09-06</date>
       <notes>
         This is the initial release of the HTML_QuickForm package.
+      </notes>
+    </release>
+    <release>
+      <version>1.12</version>
+      <date>2002/03/22</date>
+      <state>stable</state>
+      <notes>
+        Changed directory structure for package installation.
       </notes>
     </release>
   </changelog>

@@ -1,9 +1,9 @@
 <?php
 /* vim: set expandtab tabstop=4 shiftwidth=4: */
 // +----------------------------------------------------------------------+
-// | PHP Version 4                                                        |
+// | PHP version 4.0                                                      |
 // +----------------------------------------------------------------------+
-// | Copyright (c) 1997-2002 The PHP Group                                |
+// | Copyright (c) 1997, 1998, 1999, 2000, 2001 The PHP Group             |
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the PHP license,       |
 // | that is bundled with this package in the file LICENSE, and is        |
@@ -32,7 +32,17 @@ require_once("HTML/Common.php");
  * @abstract
  */
 class HTML_QuickForm_element extends HTML_Common {
-    
+
+    // {{{ properties
+
+    /**
+     * Label of the field
+     * @var       string
+     * @since     1.3
+     * @access    private
+     */
+    var $_label = "";
+
     /**
      * Form element type
      * @var       string
@@ -48,6 +58,17 @@ class HTML_QuickForm_element extends HTML_Common {
      * @access    private
      */
     var $_flagFrozen = false;
+
+    /**
+     * Does the element support persistant data when frozen
+     * @var       boolean
+     * @since     1.3
+     * @access    private
+     */
+    var $_persistantFreeze = false;
+    
+    // }}}
+    // {{{ constructor
     
     /**
      * Class constructor
@@ -59,32 +80,41 @@ class HTML_QuickForm_element extends HTML_Common {
      * @return    void
      * @throws    
      */
-    function HTML_QuickForm_element($type=null, $elementName=null, $value=null, $attributes=null)
+    function HTML_QuickForm_element($elementName=null, $elementLabel=null, $attributes=null)
     {
         HTML_Common::HTML_Common($attributes);
-        $this->setType($type);
-        if ($elementName != null) {
+        if (isset($elementName)) {
             $this->setName($elementName);
         }
-        if ($value != null) {
-            $this->setValue($value);
+        if (isset($elementLabel)) {
+            $this->setLabel($elementLabel);
+        }
+        $vars = array_merge($GLOBALS['HTTP_GET_VARS'], $GLOBALS['HTTP_POST_VARS']);
+        if (isset($vars[$this->getName()])) {
+            $submitValue = (is_string($vars[$this->getName()])) ? 
+                stripslashes($vars[$this->getName()]) : $vars[$this->getName()];
+            $this->setValue($submitValue);
         }
     } //end constructor
+    
+    // }}}
+    // {{{ apiVersion()
 
     /**
-     * Sets the element type
+     * Returns the current API version
      *
-     * @param     string    $type   Element type
      * @since     1.0
      * @access    public
-     * @return    void
-     * @throws    
+     * @return    float
      */
-    function setType($type)
+    function apiVersion()
     {
-        $this->_type = $type;
-    } // end func setType
-    
+        return 2.0;
+    } // end func apiVersion
+
+    // }}}
+    // {{{ getType()
+
     /**
      * Returns element type
      *
@@ -97,6 +127,9 @@ class HTML_QuickForm_element extends HTML_Common {
     {
         return $this->_type;
     } // end func getType
+
+    // }}}
+    // {{{ setName()
 
     /**
      * Sets the input field name
@@ -112,6 +145,9 @@ class HTML_QuickForm_element extends HTML_Common {
         // interface method
     } //end func setName
     
+    // }}}
+    // {{{ getName()
+
     /**
      * Returns the element name
      * 
@@ -125,6 +161,9 @@ class HTML_QuickForm_element extends HTML_Common {
         // interface method
     } //end func getName
     
+    // }}}
+    // {{{ setValue()
+
     /**
      * Sets the value of the form element
      *
@@ -136,8 +175,11 @@ class HTML_QuickForm_element extends HTML_Common {
      */
     function setValue($value)
     {
-        $this->updateAttributes(array("value"=>$value));
+        // interface
     } // end func setValue
+
+    // }}}
+    // {{{ getValue()
 
     /**
      * Returns the value of the form element
@@ -149,9 +191,13 @@ class HTML_QuickForm_element extends HTML_Common {
      */
     function getValue()
     {
-        return isset($this->_attributes["value"]) ? $this->_attributes["value"] : null;
+        // interface
+        return null;
     } // end func getValue
     
+    // }}}
+    // {{{ freeze()
+
     /**
      * Freeze the element so that only its value is returned
      * 
@@ -164,6 +210,9 @@ class HTML_QuickForm_element extends HTML_Common {
         $this->_flagFrozen = true;
     } //end func freeze
 
+    // }}}
+    // {{{ getFrozenHtml()
+
     /**
      * Returns the value of field without HTML tags
      * 
@@ -174,35 +223,133 @@ class HTML_QuickForm_element extends HTML_Common {
      */
     function getFrozenHtml()
     {
-        $html = $this->getValue();
+        $tabs = $this->_getTabs();
+        $value = $this->getValue();
+        if (!empty($value)) {
+            $html = $value;
+        } else {
+            $html = 'N/A';
+        }
+        if ($this->_persistantFreeze) {
+            $html .= '<input type="hidden" name="' . 
+                $this->getName() . '" value="' . $value . '" />';
+        }
         return $html;
     } //end func getFrozenHtml
+    
+    // }}}
+    // {{{ isFrozen()
 
     /**
-     * Returns the form element type
+     * Returns whether or not the element is frozen
+     *
+     * @since     1.3
+     * @access    public
+     * @return    void
+     * @throws    
+     */
+    function isFrozen()
+    {
+        return $this->_flagFrozen;
+    } // end func isFrozen
+
+    // }}}
+    // {{{ toArray()
+
+    /**
+     * Returns the element as an array
+     *
+     * @since     1.1
+     * @access    public
+     * @return    array
+     * @throws    
+     */
+    function toArray()
+    {
+        $arr = array();
+        $arr['html'] = $this->toHtml();
+        $arr['value'] = $this->getValue();
+        $arr['type'] = $this->getType();
+        $arr['frozen'] = $this->_flagFrozen;
+        $arr['label'] = $this->getLabel();
+        return $arr;
+    } // end func toArray
+
+    // }}}
+    // {{{ setLabel()
+
+    /**
+     * Sets display text for the element
      * 
-     * @since     1.0
+     * @param     string    $label  Display text for a checkbox
+     * @since     1.3
+     * @access    public
+     * @return    void
+     * @throws    
+     */
+    function setLabel($label)
+    {
+        $this->_label = $label;
+    } //end func setLabel
+
+    // }}}
+    // {{{ getLabel()
+
+    /**
+     * Returns display text for the element
+     * 
+     * @since     1.3
      * @access    public
      * @return    string
-     * @abstract    
+     * @throws    
      */
-    function getType()
+    function getLabel()
     {
-        return $this->_type;
-    } //end func getType
+        return $this->_label;
+    } //end func getLabel
+
+    // }}}
+    // {{{ onQuickFormEvent()
 
     /**
-     * Returns whether element value should persist after a freeze
-     * 
+     * Called by HTML_QuickForm whenever form event is made on this element
+     *
+     * @param     string    $event  Name of event
+     * @param     mixed     $arg    event arguments
+     * @param     object    $callerLocal calling object
      * @since     1.0
      * @access    public
-     * @return    bool
-     * @abstract    
+     * @return    void
+     * @throws    
      */
-    function persistantFreeze()
+    function onQuickFormEvent($event, $arg, &$callerLocal)
     {
+        global $caller;
+        // make it global so we can access it any of the other methods if needed
+        $caller = $callerLocal;
+        $className = get_class($this);
+        switch ($event) {
+            case 'addElement':
+            case 'createElement':
+                $this->$className($arg[0], $arg[1], $arg[2], $arg[3]);
+                break;
+            case 'setDefault':
+                $vars = array_merge($GLOBALS['HTTP_GET_VARS'], $GLOBALS['HTTP_POST_VARS']);
+                if (!isset($vars[$this->getName()])) {
+                    $this->setValue($arg);
+                }
+                break;
+            case 'setConstant':
+                $this->setValue($arg);
+                break;
+            case 'setGroupValue':
+                $this->setValue($arg);
+            break;
+        }
         return true;
-    } //end func persistantFreeze
+    } // end func onQuickFormLoad
+
+    // }}}
 
 } // end class HTML_QuickForm_element
 ?>

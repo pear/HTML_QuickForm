@@ -1,9 +1,9 @@
 <?php
 /* vim: set expandtab tabstop=4 shiftwidth=4: */
 // +----------------------------------------------------------------------+
-// | PHP Version 4                                                        |
+// | PHP version 4.0                                                      |
 // +----------------------------------------------------------------------+
-// | Copyright (c) 1997-2002 The PHP Group                                |
+// | Copyright (c) 1997, 1998, 1999, 2000, 2001 The PHP Group             |
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the PHP license,       |
 // | that is bundled with this package in the file LICENSE, and is        |
@@ -26,11 +26,24 @@ require_once("HTML/QuickForm/input.php");
  * 
  * @author       Adam Daniel <adaniel1@eesus.jnj.com>
  * @author       Bertrand Mansion <bmansion@mamasam.com>
- * @version      1.0
+ * @version      1.1
  * @since        PHP4.04pl1
  * @access       public
  */
 class HTML_QuickForm_password extends HTML_QuickForm_input {
+    
+    // {{{ properties
+
+    /**
+     * Password value
+     * @var       
+     * @since     1.1
+     * @access    private
+     */
+    var $_value = null;
+
+    // }}}
+    // {{{ constructor
 
     /**
      * Class constructor
@@ -44,11 +57,15 @@ class HTML_QuickForm_password extends HTML_QuickForm_input {
      * @return    void
      * @throws    
      */
-    function HTML_QuickForm_password ($elementName=null, $value="", $attributes=null)
+    function HTML_QuickForm_password($elementName=null, $elementLabel=null, $attributes=null)
     {
-        HTML_QuickForm_input::HTML_QuickForm_input('password', $elementName, $value, $attributes);
+        HTML_QuickForm_input::HTML_QuickForm_input($elementName, $elementLabel, $attributes);
+        $this->setType('password');
     } //end constructor
     
+    // }}}
+    // {{{ setValue()
+
     /**
      * Sets value for password element
      * 
@@ -60,8 +77,27 @@ class HTML_QuickForm_password extends HTML_QuickForm_input {
      */
     function setValue($value)
     {
-        return;
+        $this->_value = $value;
     } //end func setValue
+
+    // }}}
+    // {{{ getValue()
+
+    /**
+     * Returns the value of the form element
+     *
+     * @since     1.0
+     * @access    public
+     * @return    void
+     * @throws    
+     */
+    function getValue()
+    {
+        return $this->_value;
+    } // end func getValue
+
+    // }}}
+    // {{{ setSize()
 
     /**
      * Sets size of password element
@@ -77,6 +113,9 @@ class HTML_QuickForm_password extends HTML_QuickForm_input {
         $this->updateAttributes(array("size"=>$size));
     } //end func setSize
 
+    // }}}
+    // {{{ setMaxlength()
+
     /**
      * Sets maxlength of password element
      * 
@@ -91,6 +130,9 @@ class HTML_QuickForm_password extends HTML_QuickForm_input {
         $this->updateAttributes(array("maxlength"=>$maxlength));
     } //end func setMaxlength
         
+    // }}}
+    // {{{ getFrozenHtml()
+
     /**
      * Returns the value of field without HTML tags (in this case, value is changed to a mask)
      * 
@@ -105,18 +147,7 @@ class HTML_QuickForm_password extends HTML_QuickForm_input {
         return $html;
     } //end func getFrozenHtml
 
-    /**
-     * Returns whether element value should persist after a freeze
-     * 
-     * @since     1.0
-     * @access    public
-     * @return    bool
-     * @abstract    
-     */
-    function persistantFreeze()
-    {
-        return false;
-    } //end func persistantFreeze
+    // }}}
 
 } //end class HTML_QuickForm_password
 ?>

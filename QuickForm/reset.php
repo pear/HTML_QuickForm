@@ -1,9 +1,9 @@
 <?php
 /* vim: set expandtab tabstop=4 shiftwidth=4: */
 // +----------------------------------------------------------------------+
-// | PHP Version 4                                                        |
+// | PHP version 4.0                                                      |
 // +----------------------------------------------------------------------+
-// | Copyright (c) 1997-2002 The PHP Group                                |
+// | Copyright (c) 1997, 1998, 1999, 2000, 2001 The PHP Group             |
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the PHP license,       |
 // | that is bundled with this package in the file LICENSE, and is        |
@@ -32,6 +32,8 @@ require_once("HTML/QuickForm/input.php");
  */
 class HTML_QuickForm_reset extends HTML_QuickForm_input {
     
+    // {{{ constructor
+    
     /**
      * Class constructor
      * 
@@ -44,10 +46,15 @@ class HTML_QuickForm_reset extends HTML_QuickForm_input {
      * @return    void
      * @throws    
      */
-    function HTML_QuickForm_reset ($elementName=null, $value=null, $attributes=null)
+    function HTML_QuickForm_reset($elementName=null, $value=null, $attributes=null)
     {
-        HTML_QuickForm_input::HTML_QuickForm_input('reset', $elementName, $value, $attributes);
+        HTML_QuickForm_input::HTML_QuickForm_input($elementName, null, $attributes);
+        $this->setValue($value);
+        $this->setType('reset');
     } //end constructor
+
+    // }}}
+    // {{{ freeze()
 
     /**
      * Freeze the element so that only its value is returned
@@ -61,18 +68,7 @@ class HTML_QuickForm_reset extends HTML_QuickForm_input {
         return false;
     } //end func freeze
 
-    /**
-     * Returns whether element value should persist after a freeze
-     * 
-     * @since     1.0
-     * @access    public
-     * @return    bool
-     * @abstract    
-     */
-    function persistantFreeze()
-    {
-        return false;
-    } //end func persistantFreeze
+    // }}}
 
 } //end class HTML_QuickForm_reset
 ?>

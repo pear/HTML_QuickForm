@@ -1,9 +1,9 @@
 <?php
 /* vim: set expandtab tabstop=4 shiftwidth=4: */
 // +----------------------------------------------------------------------+
-// | PHP Version 4                                                        |
+// | PHP version 4.0                                                      |
 // +----------------------------------------------------------------------+
-// | Copyright (c) 1997-2002 The PHP Group                                |
+// | Copyright (c) 1997, 1998, 1999, 2000, 2001 The PHP Group             |
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the PHP license,       |
 // | that is bundled with this package in the file LICENSE, and is        |
@@ -31,6 +31,8 @@ require_once("HTML/QuickForm/input.php");
  */
 class HTML_QuickForm_file extends HTML_QuickForm_input
 {
+    // {{{ constructor
+
     /**
      * Class constructor
      * 
@@ -43,11 +45,15 @@ class HTML_QuickForm_file extends HTML_QuickForm_input
      * @return    void
      * @throws    
      */
-    function HTML_QuickForm_file ($elementName=null, $value=null, $attributes=null)
+    function HTML_QuickForm_file($elementName=null, $elementLabel=null, $attributes=null)
     {
-        HTML_QuickForm_input::HTML_QuickForm_input('file', $elementName, $value, $attributes);
+        HTML_QuickForm_input::HTML_QuickForm_input($elementName, $elementLabel, $attributes);
+        $this->setType('file');
     } //end constructor
     
+    // }}}
+    // {{{ setSize()
+
     /**
      * Sets size of file element
      * 
@@ -62,6 +68,9 @@ class HTML_QuickForm_file extends HTML_QuickForm_input
         $this->updateAttributes(array("size"=>$size));
     } //end func setSize
     
+    // }}}
+    // {{{ getSize()
+
     /**
      * Returns size of file element
      * 
@@ -75,6 +84,9 @@ class HTML_QuickForm_file extends HTML_QuickForm_input
         return $this->getAttribute("size");
     } //end func setSize
 
+    // }}}
+    // {{{ freeze()
+
     /**
      * Freeze the element so that only its value is returned
      * 
@@ -87,18 +99,40 @@ class HTML_QuickForm_file extends HTML_QuickForm_input
         return false;
     } //end func freeze
 
+    // }}}
+    // {{{ onQuickFormEvent()
+
     /**
-     * Returns whether element value should persist after a freeze
-     * 
+     * Called by HTML_QuickForm whenever form event is made on this element
+     *
+     * @param     string    $event  Name of event
+     * @param     mixed     $arg    event arguments
+     * @param     object    $caller calling object
      * @since     1.0
      * @access    public
-     * @return    bool
-     * @abstract    
+     * @return    void
+     * @throws    
      */
-    function persistantFreeze()
+    function onQuickFormEvent($event, $arg, &$caller)
     {
-        return false;
-    } //end func persistantFreeze
+        $className = get_class($this);
+        switch ($event) {
+            case 'addElement':
+                $form->updateAttributes(array("method"=>"POST", "enctype"=>"multipart/form-data"));
+                if (!$caller->elementExists('MAX_FILE_SIZE')) {
+                    $err = &$form->addElement('hidden', 'MAX_FILE_SIZE', $form->_maxFileSize);
+                    if (PEAR::isError($err)) {
+                        return $err;
+                    }
+                }
+            case 'createElement':
+                $this->$className($args[0], $args[1], $args[2]);
+                break;
+        }
+        return true;
+    } // end func onQuickFormLoad
+
+    // }}}
 
 } // end class HTML_QuickForm_file
 ?>

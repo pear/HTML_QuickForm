@@ -1,9 +1,9 @@
 <?php
 /* vim: set expandtab tabstop=4 shiftwidth=4: */
 // +----------------------------------------------------------------------+
-// | PHP Version 4                                                        |
+// | PHP version 4.0                                                      |
 // +----------------------------------------------------------------------+
-// | Copyright (c) 1997-2002 The PHP Group                                |
+// | Copyright (c) 1997, 1998, 1999, 2000, 2001 The PHP Group             |
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the PHP license,       |
 // | that is bundled with this package in the file LICENSE, and is        |
@@ -32,6 +32,8 @@ require_once("HTML/QuickForm/element.php");
  */
 class HTML_QuickForm_group extends HTML_QuickForm_element {
 
+    // {{{ properties
+
     /**
      * Value of the element
      * @var       mixed
@@ -57,12 +59,15 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
     var $_elements = "";
 
     /**
-     * Layout of elements within the group
+     * String to seperator elements
      * @var       string
-     * @since     1.0
+     * @since     1.1
      * @access    private
      */
-    var $_layout = "";
+    var $_seperator = "";
+
+    // }}}
+    // {{{ constructor
 
     /**
      * Class constructor
@@ -75,13 +80,33 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
      * @return    void
      * @throws    
      */
-    function HTML_QuickForm_group ($elementName=null, $elements=array(), $layout='rows')
+    function HTML_QuickForm_group($elementName=null, $elementLabel=null, $elements=null, $seperator=null)
     {
-        HTML_QuickForm_element::HTML_QuickForm_element('group', $elementName);
-        $this->_elements = $elements;
-        $this->_layout = $layout;
+        HTML_Common::HTML_Common();
+        if (isset($elementName)) {
+            $this->setName($elementName);
+        }
+        if (isset($elementLabel)) {
+            $this->setLabel($elementLabel);
+        }
+        $vars = array_merge($GLOBALS['HTTP_GET_VARS'], $GLOBALS['HTTP_POST_VARS']);
+        if (isset($vars[$this->getName()])) {
+            $submitValue = (is_string($vars[$this->getName()])) ? 
+                stripslashes($vars[$this->getName()]) : $vars[$this->getName()];
+            $this->setValue($submitValue);
+        }
+        $this->_type = 'group';
+        if (isset($elements) && is_array($elements)) {
+            $this->_elements = $elements;
+        }
+        if (isset($seperator)) {
+            $this->_seperator = $seperator;
+        }
     } //end constructor
     
+    // }}}
+    // {{{ setName()
+
     /**
      * Sets the input field name
      * 
@@ -96,6 +121,9 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
         $this->_name = $name;
     } //end func setName
     
+    // }}}
+    // {{{ getName()
+
     /**
      * Returns the element name
      * 
@@ -108,6 +136,9 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
     {
         return $this->_name;
     } //end func getName
+
+    // }}}
+    // {{{ setValue()
 
     /**
      * Sets value for textarea element
@@ -123,6 +154,9 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
         $this->_value = $value;
     } //end func setValue
     
+    // }}}
+    // {{{ getValue()
+
     /**
      * Returns the value of the form element
      *
@@ -135,6 +169,26 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
     {
         return $this->_value;
     } // end func getValue
+
+    // }}}
+    // {{{ setElements()
+
+    /**
+     * Sets the grouped elements
+     *
+     * @param     array     $elements   Array of elements
+     * @since     1.1
+     * @access    public
+     * @return    void
+     * @throws    
+     */
+    function setElements($elements)
+    {
+        $this->_elements = $elements;
+    } // end func setElements
+
+    // }}}
+    // {{{ toHtml()
 
     /**
      * Returns the input field in HTML
@@ -149,52 +203,36 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
         $html = "";
         $name = $this->getName();
         $value = $this->getValue();
-        for ($i=0; $i < count($this->_elements); $i++ ) {
-            $element = $this->_elements[$i];
+        foreach ($this->_elements as $key=>$element) {
             if (PEAR::isError($element)) {
                 return $element;
             }
             $elementName = $element->getName();
+            $index = !empty($elementName) ? $elementName : $key;
             $elementType = $element->getType();
-            if (!empty($name) && $elementType == "radio") {
+            if (!empty($name) && isset($elementName)) {
+                $element->setName($name . "[$elementName]");
+            } elseif (!empty($name)) {
                 $element->setName($name);
-            } elseif (!empty($name) && $elementType != "radio") {
-                $element->setName($name . "[]");
             }
-            if (isset($value) && $elementType == "radio") {
-                if (isset($value) && ($element->getValue() == $value)) {
-                    $element->setChecked(true);
-                } else {
-                    $element->setChecked(false);
-                }
-            } elseif (isset($value) && $elementType == "checkbox") {
-                if (!is_array($value)) {
-                    $arrValue = split('[ ]?,[ ]?', $value);
-                } else {
-                    $arrValue = $value;
-                }
-                if (in_array($element->getValue(), $arrValue)) {
-                    $element->setChecked(true);
-                } else {
-                    $element->setChecked(false);
-                }
-            } elseif ($elementType != "submit" && $elementType != "button" && $elementType != "reset" && $elementType != "image") {
-                if (isset($value) && is_array($value)) {
-                    $element->setValue($value[$i]);
-                } elseif (isset($value)) {
-                    $element->setValue($value);
-                }
+            if (isset($value) && is_array($value)) {
+                $element->onQuickFormEvent('setGroupValue', $value[$index], &$this);
+            } elseif (isset($value)) {
+                $element->onQuickFormEvent('setGroupValue', $value, &$this);
             }
             if ($this->_flagFrozen) {
                 $element->freeze();
             }
-            $element->_tabOffset = $this->_tabOffset + 1;
-            $html .= $element->toHtml();
-            $html .= ($this->_layout == "rows") ? "&nbsp;" : "<BR>\n";
+            $element->_tabOffset = $this->_tabOffset;
+            $html[] = $element->toHtml();
         }
+        $html = join($this->_seperator, $html);
         return $html;
     } //end func toHtml
     
+    // }}}
+    // {{{ getFrozenHtml()
+
     /**
      * Returns the value of field without HTML tags
      * 
@@ -212,5 +250,44 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
         return $html;
     } //end func getFrozenHtml
 
+    // }}}
+    // {{{ onQuickFormEvent()
+
+    /**
+     * Called by HTML_QuickForm whenever form event is made on this element
+     *
+     * @param     string    $event  Name of event
+     * @param     mixed     $arg    event arguments
+     * @param     object    $caller calling object
+     * @since     1.0
+     * @access    public
+     * @return    void
+     * @throws    
+     */
+    function onQuickFormEvent($event, $arg, &$caller)
+    {
+        $className = get_class($this);
+        switch ($event) {
+            case 'addElement':
+            case 'createElement':
+                $this->$className($arg[0], $arg[1], $arg[2], $arg[3]);
+                break;
+            case 'setDefault':
+                $vars = array_merge($GLOBALS['HTTP_GET_VARS'], $GLOBALS['HTTP_POST_VARS']);
+                if (!isset($vars[$this->getName()])) {
+                    $this->setValue($arg);
+                }
+                break;
+            case 'setConstant':
+                $this->setValue($arg);
+                break;
+            case 'setGroupValue':
+                $this->setValue($arg);
+            break;
+        }
+        return true;
+    } // end func onQuickFormEvent
+
+    // }}}
 } //end class HTML_QuickForm_group
 ?>

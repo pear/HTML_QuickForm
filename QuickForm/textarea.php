@@ -1,9 +1,9 @@
 <?php
 /* vim: set expandtab tabstop=4 shiftwidth=4: */
 // +----------------------------------------------------------------------+
-// | PHP Version 4                                                        |
+// | PHP version 4.0                                                      |
 // +----------------------------------------------------------------------+
-// | Copyright (c) 1997-2002 The PHP Group                                |
+// | Copyright (c) 1997, 1998, 1999, 2000, 2001 The PHP Group             |
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the PHP license,       |
 // | that is bundled with this package in the file LICENSE, and is        |
@@ -32,13 +32,18 @@ require_once("HTML/QuickForm/element.php");
  */
 class HTML_QuickForm_textarea extends HTML_QuickForm_element {
     
+    // {{{ properties
+
     /**
      * Default value
      * @var       string
      * @since     1.0
      * @access    private
      */
-    var $_value = "";
+    var $_value = null;
+
+    // }}}
+    // {{{ constructor
         
     /**
      * Class constructor
@@ -52,11 +57,16 @@ class HTML_QuickForm_textarea extends HTML_QuickForm_element {
      * @return    void
      * @throws    
      */
-    function HTML_QuickForm_textarea ($elementName, $value="", $attributes=null)
+    function HTML_QuickForm_textarea($elementName=null, $elementLabel=null, $attributes=null)
     {
-        HTML_QuickForm_element::HTML_QuickForm_element('textarea', $elementName, $value, $attributes);
+        HTML_QuickForm_element::HTML_QuickForm_element($elementName, $elementLabel, $attributes);
+        $this->_persistantFreeze = true;
+        $this->_type = 'textarea';
     } //end constructor
     
+    // }}}
+    // {{{ setName()
+
     /**
      * Sets the input field name
      * 
@@ -71,6 +81,9 @@ class HTML_QuickForm_textarea extends HTML_QuickForm_element {
         $this->updateAttributes(array('name'=>$name));
     } //end func setName
     
+    // }}}
+    // {{{ getName()
+
     /**
      * Returns the element name
      * 
@@ -83,6 +96,9 @@ class HTML_QuickForm_textarea extends HTML_QuickForm_element {
     {
         return $this->getAttribute('name');
     } //end func getName
+
+    // }}}
+    // {{{ setValue()
 
     /**
      * Sets value for textarea element
@@ -98,6 +114,9 @@ class HTML_QuickForm_textarea extends HTML_QuickForm_element {
         $this->_value = $value;
     } //end func setValue
     
+    // }}}
+    // {{{ getValue()
+
     /**
      * Returns the value of the form element
      *
@@ -110,6 +129,9 @@ class HTML_QuickForm_textarea extends HTML_QuickForm_element {
     {
         return $this->_value;
     } // end func getValue
+
+    // }}}
+    // {{{ setWrap()
 
     /**
      * Sets wrap type for textarea element
@@ -125,6 +147,9 @@ class HTML_QuickForm_textarea extends HTML_QuickForm_element {
         $this->updateAttributes(array("wrap"=>$wrap));
     } //end func setWrap
     
+    // }}}
+    // {{{ setRows()
+
     /**
      * Sets height in rows for textarea element
      * 
@@ -138,6 +163,9 @@ class HTML_QuickForm_textarea extends HTML_QuickForm_element {
     {
         $this->updateAttributes(array("rows"=>$rows));
     } //end func setRows
+
+    // }}}
+    // {{{ setCols()
 
     /**
      * Sets width in cols for textarea element
@@ -153,6 +181,9 @@ class HTML_QuickForm_textarea extends HTML_QuickForm_element {
         $this->updateAttributes(array("cols"=>$cols));
     } //end func setCols
 
+    // }}}
+    // {{{ toHtml()
+
     /**
      * Returns the textarea element in HTML
      * 
@@ -167,7 +198,7 @@ class HTML_QuickForm_textarea extends HTML_QuickForm_element {
             $html = $this->getFrozenHtml();
         } else {
             $tabs = $this->_getTabs();
-            $html = "\n$tabs<textarea".$this->_getAttrString($this->_attributes).">";
+            $html = "$tabs<textarea".$this->_getAttrString($this->_attributes).">";
             // because we wrap the form later we don't want the text indented
             $html .= preg_replace("/(\r\n|\n|\r)/", '&#010;', $this->_value);
             $html .= "</textarea>";
@@ -175,6 +206,9 @@ class HTML_QuickForm_textarea extends HTML_QuickForm_element {
         return $html;
     } //end func toHtml
     
+    // }}}
+    // {{{ getFrozenHtml()
+
     /**
      * Returns the value of field without HTML tags (in this case, value is changed to a mask)
      * 
@@ -185,9 +219,16 @@ class HTML_QuickForm_textarea extends HTML_QuickForm_element {
      */
     function getFrozenHtml()
     {
-        $html = "<pre>$this->_value</pre>";
+        $tabs = $this->_getTabs();
+        $html = "$tabs<pre>" . $this->_value . "</pre>";
+        if ($this->_persistantFreeze) {
+            $html .= '<input type="hidden" name="' . 
+                $this->getName() . '" value="' . $this->_value . '" />';
+        }
         return $html;
     } //end func getFrozenHtml
+
+    // }}}
 
 } //end class HTML_QuickForm_textarea
 ?>

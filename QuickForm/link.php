@@ -17,56 +17,54 @@
 // |          Bertrand Mansion <bmansion@mamasam.com>                     |
 // +----------------------------------------------------------------------+
 //
-// $Id$
 
 require_once("HTML/QuickForm/element.php");
 
 /**
- * Base class for input form elements
+ * HTML class for a link type field
  * 
  * @author       Adam Daniel <adaniel1@eesus.jnj.com>
  * @author       Bertrand Mansion <bmansion@mamasam.com>
  * @version      1.0
  * @since        PHP4.04pl1
  * @access       public
- * @abstract
  */
-class HTML_QuickForm_input extends HTML_QuickForm_element {
-        
-    // {{{ constructor
+class HTML_QuickForm_link extends HTML_QuickForm_element {
+    
+    // {{{ properties
 
+    /**
+     * Link display text
+     * @var       string
+     * @since     1.0
+     * @access    private
+     */
+    var $_text = "";
+
+    // }}}
+    // {{{ constructor
+    
     /**
      * Class constructor
      * 
-     * @param    mixed   $attributes     (optional)Associative array of table tag attributes 
-     *                                   or HTML attributes name="value" pairs
+     * @param     string    $elementLabel   (optional)Link label
+     * @param     string    $href           (optional)Link href
+     * @param     string    $text           (optional)Link display text
+     * @param     mixed     $attributes     (optional)Either a typical HTML attribute string 
+     *                                      or an associative array
      * @since     1.0
      * @access    public
      * @return    void
      * @throws    
      */
-    function HTML_QuickForm_input($elementName=null, $elementLabel=null, $attributes=null)
+    function HTML_QuickForm_link($elementName=null, $elementLabel=null, $href=null, $text=null, $attributes=null)
     {
         HTML_QuickForm_element::HTML_QuickForm_element($elementName, $elementLabel, $attributes);
+        $this->_persistantFreeze = false;
+        $this->_type = 'link';
+        $this->setHref($href);
+        $this->_text = $text;
     } //end constructor
-
-    // }}}
-    // {{{ setType()
-
-    /**
-     * Sets the element type
-     *
-     * @param     string    $type   Element type
-     * @since     1.0
-     * @access    public
-     * @return    void
-     * @throws    
-     */
-    function setType($type)
-    {
-        $this->_type = $type;
-        $this->updateAttributes(array('type'=>$type));
-    } // end func setType
     
     // }}}
     // {{{ setName()
@@ -100,14 +98,14 @@ class HTML_QuickForm_input extends HTML_QuickForm_element {
     {
         return $this->getAttribute('name');
     } //end func getName
-    
+
     // }}}
     // {{{ setValue()
 
     /**
-     * Sets the value of the form element
-     *
-     * @param     string    $value      Default value of the form element
+     * Sets value for textarea element
+     * 
+     * @param     string    $value  Value for password element
      * @since     1.0
      * @access    public
      * @return    void
@@ -115,9 +113,9 @@ class HTML_QuickForm_input extends HTML_QuickForm_element {
      */
     function setValue($value)
     {
-        $this->updateAttributes(array('value'=>$value));
-    } // end func setValue
-
+        return;
+    } //end func setValue
+    
     // }}}
     // {{{ getValue()
 
@@ -131,14 +129,32 @@ class HTML_QuickForm_input extends HTML_QuickForm_element {
      */
     function getValue()
     {
-        return $this->getAttribute('value');
+        return;
     } // end func getValue
+
     
+    // }}}
+    // {{{ setHref()
+
+    /**
+     * Sets the links href
+     *
+     * @param     string    $href
+     * @since     1.0
+     * @access    public
+     * @return    void
+     * @throws    
+     */
+    function setHref($href)
+    {
+        $this->updateAttributes(array('href'=>$href));
+    } // end func setHref
+
     // }}}
     // {{{ toHtml()
 
     /**
-     * Returns the input field in HTML
+     * Returns the textarea element in HTML
      * 
      * @since     1.0
      * @access    public
@@ -147,16 +163,30 @@ class HTML_QuickForm_input extends HTML_QuickForm_element {
      */
     function toHtml()
     {
-        if ($this->_flagFrozen) {
-            $html = $this->getFrozenHtml();
-        } else {
-            $tabs = $this->_getTabs();
-            $html = "$tabs<input".$this->_getAttrString($this->_attributes)." />";
-        }
+        $tabs = $this->_getTabs();
+        $html = "$tabs<a".$this->_getAttrString($this->_attributes).">";
+        $html .= $this->_text;
+        $html .= "</a>";
         return $html;
     } //end func toHtml
+    
+    // }}}
+    // {{{ getFrozenHtml()
+
+    /**
+     * Returns the value of field without HTML tags (in this case, value is changed to a mask)
+     * 
+     * @since     1.0
+     * @access    public
+     * @return    string
+     * @throws    
+     */
+    function getFrozenHtml()
+    {
+        return;
+    } //end func getFrozenHtml
 
     // }}}
 
-} // end class HTML_QuickForm_element
+} //end class HTML_QuickForm_textarea
 ?>
