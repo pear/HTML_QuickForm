@@ -40,7 +40,8 @@ $GLOBALS['HTML_QUICKFORM_ELEMENT_TYPES'] =
             'textarea'      =>array('HTML/QuickForm/textarea.php','HTML_QuickForm_textarea'),
             'link'          =>array('HTML/QuickForm/link.php','HTML_QuickForm_link'),
             'advcheckbox'   =>array('HTML/QuickForm/advcheckbox.php','HTML_QuickForm_advcheckbox'),
-            'date'          =>array('HTML/QuickForm/date.php','HTML_QuickForm_date')
+            'date'          =>array('HTML/QuickForm/date.php','HTML_QuickForm_date'),
+            'static'        =>array('HTML/QuickForm/static.php','HTML_QuickForm_static')
         );
 
 // {{{ error codes
@@ -1429,7 +1430,7 @@ class HTML_QuickForm extends HTML_Common {
     } // end func getRequiredNote
 
     // }}}
-    // {{{ _findValue()
+    // {{{ _findElementValue()
 
     /**
      * Tries to find the element value from the submitted values array
