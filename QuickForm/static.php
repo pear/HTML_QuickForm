@@ -112,9 +112,7 @@ class HTML_QuickForm_static extends HTML_QuickForm_element {
      */
     function toHtml()
     {
-        $tabs = $this->_getTabs();
-        $html = $tabs.$this->_text;
-        return $html;
+        return $this->_getTabs() . $this->_text;
     } //end func toHtml
     
     // }}}
