@@ -22,6 +22,10 @@
 require_once("HTML/QuickForm/element.php");
 require_once("HTML/QuickForm/select.php");
 
+// Still some features to be implemented and commented.
+// Use with care. This is only EXPERIMENTAL.
+// API has already changed...
+
 /**
  * Class to dynamically create HTML Select elements from a date
  *
@@ -51,20 +55,20 @@ class HTML_QuickForm_date extends HTML_QuickForm_element
      */
     var $_options = array(
                         "en"    => array (
-                            "weekdays_short"=> array ("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"),
-                            "weekdays_long" => array ("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"),
+                            "weekdays_short"=> array ("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"),
+                            "weekdays_long" => array ("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"),
                             "months_short"  => array ("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"),
                             "months_long"   => array ("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December")
                         ),
                         "de"    => array (
-                            "weekdays_short"=> array ("Mon", "Di", "Mi", "Do", "Fr", "Sa", "So"),
-                            "weekdays_long" => array ("Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"),
+                            "weekdays_short"=> array ("So", "Mon", "Di", "Mi", "Do", "Fr", "Sa"),
+                            "weekdays_long" => array ("Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"),
                             "months_short"  => array ("Jan", "Feb", "Marz", "April", "Mai", "Juni", "Juli", "Aug", "Sept", "Okt", "Nov", "Dez"),
                             "months_long"   => array ("Januar", "Februar", "Marz", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember")
                         ),
                         "fr"    => array (
-                            "weekdays_short"=> array ("Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"),
-                            "weekdays_long" => array ("Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"),
+                            "weekdays_short"=> array ("Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"),
+                            "weekdays_long" => array ("Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"),
                             "months_short"  => array ("Jan", "Fev", "Mar", "Avr", "Mai", "Jun", "Jul", "Aou", "Sep", "Oct", "Nov", "Dec"),
                             "months_long"   => array ("Janvier", "Fevrier", "Mars", "Avril", "Mai", "Juin", "Juillet", "Aout", "Septembre", "Octobre", "Novembre", "Decembre")
                         ),              
@@ -241,9 +245,13 @@ class HTML_QuickForm_date extends HTML_QuickForm_element
 
             switch ($sign) {
                 case "D" :
+                    // Sunday is 0 like with 'w' in date()
                     $options = $this->_options[$this->language]["weekdays_short"];
-                    array_unshift($options , '');
-                    unset($options[0]);
+                    $this->dateSelect[$sign] = &new HTML_QuickForm_select($selectName);
+                    $this->dateSelect[$sign]->load($options, $selectedValue);
+                    break;
+                case "l" :
+                    $options = $this->_options[$this->language]["weekdays_long"];
                     $this->dateSelect[$sign] = &new HTML_QuickForm_select($selectName);
                     $this->dateSelect[$sign]->load($options, $selectedValue);
                     break;
@@ -303,13 +311,14 @@ class HTML_QuickForm_date extends HTML_QuickForm_element
             $this->_selectedDate = $date;
         } elseif (is_int($date)) {
             // might be a unix epoch, then we fill all possible values
-            $arr = explode('-', date('D-d-M-m-F-Y', $date));
+            $arr = explode('-', date('w-d-n-Y', $date));
             $this->_selectedDate = array('D' => $arr[0],
+                                         'l' => $arr[0],
                                          'd' => $arr[1],
                                          'M' => $arr[2],
-                                         'm' => $arr[3],
-                                         'F' => $arr[4],
-                                         'Y' => $arr[5]);
+                                         'm' => $arr[2],
+                                         'F' => $arr[2],
+                                         'Y' => $arr[3]);
         }
     } // end func setSelectedDate
 
@@ -323,18 +332,22 @@ class HTML_QuickForm_date extends HTML_QuickForm_element
     {
         $this->_createSelects();
         $strHtml = '';
-        foreach ($this->dateSelect as $key => $val) {
+        foreach ($this->dateSelect as $key => $element) {
             if ($this->_flagFrozen) {
-                if (is_string($this->dateSelect[$key])) {
-                    $strHtml .= $this->dateSelect[$key];
+                if (is_string($element)) {
+                    if ($element == ' ')
+                        $element = '&nbsp;';
+                    $strHtml .= $element;
                 } else {
-                    $strHtml .= $this->dateSelect[$key]->getFrozen();
+                    $strHtml .= $element->getFrozenHtml();
                 }
             } else {
-                if (is_string($this->dateSelect[$key])) {
-                    $strHtml .= $this->dateSelect[$key];
+                if (is_string($element)) {
+                    if ($element == ' ')
+                        $element = '&nbsp;';
+                    $strHtml .= $element;
                 } else {
-                    $strHtml .= $this->dateSelect[$key]->toHtml();
+                    $strHtml .= $element->toHtml();
                 }
             }
         }
