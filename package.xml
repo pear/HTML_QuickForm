@@ -18,6 +18,15 @@
     </notes>
   </release>
   
+  <release>
+    <version>1.4</version>
+    <date>2001-11-05</date>
+    <notes>
+      Install paths should be fixed. Installation has to be done in HTML/QuickForm.
+      File upload and javascript work ok.
+    </notes>
+  </release>
+  
   <filelist>
     <dir name="/" baseinstalldir="HTML">
         <dir name="QuickForm">
