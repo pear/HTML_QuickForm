@@ -4,19 +4,19 @@
   <name>HTML_QuickForm</name>
   <summary>The PEAR::HTML_QuickForm package provides methods for creating, validating, processing HTML forms.</summary>
   <description>
-    The PEAR::HTML_QuickForm package provides methods for creating, validating, processing HTML forms.
-    Features:
-     * Creates xHTML compliant form elements of various type.
-     * Allows you to choose an unlimited number of html attributes.
-     * Allows you to create your own custom elements using your own classes.
-     * Process form values (you should override the process method).
-     * Creates javascript validation code using regular expression.
-     * Server-side validation too.
-     * Allows you to create your own validation rules.
-     * Manages file uploads.
-     * Allows you to freeze some elements in your form.
-     * Allows you to customize the look of your form in many ways.
-     * Template-like form elements customization...
+The PEAR::HTML_QuickForm package provides methods for creating, validating, processing HTML forms.
+Features:
+* Creates xHTML compliant form elements of various type.
+* Allows you to choose an unlimited number of html attributes.
+* Allows you to create your own custom elements using your own classes.
+* Process form values (you should override the process method).
+* Creates javascript validation code using regular expression.
+* Server-side validation too.
+* Allows you to create your own validation rules.
+* Manages file uploads.
+* Allows you to freeze some elements in your form.
+* Allows you to customize the look of your form in many ways.
+* Template-like form elements customization...
   </description>
   <license>PHP License</license>
   <maintainers>
@@ -40,17 +40,27 @@
     </maintainer>
   </maintainers>
   <release>
-    <version>2.2</version>
-    <date>2002-05-29</date>
+    <version>2.3</version>
+    <date>2002-06-19</date>
     <state>stable</state>
     <notes>
-* Some fixes for file uploads.
-* Some fixes for hidden fields.
+* Important API change in the way select elements load arrays.
+* Added the possibility to set a template for an element only.
+* Fixes in the creation of select elements with multiple attribute.
+* Added consistency in the magic_quotes handling.
+* Added recursive filters on setDefaults an setConstants values.
+* Added getSubmitValue (same as getSubmitValues but for one value only).
+* Removed HTML_QuickForm_date element: it needs more work.
+* Added the HTML_QuickForm_advcheckbox element in package and in registered elements.
+* Added one example for the HTML_QuickForm_advcheckbox element.
+* Added setPersistantFreeze accessor method in element.php.
+* Fixed problems with password field values.
     </notes>
     <filelist>
       <dir name="/" baseinstalldir="HTML">
         <file role="php">QuickForm.php</file>
         <dir name="QuickForm">
+          <file role="php">advcheckbox.php</file>
           <file role="php">button.php</file>
           <file role="php">checkbox.php</file>
           <file role="php">element.php</file>
@@ -73,6 +83,9 @@
           <file>QuickForm_example2.php</file>
         </dir>
       </dir>
+      <deps>
+        <dep type="pkg" rel="ge" version="1.0">HTML_Common</dep>
+      </deps>
     </filelist>
   </release>
   <changelog>
@@ -134,6 +147,15 @@ Here is a list of what's new in this version:
 * Filter function is now recursive.
 * Better handling of registered rules.
 * New regex for numeric validation.
+    </notes>
+  </release>
+    <release>
+    <version>2.2</version>
+    <date>2002-05-29</date>
+    <state>stable</state>
+    <notes>
+* Some fixes for file uploads.
+* Some fixes for hidden fields.
     </notes>
   </release>
   </changelog>
