@@ -6,7 +6,7 @@ require_once('HTML/QuickForm.php');
 // $Id$
 
 $form = new HTML_QuickForm('myform');
-$form->addElement('file', 'myfile', 'Your file:');
+$file =& $form->addElement('file', 'myfile', 'Your file:');
 $form->addElement('submit', 'submit', 'Send');
 
 // optional : see registered rules
@@ -19,7 +19,7 @@ $form->addRule('myfile', 'File is required', 'uploadedfile');
 
 if ($form->validate()) {
 	// optional : you can move and rename the uploaded file
-    $form->moveUploadedFile('myfile', '/tmp', 'testfile.txt');
+    $file->moveUploadedFile('/tmp', 'testfile.txt');
     echo '<pre>';
     var_dump($form->_submitFiles);
     echo '</pre>';
