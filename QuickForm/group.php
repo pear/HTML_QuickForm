@@ -112,7 +112,7 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
         }
         $this->_type = 'group';
         if (isset($elements) && is_array($elements)) {
-            $this->_elements = $elements;
+            $this->setElements($elements);
         }
         if (isset($separator)) {
             $this->_separator = $separator;
@@ -211,7 +211,9 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
      */
     function setElements($elements)
     {
-        $this->_elements = $elements;
+        foreach ($elements as $element) {
+            $this->_elements[] = $element;
+        }
     } // end func setElements
 
     // }}}
@@ -308,6 +310,46 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
         $renderer =& HTML_QuickForm::defaultRenderer();
         $renderer->setGroupTemplate($template, $this->_name);
     } //end func setGroupTemplate
+
+    // }}}
+    // {{{ getElementName()
+
+    /**
+     * Returns the element name inside the group such as found in the html form
+     * 
+     * @param     mixed     $index  Element name or element index in the group
+     * @since     3.0
+     * @access    public
+     * @return    mixed     string with element name, false if not found
+     */
+    function getElementName($index)
+    {
+        $elementName = false;
+        foreach (array_keys($this->_elements) as $key) {
+            $element =& $this->_elements[$key];
+            $elementName = $element->getName();
+            if (is_int($index) && $index == $key) {
+                if (isset($elementName) && $elementName == '') {
+                    $elementName = $key;
+                }
+                if ($this->_appendName) {
+                    if (is_null($elementName)) {
+                        $elementName = $this->getName();
+                    } else {
+                        $elementName = $this->getName().'['.$elementName.']';
+                    }
+                }
+                return $elementName;
+            }
+            if (is_string($index) && $elementName == $index) {
+                if ($this->_appendName) {
+                    $elementName = $this->getName().'['.$elementName.']';
+                }
+                return $elementName;        
+            }
+        }
+        return $elementName;
+    } //end func getElementName
 
     // }}}
     // {{{ getFrozenHtml()
