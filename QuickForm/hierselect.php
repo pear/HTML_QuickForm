@@ -172,10 +172,15 @@ class HTML_QuickForm_hierselect extends HTML_QuickForm_group
     function setValue($value)
     {
         parent::setValue($value);
+
         // Reload the options in the second selects
         if (sizeof($this->_secOptions) > 0) {
             if (is_array($value)) {
-                $curKey = isset($this->_secOptions[$value[0][0]]) ? $value[0][0] : key($this->_secOptions);
+                if (isset($this->_secOptions[$value[0]][$value[1]])) {
+                    $curKey = $value[0];
+                } else {
+                    $curKey =  key($this->_secOptions);
+                }
             } else {
                 $curKey = key($this->_secOptions);
             }
@@ -249,6 +254,20 @@ class HTML_QuickForm_hierselect extends HTML_QuickForm_group
     {
         $renderer->renderElement($this, $required, $error);
     } // end func accept
+
+    // }}}
+    // {{{ onQuickFormEvent()
+
+    function onQuickFormEvent($event, $arg, &$caller)
+    {
+        if ('updateValue' == $event) {
+            // we need to call setValue() so that the secondary option
+            // matches the main option
+            return HTML_QuickForm_element::onQuickFormEvent($event, $arg, $caller);
+        } else {
+            return parent::onQuickFormEvent($event, $arg, $caller);
+        }
+    } // end func onQuickFormEvent
 
     // }}}
 } // end class HTML_QuickForm_hierselect
