@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 <!DOCTYPE package SYSTEM "../package.dtd">
-<!-- do not use the "Type" attribute here, that one is only for
-     generated package.xml files -->
-<package version="2.0">
+<package version="1.0">
   <name>HTML_QuickForm</name>
   <summary>The PEAR::HTML_QuickForm package provides methods for creating, validating, processing HTML forms.</summary>
   <description>
@@ -20,6 +18,7 @@
      * Allows you to customize the look of your form in many ways.
      * Template-like form elements customization...
   </description>
+  <license>PHP License</license>
   <maintainers>
     <maintainer>
       <user>mansion</user>
@@ -33,18 +32,13 @@
       <email>adaniel1@eesus.jnj.com</email>
       <role>lead</role>
     </maintainer>
-    <maintainer>
-      <name>Jason Rust</name>
-      <email>jrust@rustyparts.com</email>
-      <role>helper</role>
-    </maintainer>
   </maintainers>
   <release>
     <version>2.0</version>
-    <date>2002/04/15</date>
+    <date>2002-04-15</date>
     <state>stable</state>
     <notes>
-      Warning : New API for new version 2.0 !
+      New API for new version 2.0 !
       Here is a list of what's new in this version:
 		* Moved all the elements from HTML/QuickForm/Elements/ to HTML/QuickForm/
 		* Added $_elementIndex to keep track of the elements
@@ -95,6 +89,7 @@
         </dir>
         <dir name="docs" role="doc">
           <file>QuickForm_example.php</file>
+          <file>QuickForm_example2.php</file>
         </dir>
       </dir>
     </filelist>
@@ -109,7 +104,7 @@
     </release>
     <release>
       <version>1.12</version>
-      <date>2002/03/22</date>
+      <date>2002-03-22</date>
       <state>stable</state>
       <notes>
         Changed directory structure for package installation.
