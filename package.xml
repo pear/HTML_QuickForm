@@ -85,6 +85,10 @@ Features:
         <dir name="docs" role="doc">
           <file>QuickForm_example.php</file>
           <file>QuickForm_example2.php</file>
+          <file>QuickForm_example3.php</file>
+          <file>QuickForm_example4.php</file>
+          <file>QuickForm_example5.php</file>
+          <file>QuickForm_example6.php</file>
         </dir>
       </dir>
       <deps>
