@@ -3,17 +3,6 @@ require_once('HTML/QuickForm.php');
 /*
 * This example shows how to use filters to clean
 * submitted values. We use trim function here.
-* Available filters at the moment are:
-*            'trim'          =>'_filterTrim',
-*            'intval'        =>'_filterIntval',
-*            'strval'        =>'_filterStrval',
-*            'doubleval'     =>'_filterDoubleval',
-*            'boolval'       =>'_filterBoolval',
-*            'stripslashes'  =>'_filterStripslashes',
-*            'addslashes'    =>'_filterAddslashes'
-*
-* Use registerFilter() to create your own filter.
-* See example 5.
 */
 // $Id$
 
