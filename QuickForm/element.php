@@ -401,6 +401,23 @@ class HTML_QuickForm_element extends HTML_Common {
     } // end func onQuickFormEvent
 
     // }}}
+    // {{{ accept()
+
+   /**
+    * Accepts a renderer
+    *
+    * @param object     An HTML_QuickForm_Renderer object
+    * @param bool       Whether an element is required
+    * @param string     An error message associated with an element
+    * @access public
+    * @return void 
+    */
+    function accept(&$renderer, $required=false, $error=null)
+    {
+        $renderer->renderElement($this, $required, $error);
+    } // end func accept
+
+    // }}}
 
 } // end class HTML_QuickForm_element
 ?>
