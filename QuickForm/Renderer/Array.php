@@ -52,6 +52,7 @@ require_once 'HTML/QuickForm/Renderer.php';
  *   'sections' => array(
  *     array(
  *       'header'   => 'Header text for the first header',
+ *       'name'     => 'Header name for the first header',
  *       'elements' => array(
  *          element_1,
  *          ...
@@ -61,6 +62,7 @@ require_once 'HTML/QuickForm/Renderer.php';
  *     ...
  *     array(
  *       'header'   => 'Header text for the Mth header',
+ *       'name'     => 'Header name for the Mth header',
  *       'elements' => array(
  *          element_1,
  *          ...
@@ -176,7 +178,10 @@ class HTML_QuickForm_Renderer_Array extends HTML_QuickForm_Renderer
 
     function renderHeader(&$header)
     {
-        $this->_ary['sections'][$this->_sectionCount] = array('header' => $header->toHtml());
+        $this->_ary['sections'][$this->_sectionCount] = array(
+            'header' => $header->toHtml(),
+            'name'   => $header->getName()
+        );
         $this->_currentSection = $this->_sectionCount++;
     } // end func renderHeader
 
