@@ -141,7 +141,7 @@ class HTML_QuickForm_date extends HTML_QuickForm_element
      * @access    private
      * @return    void
      */
-    function _setdefaults($options)
+    function _setDefaults($options)
     {
         if (isset($options['format'])) {
             $this->setFormat($options['format']);
