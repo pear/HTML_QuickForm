@@ -114,9 +114,18 @@ $form->addRule('ifilTest', 'Required File Upload', 'uploadedfile');
 if ($form->validate()) {
     // Form is validated, then processes the data
     $form->freeze();
-    $form->process();
+    $form->process('myProcess', false);
     echo "\n<HR>\n";
 }
+
+// Process callback
+function myProcess($values)
+{
+    echo '<pre>';
+    var_dump($values);
+    echo '</pre>';
+}
+
 $form->display();
 /*echo '<pre>';
 print_r($form->toArray());
