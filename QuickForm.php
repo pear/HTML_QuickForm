@@ -289,7 +289,7 @@ class HTML_QuickForm extends HTML_Common {
     {
         HTML_Common::HTML_Common($attributes);
         $method = (strtoupper($method) == "GET") ? "GET" : "POST";
-        $action = ($action == "") ? $GLOBALS["PHP_SELF"] : $action;
+        $action = ($action == "") ? $GLOBALS['HTTP_SERVER_VARS']['PHP_SELF'] : $action;
         $this->updateAttributes(array("action"=>$action, "method"=>$method, "name"=>$formName, "target"=>$target));
         $this->_registeredTypes = &$GLOBALS['HTML_QUICKFORM_ELEMENT_TYPES'];
         $this->_submitValues = $GLOBALS["HTTP_" . $method . "_VARS"];
