@@ -46,25 +46,82 @@ Features:
     </maintainer>
   </maintainers>
   <release>
-    <version>2.10</version>
-    <date>2003-03-07</date>
-    <state>stable</state>
+    <version>3.0</version>
+    <date>2003-04-16</date>
+    <state>beta</state>
     <notes>
-* Email validation regex accepts lower and uppercases (Derick Rethans).
-* Added getUploadedFile() and isUploadedFile() methods (Wotjek Gdela).
-* XHTML compliant for the form tags (Jules Szemere).
-* Fixed Javascript validation when empty elements are not required (Joern Barthel).
-* Added possibility to call setDefaults() and setConstants() anytime.
-* Fix problem with duplicate element names (ex: radio).
-* Added method updateElementAttr() to update the attributes of multiple elements (Dan Wilson).
-* Slovanian translation of date in date element (Matej Dakol).
-* Fix bug in date element preventing submitted values to be used.
-* Removed nbsp; replace in frozen textarea (Carsten Bleek, Dan Wilson).
+* Major changes in this release
 
-This is probably the last release of QuickForm without template support.
-The next release will have two BC breaks:
-- Use of filters will be easier, no registration needed.
-- Groups with no name will not be supported anymore, even if name is not used.
+- Renderers
+   QuickForm now uses external renderers in pair with ITX or Sigma.
+   BC is preserved with the Default renderer.
+   Renderers for other template engines are expected.
+- Filters
+   Filter functions do not have to be registered anymore.
+- Validation
+   Validation rules are tested in the order they are set.
+- Group validation
+   Groups can now be validated with custom functions.
+- Static elements
+   Header and Static elements are treated like other form elements.
+- Process
+   Process will call a callback function to process the form.
+- Groups
+   Groups must have a name. Group name can be appended or not to its elements names.
+- File validation
+   File validation only happens if a file is required. It is also tested if the file has been uploaded.
+- Setting the elements value
+   Only one event is used to set the element value whether it is a default, a constant or a submitted value.
+- XHTML
+   HTML_Common and QuickForm have been reworked to be more XHTML compliant.
+
+* Migration to 3.0
+
+Incompatibilities:
+
+- Filters registration is not supported anymore. Just give applyFilter() the function name as a parameter.
+- toArray() now returns a different structure and calls an external renderer: elements in groups are rendered as seperate elements, every element has a numeric index for key.
+- process() needs a callback function.
+- Validation rules are validated in the order they were set.
+- File validation happens only when the file is required.
+- Direct calls to onQuickFormEvent('set...') won't work anymore, these events have been replaced by a unique updateValue event.
+- Grouped elements index is now a numeric key only. This can break some group rules if you used their associative key in addGroupRule().
+
+Deprecated features:
+- addHeader() and addData(), while still there, are deprecated. Now use addElement('header') and addElement('static').
+- If you plan to use templates, it is encouraged to do so by using a renderer object. setElementTemplate() and the like are now considered as deprecated.
+- Groups must have a name. If you don't want the name to be appended to the elements names, set the appendName parameter to false.
+
+* Changes
+
+- Added support for external renderers (Alexey Borzov)
+- Got rid of registering filters, now only function existence is checked (Alexey Borzov)
+- First parameter to applyFilter can be an array (Alexey Borzov)
+- Removed method display(), exists in parent class (Alexey Borzov)
+- addHeader() and addData() now call addElement(), added a new header element (Alexey Borzov)
+- Added an array renderer (Alexey Borzov)
+- Added a default renderer (Alexey Borzov)
+- Added a dynamic ITX/Sigma renderer with examples (Alexey Borzov)
+- Added a static ITX/Sigma renderer with examples (Bertrand Mansion)
+- Automatically generates a name for group element when no name given (Alexey Borzov)
+- Added possibility to append the group name or not to grouped elements (Alexey Borzov)
+- Changed the way element values are set (Alexey Borzov)
+- Fix warning with uploaded files (Frederic Poeydomenge)
+- Changed _findElementValue to work with appendName (Bertrand Mansion)
+- Elements with value 0 are not considered empty when validating (Bertrand Mansion)
+- Added possibility to validate a group with a function using addRule() (Bertrand Mansion)
+- Added possibility to validate groups when appendName is false (Bertrand Mansion)
+- Rules are validated in the order they are set (Bertrand Mansion)
+- Fixed problems when validating a file not uploaded (Frederic Poeydomenge, Bertrand Mansion)
+- Elements values are now set through a uniform 'updateValue' event (Alexey Borzov)
+- Added Polish date names in date element (Robert Janeczek)
+- Added Hungarian date names in date element (Kovacs Gergely)
+- Added Russion date names in date element (Alexey Borzov)
+- Added XHTML compliant labels in radio and checkboxes (Alexey Borzov, Alexander Radivanovich)
+- Optimized select element addOption() and toHtml() methods (Alexey Borzov)
+- XHTML for form tag (Bertrand Mansion)
+- Added method getElementName() in group element (Bertrand Mansion)
+- Fix bug when setting attributes in date element (Bertrand Mansion)
     </notes>
     <filelist>
       <dir name="/" baseinstalldir="HTML">
@@ -90,6 +147,13 @@ The next release will have two BC breaks:
           <file role="php">submit.php</file>
           <file role="php">text.php</file>
           <file role="php">textarea.php</file>
+          <file role="php">Renderer.php</file>
+          <dir name="Renderer">
+            <file role="php">Array.php</file>
+            <file role="php">Default.php</file>
+            <file role="php">ITDynamic.php</file>
+            <file role="php">ITStatic.php</file>
+          </dir>
         </dir>
         <dir name="docs">
           <file>QuickForm_example.php</file>
@@ -99,14 +163,44 @@ The next release will have two BC breaks:
           <file>QuickForm_example5.php</file>
           <file>QuickForm_example6.php</file>
           <file>QuickForm_example7.php</file>
+          <dir name="renderers">
+            <file>ITDynamic_example.php</file>
+            <file>ITDynamic_example2.php</file>
+            <file>ITStatic_example.php</file>
+            <file>it-dynamic-2.html</file>
+            <file>it-dynamic.html</file>
+            <file>it-static.html</file>
+          </dir>
         </dir>
       </dir>
     </filelist>
     <deps>
-       <dep type="pkg" rel="ge" version="1.0">HTML_Common</dep>
+       <dep type="pkg" rel="ge" version="1.1">HTML_Common</dep>
     </deps>
   </release>
   <changelog>
+  <release>
+    <version>2.10</version>
+    <date>2003-03-07</date>
+    <state>stable</state>
+    <notes>
+* Email validation regex accepts lower and uppercases (Derick Rethans).
+* Added getUploadedFile() and isUploadedFile() methods (Wotjek Gdela).
+* XHTML compliant for the form tags (Jules Szemere).
+* Fixed Javascript validation when empty elements are not required (Joern Barthel).
+* Added possibility to call setDefaults() and setConstants() anytime.
+* Fix problem with duplicate element names (ex: radio).
+* Added method updateElementAttr() to update the attributes of multiple elements (Dan Wilson).
+* Slovanian translation of date in date element (Matej Dakol).
+* Fix bug in date element preventing submitted values to be used.
+* Removed nbsp; replace in frozen textarea (Carsten Bleek, Dan Wilson).
+
+This is probably the last release of QuickForm without template support.
+The next release will have two BC breaks:
+- Use of filters will be easier, no registration needed.
+- Groups with no name will not be supported anymore, even if name is not used.
+    </notes>
+  </release>
   <release>
     <version>2.9</version>
     <date>2003-02-20</date>
