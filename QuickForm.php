@@ -228,11 +228,13 @@ class HTML_QuickForm extends HTML_Common {
      */
     var $_registeredFilters = 
         array(
-            'trim'      =>'_filterTrim',
-            'intval'    =>'_filterIntval',
-            'strval'    =>'_filterStrval',
-            'doubleval'  =>'_filterDoubleval',
-            'boolval'   =>'_filterBoolval'
+            'trim'          =>'_filterTrim',
+            'intval'        =>'_filterIntval',
+            'strval'        =>'_filterStrval',
+            'doubleval'     =>'_filterDoubleval',
+            'boolval'       =>'_filterBoolval',
+            'stripslashes'  =>'_filterStripslashes',
+            'addslashes'    =>'_filterAddslashes'
         );
 
     /**
@@ -336,8 +338,8 @@ class HTML_QuickForm extends HTML_Common {
      *
      * @param     string    $ruleName   Name of validation rule
      * @param     string    $type       Either: 'regex' or 'function'
-     * @param     string    $data1       Name of function or regular expression
-     * @param     string    $data2       Object parent of above function
+     * @param     string    $data1      Name of function or regular expression
+     * @param     string    $data2      Object parent of above function
      * @since     1.0
      * @access    public
      * @return    void
@@ -347,6 +349,24 @@ class HTML_QuickForm extends HTML_Common {
     {
         $this->_registeredRules[$ruleName] = array($type, $data1, $data2);
     } // end func registerRule
+
+    // }}}
+    // {{{ registerFilter()
+
+    /**
+     * Registers a new filter
+     *
+     * @param     string    $filterName   Name of filter
+     * @param     string    $filterFunc   Associated function or method
+     * @since     2.0
+     * @access    public
+     * @return    void
+     * @throws    
+     */
+    function registerFilter($filterName, $filterFunc)
+    {
+        $this->_registeredFilters[$filterName] = $filterFunc;
+    } // end func registerFilter
 
     // }}}
     // {{{ elementExists()
@@ -371,16 +391,25 @@ class HTML_QuickForm extends HTML_Common {
     /**
      * Initializes default form values
      *
-     * @param     array   $defaultValues        values used to fill the form    
+     * @param     array    $defaultValues       values used to fill the form
+     * @param     mixed    $filter              (optional) filter(s) to apply to all default values    
      * @since     1.0
      * @access    public
      * @return    void
      */
-    function setDefaults($defaultValues=null)
+    function setDefaults($defaultValues=null, $filter=null)
     {
         if (is_array($defaultValues)) {
-            while(list($key,$value)=each($defaultValues)) {
-                $value = is_string($value) ? stripslashes($value) : $value;             
+            if (isset($filter)) {
+                if (is_array($filter)) {
+                    while(list(,$val) = each($filter)) {
+                        $defaultValues = $this->_recursiveFilter($val, $defaultValues);
+                    }
+                } else {
+                    $defaultValues = $this->_recursiveFilter($filter, $defaultValues);
+                }
+            }
+            while(list($key, $value) = each($defaultValues)) {
                 $this->_defaultValues[$key] = $value;
             }
         }
@@ -390,10 +419,11 @@ class HTML_QuickForm extends HTML_Common {
     // {{{ setConstants()
 
     /**
-     * Initializes constant form values.  These values won't get overridden by POST or GET vars
+     * Initializes constant form values.
+     * These values won't get overridden by POST or GET vars
      *
      * @param     array   $constantValues        values used to fill the form    
-     * @since     1.0
+     * @since     2.0
      * @access    public
      * @return    void
      */
@@ -570,7 +600,7 @@ class HTML_QuickForm extends HTML_Common {
     // {{{ &getElementValue()
 
     /**
-     * Returns the elements current value
+     * Returns the elements raw value such as submitted by the form
      *
      * @param     string     $element    Element name
      * @since     2.0
@@ -585,7 +615,24 @@ class HTML_QuickForm extends HTML_Common {
         } else {
             return PEAR::raiseError(null, QUICKFORM_UNREGISTERED_ELEMENT, null, E_USER_WARNING, "Element '$element' does not exist in HTML_QuickForm::getElementValue()", 'HTML_QuickForm_Error', true);
         }
-    } // end func getElement
+    } // end func getElementValue
+
+    // }}}
+    // {{{ getSubmitValue()
+
+    /**
+     * Returns the elements value after filters
+     *
+     * @param     string     $element    Element name
+     * @since     2.0
+     * @access    public
+     * @return    element value
+     * @throws    
+     */    
+    function getSubmitValue($element)
+    {
+        return $this->_submitValues[$element];
+    } // end func getSubmitValue
 
     // }}}
     // {{{ getElementError()
@@ -775,12 +822,16 @@ class HTML_QuickForm extends HTML_Common {
      */
     function applyFilter($element, $type)
     {
-        $filterData = $this->_registeredFilters[$type];
+        if ($this->isFilterRegistered($type)) {
+            $filterData = $this->_registeredFilters[$type];
+        } else {
+            return PEAR::raiseError(null, QUICKFORM_INVALID_FILTER, null, E_USER_WARNING, "Filter function '$type' is not registered in QuickForm::applyFilter()", 'HTML_QuickForm_Error', true);
+        }
         if ($element == '__ALL__') {
-            $this->_submitValues = $this->_arrayMap($filterData);
+            $this->_submitValues = $this->_recursiveFilter($filterData);
         } else {
             if (isset($this->_submitValues[$element])) {
-                $this->_submitValues[$element] = $this->_arrayMap($filterData, $this->_submitValues[$element]);
+                $this->_submitValues[$element] = $this->_recursiveFilter($filterData, $this->_submitValues[$element]);
             } else {
                 return PEAR::raiseError(null, QUICKFORM_NONEXIST_ELEMENT, null, E_USER_WARNING, "Element '$element' does not exist in HTML_QuickForm::applyFilter()", 'HTML_QuickForm_Error', true);
             }
@@ -788,7 +839,7 @@ class HTML_QuickForm extends HTML_Common {
     } // end func applyFilter
 
     // }}}
-    // {{{ _arrayMap()
+    // {{{ _recursiveFilter()
 
     /**
      * Recursively apply a filter function
@@ -800,7 +851,7 @@ class HTML_QuickForm extends HTML_Common {
      * @return    cleaned values
      * @throws    
      */
-    function _arrayMap($filter, $value = null)
+    function _recursiveFilter($filter, $value = null)
     {
         if (!isset($value)) {
             $value = $this->_submitValues;
@@ -808,7 +859,7 @@ class HTML_QuickForm extends HTML_Common {
         if (is_array($value)) {
             $cleanValues = array();
             foreach ($value as $k => $v) {
-                $cleanValues[$k] = $this->_arrayMap($filter, $value[$k]);
+                $cleanValues[$k] = $this->_recursiveFilter($filter, $value[$k]);
             }
             return $cleanValues;
         } else {
@@ -817,11 +868,10 @@ class HTML_QuickForm extends HTML_Common {
             } elseif (function_exists($filter)) {
                 return $filter($value);
             } else {
-                return PEAR::raiseError(null, QUICKFORM_INVALID_FILTER, null, E_USER_WARNING, "Invalid filter function '$type' used in QuickForm::_arrayMap()", 'HTML_QuickForm_Error', true);
+                return PEAR::raiseError(null, QUICKFORM_INVALID_FILTER, null, E_USER_WARNING, "Filter function '$filter' does not exist QuickForm::_recursiveFilter()", 'HTML_QuickForm_Error', true);
             }
-            return $this->$filter($value);
         }
-    } // end func _arrayMap
+    } // end func _recursiveFilter
 
     // }}}
     // {{{ _wrapElement()
@@ -1423,6 +1473,39 @@ class HTML_QuickForm extends HTML_Common {
     } // end func _ruleCheckFileName
     
     // }}}
+    // {{{ isFilterRegistered()
+
+    /**
+     * Returns whether or not the filter is supported
+     *
+     * @param     string   $filterName     Filter
+     * @since     1.0
+     * @access    public
+     * @return    boolean
+     * @throws    
+     */
+    function isFilterRegistered($filterName)
+    {
+        return in_array($filterName, array_keys($this->_registeredFilters));
+    } // end func isFilterRegistered
+
+    // }}}
+    // {{{ getRegisteredFilters()
+
+    /**
+     * Returns an array of registered filters
+     *
+     * @since     2.0
+     * @access    public
+     * @return    array
+     * @throws    
+     */
+    function getRegisteredFilters()
+    {
+        return array_keys($this->_registeredFilters);
+    } // end func getRegisteredFilters
+
+    // }}}
     // {{{ _filterTrim()
 
     /**
@@ -1506,6 +1589,40 @@ class HTML_QuickForm extends HTML_Common {
     {
         return ($value && true);
     } // end func _filterBoolval
+
+    // }}}
+    // {{{ _filterStripslashes()
+
+    /**
+     * Returns the value after strislashes
+     *
+     * @param     mixed     $value  element value
+     * @since     2.0
+     * @access    private
+     * @return    mixed
+     * @throws    
+     */
+    function _filterStripslashes($value)
+    {
+        return (is_string($value)) ? stripslashes($value) : $value;
+    } // end func _filterStripslashes
+
+    // }}}
+    // {{{ _filterAddslashes()
+
+    /**
+     * Returns the value after addslashes
+     *
+     * @param     mixed     $value  element value
+     * @since     2.0
+     * @access    private
+     * @return    mixed
+     * @throws    
+     */
+    function _filterAddslashes($value)
+    {
+        return (is_string($value)) ? addslashes($value) : $value;
+    } // end func _filterAddslashes
 
     // }}}
     // {{{ freeze()
