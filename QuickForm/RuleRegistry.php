@@ -36,10 +36,10 @@ $GLOBALS['_HTML_QuickForm_registered_rules'] = array(
 );
 
 /**
-* Validates values using rule objects
+* Registers rule objects and uses them for validation
 *
 */
-class HTML_QuickForm_Validate
+class HTML_QuickForm_RuleRegistry
 {
     /**
      * Array containing references to used rules
@@ -50,14 +50,14 @@ class HTML_QuickForm_Validate
 
 
     /**
-     * Returns a singleton of HTML_QuickForm_Validate
+     * Returns a singleton of HTML_QuickForm_RuleRegistry
      *
-     * Usually, only one Validate object is needed, this is the reason
+     * Usually, only one RuleRegistry object is needed, this is the reason
      * why it is recommended to use this method to get the validation object. 
      *
      * @access    public
      * @static
-     * @return    object    Reference to the HTML_QuickForm_Validate singleton
+     * @return    object    Reference to the HTML_QuickForm_RuleRegistry singleton
      */
     function &singleton()
     {
@@ -182,5 +182,5 @@ class HTML_QuickForm_Validate
         return $rule->getValidationScript($jsValue, $jsField, $jsMessage, $jsReset, $options);
     } // end func getValidationScript
 
-} // end class HTML_QuickForm_Validate
+} // end class HTML_QuickForm_RuleRegistry
 ?>
