@@ -252,69 +252,19 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
     // {{{ toHtml()
 
     /**
-     * Returns the input field in HTML
+     * Returns Html for the group
      * 
      * @since       1.0
      * @access      public
      * @return      string
-     * @throws    
      */
     function toHtml()
     {
-        $html = '';
-        $htmlArr = array();
-        $name = $this->getName();
-        $value = $this->getValue();
-        foreach ($this->_elements as $key => $element) {
-            if (PEAR::isError($element)) {
-                return $element;
-            }
-            $elementName = $element->getName();
-            $index = (!empty($elementName)) ? $elementName : $key;
-            
-            $elementType = $element->getType();
-            if (!empty($name) && isset($elementName)) {
-                $element->setName($name . '['.$elementName.']');
-            } elseif (!empty($name)) {
-                $element->setName($name);
-            }
-            if (is_array($value)) {
-                if (isset($value[$index])) {
-                    $element->onQuickFormEvent('setGroupValue', $value[$index], $this);
-                }
-            } elseif (isset($value)) {
-                $element->onQuickFormEvent('setGroupValue', $value, $this);
-            }
-            if ($this->_flagFrozen) {
-                $element->freeze();
-            }
-            $element->_tabOffset = $this->_tabOffset;
-            $required = in_array($element->getName(), $this->_required);
-            if ($this->_elementTemplate != '') {
-                $htmlArr[] = $this->_wrapElement($element->getLabel(), $element->toHtml(), $required);
-            } else {
-                $htmlArr[] = $element->toHtml(); 
-            }
-        }
-        if ($this->_groupTemplate != '') {
-            $html = $this->_wrapGroup($htmlArr);
-        } elseif (is_array($this->_seperator)) {
-            $count = count($this->_seperator);
-            $i = 0;
-            foreach ($htmlArr as $content) {
-                if ($i >= $count)
-                    $i = 0;
-                $html .= $content.$this->_seperator[$i];
-                $i++;
-            }
-            $html = substr($html, 0, -(strlen($this->_seperator[$i-1])));
-        } else {
-            if (is_null($this->_seperator)) {
-                $this->_seperator = '&nbsp;';
-            }
-            $html = implode((string)$this->_seperator, $htmlArr);
-        }
-        return $html;
+        include_once('HTML/QuickForm/Renderer/Default.php');
+        $renderer =& new HTML_QuickForm_Renderer_Default();
+        $renderer->setElementTemplate('{element}');
+        $this->accept($renderer);
+        return $renderer->toHtml();
     } //end func toHtml
     
     // }}}
@@ -348,54 +298,6 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
     {
         $this->_groupTemplate = $template;
     } //end func setGroupTemplate
-
-    // }}}
-    // {{{ _wrapElement()
-
-    /**
-     * Create the formatted html for a group element
-     * 
-     * @param     string     $label     Label of the element if any
-     * @param     string     $raw       Raw html of the element
-     * @param     bool       $require   Is element required ?
-     * @since     2.5
-     * @access    public
-     * @return    string
-     * @throws    
-     */
-    function _wrapElement($label, $raw, $required)
-    {
-        $html = '';
-        $html = str_replace('{label}', $label, $this->_elementTemplate);
-        if ($required) {
-            $html = str_replace('<!-- BEGIN required -->', '', $html);
-            $html = str_replace('<!-- END required -->', '', $html);
-        } else {
-            $html = preg_replace("/([ \t\n\r]*)?<!-- BEGIN required -->(\s|\S)*<!-- END required -->([ \t\n\r]*)?/i", '', $html);
-        }
-        $html = str_replace('{element}', $raw, $html);
-        return $html;
-    } //end func _wrapElement
-
-    // }}}
-    // {{{ _wrapGroup()
-
-    /**
-     * Create the formatted html for the group
-     * 
-     * @param     array     $htmlArr    Array of formatted html for each elements in group
-     * @since     2.5
-     * @access    public
-     * @return    string
-     * @throws    
-     */
-    function _wrapGroup($htmlArr)
-    {
-        $html = '';
-        $content = implode('', $htmlArr);
-        $html = str_replace('{content}', $content, $this->_groupTemplate);
-        return $html;
-    } //end func _wrapGroup
 
     // }}}
     // {{{ getFrozenHtml()
@@ -483,5 +385,53 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
     } // end func onQuickFormEvent
 
     // }}}
+    // {{{ accept()
+
+   /**
+    * Accepts a renderer
+    *
+    * @param object     An HTML_QuickForm_Renderer object
+    * @param bool       Whether a group is required
+    * @param string     An error message associated with a group
+    * @access public
+    * @return void 
+    */
+    function accept(&$renderer, $required = false, $error = null)
+    {
+        $renderer->startGroup($this, $required, $error);
+        $name  = $this->getName();
+        $value = $this->getValue();
+        foreach ($this->_elements as $key => $element) {
+            if (PEAR::isError($element)) {
+                return $element;
+            }
+            $elementName = $element->getName();
+            $index = (!empty($elementName)) ? $elementName : $key;
+            
+            $elementType = $element->getType();
+            if (!empty($name) && isset($elementName)) {
+                $element->setName($name . '['.$elementName.']');
+            } elseif (!empty($name)) {
+                $element->setName($name);
+            }
+            if (is_array($value)) {
+                if (isset($value[$index])) {
+                    $element->onQuickFormEvent('setGroupValue', $value[$index], $this);
+                }
+            } elseif (isset($value)) {
+                $element->onQuickFormEvent('setGroupValue', $value, $this);
+            }
+            if ($this->_flagFrozen) {
+                $element->freeze();
+            }
+            $required = in_array($element->getName(), $this->_required);
+
+            $element->accept($renderer, $required);
+        }
+        $renderer->finishGroup($this);
+    } // end func accept
+
+    // }}}
+
 } //end class HTML_QuickForm_group
 ?>
