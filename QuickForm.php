@@ -450,6 +450,20 @@ class HTML_QuickForm extends HTML_Common {
      */
     function addElementGroup($elements, $label="", $name=null, $groupLayout="rows")
     {
+        // Update form attributes if there is a file input in the elements array
+        foreach ($elements as $el) {
+            if ($this->_fileFlag == true) {
+                break;
+            }
+            if ($el->getType() == 'file') {
+                $this->updateAttributes(array("method"=>"POST", "enctype"=>"multipart/form-data"));
+                $err = &$this->addElement('hidden', 'MAX_FILE_SIZE', $this->_maxFileSize, '');
+                if (PEAR::isError($err)) {
+                    return $err;
+                }
+                $this->_fileFlag = true;
+            }
+        }
         $elementObject = &HTML_QuickForm::createElement('group', $name, $elements, null, $groupLayout);
         if (PEAR::isError($elementObject)) {
             return $elementObject;
