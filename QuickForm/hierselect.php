@@ -156,7 +156,6 @@ class HTML_QuickForm_hierselect extends HTML_QuickForm_group
                 $i++;
             }
         }
-        $this->_js .= "</script>\n";
     } // end func setSecOptions
 
     // }}}
@@ -201,17 +200,6 @@ class HTML_QuickForm_hierselect extends HTML_QuickForm_group
      */
     function _createElements()
     {
-        if (!defined('HTML_QUICKFORM_HIERSELECT_EXISTS')) {
-            $this->_js .= "function swapOptions(selIndex, ctl, arName) {\n"
-                     ."  ctl.options.length = 0;\n"
-                     ."  var the_array = eval(arName + '_' + selIndex);\n"
-                     ."  for (i=0; i < the_array.length; i++) {\n"
-                     ."    opt = new Option(the_array[i][1], the_array[i][0], false, false);\n"
-                     ."    ctl.options[i] = opt;\n"
-                     ."  }\n"
-                     ."}\n";
-            define('HTML_QUICKFORM_HIERSELECT_EXISTS', true);
-        }
         $this->_elements[] =& new HTML_QuickForm_select('0', null, array(), $this->getAttributes());
         $this->_elements[] =& new HTML_QuickForm_select('1', null, array(), $this->getAttributes());
     } // end func _createElements
@@ -230,6 +218,19 @@ class HTML_QuickForm_hierselect extends HTML_QuickForm_group
         $this->_elements[0]->updateAttributes(array('onChange' => 'swapOptions(this.options[this.selectedIndex].value, this.form[\''.$this->getElementName(1)."'], '".$this->getName()."');"));
         if ($this->_flagFrozen) {
             $this->_js = '';
+        } else {
+            if (!defined('HTML_QUICKFORM_HIERSELECT_EXISTS')) {
+                $this->_js .= "function swapOptions(selIndex, ctl, arName) {\n"
+                         ."  ctl.options.length = 0;\n"
+                         ."  var the_array = eval(arName + '_' + selIndex);\n"
+                         ."  for (i = 0; i < the_array.length; i++) {\n"
+                         ."    opt = new Option(the_array[i][1], the_array[i][0], false, false);\n"
+                         ."    ctl.options[i] = opt;\n"
+                         ."  }\n"
+                         ."}\n";
+                define('HTML_QUICKFORM_HIERSELECT_EXISTS', true);
+            }
+            $this->_js .= "</script>\n";
         }
         include_once('HTML/QuickForm/Renderer/Default.php');
         $renderer =& new HTML_QuickForm_Renderer_Default();
