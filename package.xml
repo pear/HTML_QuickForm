@@ -57,60 +57,31 @@ Features:
     </maintainer -->
   </maintainers>
   <release>
-    <version>3.2.2</version>
-    <date>2004-03-22</date>
+    <version>3.2.3</version>
+    <date>2004-06-??</date>
     <state>stable</state>
     <notes>
-* On XHTML compliance:
-As of 3.2.2 QuickForm does not rely on presence of 'name' attribute
-in form tag (which is invalid in Strict XHTML), although it does
-set this attribute. If you desire Strict XHTML compliance, you can
-remove the attribute via removeAttribute() method.
-
-* On Flexy renderers:
-The Flexy renderers currently lack a maintainer. If one is not
-found, they will be marked as unsupported and may later be removed
-from the package. If you wish to look after these renderers, please
-contact the package maintainers.
-
 * Additions and changes
-- Added arrayMerge() method to HTML_QuickForm, this behaves like
-  builtin array_merge_recursive() but does not renumber numeric
-  array keys. The new method is now used throughout the QuickForm
-  instead of array_merge_recursive()
-- Added setDatasource() method
-- Implemented #552 (ITStatic renderer can group hidden fields in
-  output)
-- Added Estonian translation for date element (Ants Aasma)
-- Added Turkish translation for date element (Suat Imam-Oglu)
-- Added Norwegian translation for date element (Espen Carlsen)
-- All non-ASCII symbols in date translations are now encoded as 
-  HTML Unicode entities to prevent encoding problems
-- Renamed labels-default.php example to multiple-labels.php
-  (suggested by Ignatius Reilly)
-- Date element accepts non numeric default values compatible with
-  function strtotime() (Kellan Elliot-Mccrea)
-- Added possibility to have more than just two selects in
-  the hierselect element (Herim Vasquez)
-
+- Implemented a new 'xbutton' element for HTML 4.0 &lt;button&gt; tag
+  (see also #1227)
+- HTML_QuickForm::toArray() method accepts a boolean value that is 
+  passed to the constructor of HTML_QuickForm_Renderer_Array (see #1392)
+- ITDynamic renderer is now able to select a block for rendering based
+  on the element's name (see #1506)
+- Default template of Default Renderer now allows XHTML-compliant output
+  of hidden elements (see #1124)
 
 * Bugfixes
-- Fixed #735 (applyFilter() failed for elements with "complex" names and
-  grouped elements)
-- Fixed #872 (possible get_class()-related issues in PHP5)
-- Fixed #925 (XHTML compliance, see the note)
-- Fixed #741 (frozen elements lost 'id' attribute)
-- Final fix for #202 (ArraySmarty renderer broke on elements with
-  brackets in names)
-- Fixed #645 (ArraySmarty renderer had problems with anonymous elements)
-- Fixed #734 (ArraySmarty renderer did not honour the change of Smarty
-  delimiters)
-- Fixed #745 (wrong removal of group name from elements)
-- Fixed #212 (ObjectFlexy renderer broke on elements with brackets in names)
-- Fixed #1032 (ITStatic used wrong placeholders for groups with 
-  $appendName = false)
-- updateElementAttr() works correctly if passed an array of actual element 
-  objects, also handles the case of multiple elements with the same name.
+- Fixed #1235 (setChecked() and setValue() did not work on advcheckbox)
+- Fixed #1389 (Invalid comments in autocomplete element's Javascript)
+- Fixed #1143 (Client validation should be turned off for frozen elements)
+- Fixed #1252 (File upload names were not cleaned when magic_quotes_gpc = On)
+- Fixed notices raised by hierselect element (reported by Herim Vasquez)
+- Fixed #1248 (Errors in hierselect's Javascript when element's name
+  begins with a number)
+- Fixed #1577 (hierselect's Javascript works with multiselects)
+- Fixed #1516 (Default Renderer should use separators even when 
+  setGroupTemplate() is used)
     </notes>
     <filelist>
       <dir name="/" baseinstalldir="HTML">
@@ -207,6 +178,63 @@ contact the package maintainers.
     </deps>
   </release>
   <changelog>
+  <release>
+    <version>3.2.2</version>
+    <date>2004-03-22</date>
+    <state>stable</state>
+    <notes>
+* On XHTML compliance:
+As of 3.2.2 QuickForm does not rely on presence of 'name' attribute
+in form tag (which is invalid in Strict XHTML), although it does
+set this attribute. If you desire Strict XHTML compliance, you can
+remove the attribute via removeAttribute() method.
+
+* On Flexy renderers:
+The Flexy renderers currently lack a maintainer. If one is not
+found, they will be marked as unsupported and may later be removed
+from the package. If you wish to look after these renderers, please
+contact the package maintainers.
+
+* Additions and changes
+- Added arrayMerge() method to HTML_QuickForm, this behaves like
+  builtin array_merge_recursive() but does not renumber numeric
+  array keys. The new method is now used throughout the QuickForm
+  instead of array_merge_recursive()
+- Added setDatasource() method
+- Implemented #552 (ITStatic renderer can group hidden fields in
+  output)
+- Added Estonian translation for date element (Ants Aasma)
+- Added Turkish translation for date element (Suat Imam-Oglu)
+- Added Norwegian translation for date element (Espen Carlsen)
+- All non-ASCII symbols in date translations are now encoded as 
+  HTML Unicode entities to prevent encoding problems
+- Renamed labels-default.php example to multiple-labels.php
+  (suggested by Ignatius Reilly)
+- Date element accepts non numeric default values compatible with
+  function strtotime() (Kellan Elliot-Mccrea)
+- Added possibility to have more than just two selects in
+  the hierselect element (Herim Vasquez)
+
+
+* Bugfixes
+- Fixed #735 (applyFilter() failed for elements with "complex" names and
+  grouped elements)
+- Fixed #872 (possible get_class()-related issues in PHP5)
+- Fixed #925 (XHTML compliance, see the note)
+- Fixed #741 (frozen elements lost 'id' attribute)
+- Final fix for #202 (ArraySmarty renderer broke on elements with
+  brackets in names)
+- Fixed #645 (ArraySmarty renderer had problems with anonymous elements)
+- Fixed #734 (ArraySmarty renderer did not honour the change of Smarty
+  delimiters)
+- Fixed #745 (wrong removal of group name from elements)
+- Fixed #212 (ObjectFlexy renderer broke on elements with brackets in names)
+- Fixed #1032 (ITStatic used wrong placeholders for groups with 
+  $appendName = false)
+- updateElementAttr() works correctly if passed an array of actual element 
+  objects, also handles the case of multiple elements with the same name.
+    </notes>
+  </release>
   <release>
     <version>3.2.1</version>
     <date>2004-01-03</date>
