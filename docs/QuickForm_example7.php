@@ -11,10 +11,13 @@ require_once ("HTML/QuickForm.php");
 $form = new HTML_QuickForm('frmTest', 'GET');
 
 $renderer =& $form->defaultRenderer();
-$form->setFormTemplate('<table width="450" border="0" cellpadding="3" cellspacing="2" bgcolor="#CCCC99">
+$renderer->setFormTemplate('<table width="450" border="0" cellpadding="3" cellspacing="2" bgcolor="#CCCC99">
   <form{attributes}>{content}
   </form>
 </table>');
+$renderer->setHeaderTemplate('	<tr>
+		<td style="white-space:nowrap;background:#996;color:#ffc;" align="left" colspan="2"><b>{header}</b></td>
+	</tr>');
 
 // Fills with some defaults values
 $defaultValues['id']        = array('lastname'=>'Mamasam', 'code'=>'1234');
@@ -35,7 +38,7 @@ $id['code']->setMaxLength(4);
 $form->addGroup($id, 'id', 'ID:', ',&nbsp');
 
 $renderer->setGroupTemplate('<table><tr>{content}</tr></table>', 'id');
-$renderer->setGroupElementTemplate('<td>{element}<br /><font size="-2"><!-- BEGIN required --><font color="red">*</font><!-- END required -->{label}</font></td>', 'id');
+$renderer->setGroupElementTemplate('<td>{element}<br /><span style="font-size:10px;"><!-- BEGIN required --><span style="color: #f00">*</span><!-- END required --><span style="color:#996;">{label}</span></span></td>', 'id');
 
 // Creates a group of text inputs
 $areaCode = &HTML_QuickForm::createElement('text', '');
@@ -79,8 +82,8 @@ $form->addRule('iradYesNo', 'Check Yes or No', 'required');
 $form->addGroupRule('ichkABC', 'Please check at least one box', 'required', null, 1);
 
 // More complex validation rules for groups
-$IDRules['lastname'][0] = array('Name is letters only', 'lettersonly');
-$IDRules['lastname'][1] = array('Name is required', 'required');
+$IDRules['lastname'][0] = array('Name is required', 'required');
+$IDRules['lastname'][1] = array('Name is letters only', 'lettersonly');
 $IDRules['code'][0] = array('Code must be numeric', 'numeric');
 $form->addGroupRule('id', $IDRules);
 
