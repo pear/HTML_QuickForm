@@ -50,9 +50,9 @@ $select->setMultiple(true);
 
 $form->addElement('header', '', 'Date Elements');
 // Date elements
-$form->addElement('dategroup', 'dateTest1', 'Date1:', array('format'=>'dmY', 'minYear'=>2000, 'maxYear'=>2004));
-$form->addElement('dategroup', 'dateTest2', 'Date2:', array('format'=>'d-F-Y', 'language'=>'de'));
-$form->addElement('dategroup', 'dateTest3', 'Today is:', array('format'=>'l D d M Y'));
+$form->addElement('date', 'dateTest1', 'Date1:', array('format'=>'dmY', 'minYear'=>2000, 'maxYear'=>2004));
+$form->addElement('date', 'dateTest2', 'Date2:', array('format'=>'d-F-Y', 'language'=>'de'));
+$form->addElement('date', 'dateTest3', 'Today is:', array('format'=>'l D d M Y'));
 
 
 $form->addElement('header', '', 'Grouped Elements');
