@@ -40,18 +40,17 @@ Features:
     </maintainer>
   </maintainers>
   <release>
-    <version>2.5</version>
-    <date>2002-11-20</date>
+    <version>2.6</version>
+    <date>2003-01-29</date>
     <state>stable</state>
     <notes>
-* Refine the use of setDefaults and setContants.
-setDefaults is used to fill the form with defaults values that will be overriden by submitted values once the form is submitted.
-setConstants is used to overide default and submitted values for example if form is not valid when submitted. In this case, constant values will be shown again in the field.
-In all cases, values won't be overriden by the other method anymore.
-* Added grouped elements validation on the server-side.
-* Added grouped elements customization through templates.
-* Fixes in rules for file uploads on maxsize, mime... when element is not required.
-* Added a new example for groups customization and validation.
+* IMPORTANT: addElement now returns a reference to the added element.
+* Added new date element to create formatted date selects.
+* Added example for the new date element in QuickForm_Example.php
+* Fixed a warning in checkbox element
+* Default values are always overidden by submitted values.
+* Email validation rules accept 4 chars extensions (.info, .name, ...)
+* Fixed bug in applyFilter()
     </notes>
     <filelist>
       <dir name="/" baseinstalldir="HTML">
@@ -61,6 +60,7 @@ In all cases, values won't be overriden by the other method anymore.
           <file role="php">button.php</file>
           <file role="php">checkbox.php</file>
           <file role="php">element.php</file>
+          <file role="php">date.php</file>
           <file role="php">file.php</file>
           <file role="php">group.php</file>
           <file role="php">hidden.php</file>
@@ -92,6 +92,21 @@ In all cases, values won't be overriden by the other method anymore.
     </filelist>
   </release>
   <changelog>
+  <release>
+    <version>2.5</version>
+    <date>2002-11-20</date>
+    <state>stable</state>
+    <notes>
+* Refine the use of setDefaults and setContants.
+setDefaults is used to fill the form with defaults values that will be overriden by submitted values once the form is submitted.
+setConstants is used to overide default and submitted values for example if form is not valid when submitted. In this case, constant values will be shown again in the field.
+In all cases, values won't be overriden by the other method anymore.
+* Added grouped elements validation on the server-side.
+* Added grouped elements customization through templates.
+* Fixes in rules for file uploads on maxsize, mime... when element is not required.
+* Added a new example for groups customization and validation.
+    </notes>
+  </release>
   <release>
     <version>2.4</version>
     <date>2002-10-21</date>
