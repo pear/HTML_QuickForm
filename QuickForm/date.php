@@ -58,15 +58,22 @@ class HTML_QuickForm_date extends HTML_QuickForm_group
     *       A => AM/PM
     * 'minYear': Minimum year in year select
     * 'maxYear': Maximum year in year select
+    * 'addEmptyOption': Should an empty option be added to the top of
+    *     each select box?
+    * 'emptyOptionVal': The value passed by the empty option.
+    * 'emptyOptionText': The text displayed for the empty option.
     * 
     * @access   private
     * @var      array
     */
     var $_options = array(
-        'language'  => 'en',
-        'format'    => 'dMY',
-        'minYear'   => 2001,
-        'maxYear'   => 2010
+        'language'         => 'en',
+        'format'           => 'dMY',
+        'minYear'          => 2001,
+        'maxYear'          => 2010,
+        'addEmptyOption'   => false,
+        'emptyOptionValue' => '',
+        'emptyOptionText'  => '',
     );
 
    /**
@@ -273,6 +280,11 @@ class HTML_QuickForm_date extends HTML_QuickForm_group
                         $this->_wrap[0] = $separator;
                     }
                     $separator = '';
+                    // Should we add an empty option to the top of the select?
+                    if ($this->_options['addEmptyOption']) {
+                        // Preserve the keys
+                        $options = array($this->_options['emptyOptionValue'] => $this->_options['emptyOptionText']) + $options;
+                    }
                     $this->_elements[] =& new HTML_QuickForm_select($sign, null, $options, $this->getAttributes());
                 }
             }
