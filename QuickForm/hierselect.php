@@ -132,6 +132,14 @@ class HTML_QuickForm_hierselect extends HTML_QuickForm_group
      */
     function setSecOptions($options)
     {
+        $js_escape = array(
+            "\r"    => '\r',
+            "\n"    => '\n',
+            "\t"    => '\t',
+            "'"     => "\\'",
+            '"'     => '\"',
+            '\\'    => '\\\\'
+        );
         if (empty($this->_elements)) {
             $this->_createElements();
         }
@@ -152,7 +160,7 @@ class HTML_QuickForm_hierselect extends HTML_QuickForm_group
             $this->_js .= "var ".$varName." = new Array();\n";
             $i = 0;
             foreach ($array as $value => $text) {
-                $this->_js .= $varName."[".$i."] = new Array('".$value."', '".$text."');\n";
+                $this->_js .= $varName."[".$i."] = new Array('".strtr($value, $js_escape)."', '".strtr($text, $js_escape)."');\n";
                 $i++;
             }
         }
