@@ -108,15 +108,12 @@ class HTML_QuickForm_select extends HTML_QuickForm_element {
      */
     function setSelected($values)
     {
-        if (is_string($values)) {
+        if (is_string($values) && $this->getMultiple()) {
             $values = split("[ ]?,[ ]?", $values);
-            $this->_values = $values;
         }
-
         if (is_array($values)) {
             $this->_values = $values;
-        }
-        else {
+        } else {
             $this->_values = array($values);
         }
     } //end func setSelected
@@ -271,7 +268,7 @@ class HTML_QuickForm_select extends HTML_QuickForm_element {
      * 
      * @since     1.2
      * @access    public
-     * @return    void
+     * @return    bool    true if multiple select, false otherwise
      * @throws    
      */
     function getMultiple()
