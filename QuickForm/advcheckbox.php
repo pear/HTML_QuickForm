@@ -39,7 +39,8 @@ require_once('HTML/QuickForm/checkbox.php');
  * @since        2.0
  * @access       public
  */
-class HTML_QuickForm_advcheckbox extends HTML_QuickForm_checkbox {
+class HTML_QuickForm_advcheckbox extends HTML_QuickForm_checkbox
+{
     // {{{ properties
 
     /**
@@ -74,7 +75,6 @@ class HTML_QuickForm_advcheckbox extends HTML_QuickForm_checkbox {
      * @since     1.0
      * @access    public
      * @return    void
-     * @throws    
      */
     function HTML_QuickForm_advcheckbox($elementName=null, $elementLabel=null, $text=null, $attributes=null, $values=null)
     {
@@ -224,7 +224,6 @@ class HTML_QuickForm_advcheckbox extends HTML_QuickForm_checkbox {
      * @since     1.0
      * @access    public
      * @return    void
-     * @throws    
      */
     function onQuickFormEvent($event, $arg, &$caller)
     {

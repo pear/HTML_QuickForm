@@ -43,9 +43,8 @@ class HTML_QuickForm_image extends HTML_QuickForm_input
      * @since     1.0
      * @access    public
      * @return    void
-     * @throws    
      */
-    function HTML_QuickForm_image($elementName=null, $src="", $attributes=null)
+    function HTML_QuickForm_image($elementName=null, $src='', $attributes=null)
     {
         HTML_QuickForm_input::HTML_QuickForm_input($elementName, null, $attributes);
         $this->setType('image');
@@ -62,11 +61,10 @@ class HTML_QuickForm_image extends HTML_QuickForm_input
      * @since     1.0
      * @access    public
      * @return    void
-     * @throws    
      */
     function setSource($src)
     {
-        $this->updateAttributes(array("src"=>$src));
+        $this->updateAttributes(array('src' => $src));
     } // end func setSource
 
     // }}}
@@ -79,11 +77,10 @@ class HTML_QuickForm_image extends HTML_QuickForm_input
      * @since     1.0
      * @access    public
      * @return    void
-     * @throws    
      */
     function setBorder($border)
     {
-        $this->updateAttributes(array("border"=>$border));
+        $this->updateAttributes(array('border' => $border));
     } // end func setBorder
 
     // }}}
@@ -96,11 +93,10 @@ class HTML_QuickForm_image extends HTML_QuickForm_input
      * @since     1.0
      * @access    public
      * @return    void
-     * @throws    
      */
     function setAlign($align)
     {
-        $this->updateAttributes(array("align"=>$align));
+        $this->updateAttributes(array('align' => $align));
     } // end func setAlign
 
     // }}}
@@ -111,7 +107,6 @@ class HTML_QuickForm_image extends HTML_QuickForm_input
      * 
      * @access    public
      * @return    void
-     * @throws    
      */
     function freeze()
     {

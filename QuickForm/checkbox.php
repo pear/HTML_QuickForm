@@ -30,7 +30,8 @@ require_once("HTML/QuickForm/input.php");
  * @since        PHP4.04pl1
  * @access       public
  */
-class HTML_QuickForm_checkbox extends HTML_QuickForm_input {
+class HTML_QuickForm_checkbox extends HTML_QuickForm_input
+{
     // {{{ properties
 
     /**
@@ -55,7 +56,6 @@ class HTML_QuickForm_checkbox extends HTML_QuickForm_input {
      * @since     1.0
      * @access    public
      * @return    void
-     * @throws    
      */
     function HTML_QuickForm_checkbox($elementName=null, $elementLabel=null, $text='', $attributes=null)
     {
@@ -71,13 +71,12 @@ class HTML_QuickForm_checkbox extends HTML_QuickForm_input {
     // {{{ setChecked()
 
     /**
-     * Sets whether a checkbox or radio button is checked
+     * Sets whether a checkbox is checked
      * 
      * @param     bool    $checked  Whether the field is checked or not
      * @since     1.0
      * @access    public
      * @return    void
-     * @throws    
      */
     function setChecked($checked)
     {
@@ -92,12 +91,11 @@ class HTML_QuickForm_checkbox extends HTML_QuickForm_input {
     // {{{ getChecked()
 
     /**
-     * Returns whether a checkbox or radio button is checked
+     * Returns whether a checkbox is checked
      * 
      * @since     1.0
      * @access    public
-     * @return    string
-     * @throws    
+     * @return    bool
      */
     function getChecked()
     {
@@ -108,12 +106,11 @@ class HTML_QuickForm_checkbox extends HTML_QuickForm_input {
     // {{{ toHtml()
 
     /**
-     * Returns the radio element in HTML
+     * Returns the checkbox element in HTML
      * 
      * @since     1.0
      * @access    public
      * @return    string
-     * @throws    
      */
     function toHtml()
     {
@@ -131,17 +128,15 @@ class HTML_QuickForm_checkbox extends HTML_QuickForm_input {
      * @since     1.0
      * @access    public
      * @return    string
-     * @throws    
      */
     function getFrozenHtml()
     {
         if ($this->getChecked()) {
-            $html = '<tt>[x]</tt>';
-            $html .= '<input type="hidden" name="'.$this->getName().'" value="1" />';
+            return '<tt>[x]</tt>' .
+                   '<input type="hidden" name="' . $this->getName() . '" value="1" />';
         } else {
-            $html = '<tt>[ ]</tt>';
+            return '<tt>[ ]</tt>';
         }
-        return $html;
     } //end func getFrozenHtml
 
     // }}}
@@ -154,7 +149,6 @@ class HTML_QuickForm_checkbox extends HTML_QuickForm_input {
      * @since     1.1
      * @access    public
      * @return    void
-     * @throws    
      */
     function setText($text)
     {
@@ -170,7 +164,6 @@ class HTML_QuickForm_checkbox extends HTML_QuickForm_input {
      * @since     1.1
      * @access    public
      * @return    string
-     * @throws    
      */
     function getText()
     {
@@ -187,7 +180,6 @@ class HTML_QuickForm_checkbox extends HTML_QuickForm_input {
      * @since     1.0
      * @access    public
      * @return    void
-     * @throws    
      */
     function setValue($value)
     {
@@ -202,8 +194,7 @@ class HTML_QuickForm_checkbox extends HTML_QuickForm_input {
      *
      * @since     1.0
      * @access    public
-     * @return    void
-     * @throws    
+     * @return    bool
      */
     function getValue()
     {
@@ -222,7 +213,6 @@ class HTML_QuickForm_checkbox extends HTML_QuickForm_input {
      * @since     1.0
      * @access    public
      * @return    void
-     * @throws    
      */
     function onQuickFormEvent($event, $arg, &$caller)
     {

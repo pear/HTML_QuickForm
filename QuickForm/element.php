@@ -31,8 +31,8 @@ require_once('HTML/Common.php');
  * @access       public
  * @abstract
  */
-class HTML_QuickForm_element extends HTML_Common {
-
+class HTML_QuickForm_element extends HTML_Common
+{
     // {{{ properties
 
     /**
@@ -73,12 +73,12 @@ class HTML_QuickForm_element extends HTML_Common {
     /**
      * Class constructor
      * 
-     * @param    mixed   $attributes     (optional)Associative array of table tag attributes 
-     *                                   or HTML attributes name="value" pairs
+     * @param    string     Name of the element
+     * @param    mixed      Label(s) for the element
+     * @param    mixed      Associative array of tag attributes or HTML attributes name="value" pairs
      * @since     1.0
      * @access    public
      * @return    void
-     * @throws    
      */
     function HTML_QuickForm_element($elementName=null, $elementLabel=null, $attributes=null)
     {
@@ -115,7 +115,6 @@ class HTML_QuickForm_element extends HTML_Common {
      * @since     1.0
      * @access    public
      * @return    string
-     * @throws    
      */
     function getType()
     {
@@ -132,7 +131,6 @@ class HTML_QuickForm_element extends HTML_Common {
      * @since     1.0
      * @access    public
      * @return    void
-     * @throws    
      */
     function setName($name)
     {
@@ -148,7 +146,6 @@ class HTML_QuickForm_element extends HTML_Common {
      * @since     1.0
      * @access    public
      * @return    string
-     * @throws    
      */
     function getName()
     {
@@ -165,7 +162,6 @@ class HTML_QuickForm_element extends HTML_Common {
      * @since     1.0
      * @access    public
      * @return    void
-     * @throws    
      */
     function setValue($value)
     {
@@ -180,8 +176,7 @@ class HTML_QuickForm_element extends HTML_Common {
      *
      * @since     1.0
      * @access    public
-     * @return    void
-     * @throws    
+     * @return    mixed
      */
     function getValue()
     {
@@ -197,7 +192,6 @@ class HTML_QuickForm_element extends HTML_Common {
      * 
      * @access    public
      * @return    void
-     * @throws    
      */
     function freeze()
     {
@@ -213,7 +207,6 @@ class HTML_QuickForm_element extends HTML_Common {
      * @since     1.0
      * @access    public
      * @return    string
-     * @throws    
      */
     function getFrozenHtml()
     {
@@ -238,8 +231,7 @@ class HTML_QuickForm_element extends HTML_Common {
      *
      * @since     1.3
      * @access    public
-     * @return    void
-     * @throws    
+     * @return    bool
      */
     function isFrozen()
     {
@@ -257,7 +249,6 @@ class HTML_QuickForm_element extends HTML_Common {
      * @since     2.0
      * @access    public
      * @return    void
-     * @throws    
      */
     function setPersistantFreeze($persistant=false)
     {
@@ -270,11 +261,10 @@ class HTML_QuickForm_element extends HTML_Common {
     /**
      * Sets display text for the element
      * 
-     * @param     string    $label  Display text for a checkbox
+     * @param     string    $label  Display text for the element
      * @since     1.3
      * @access    public
      * @return    void
-     * @throws    
      */
     function setLabel($label)
     {
@@ -290,7 +280,6 @@ class HTML_QuickForm_element extends HTML_Common {
      * @since     1.3
      * @access    public
      * @return    string
-     * @throws    
      */
     function getLabel()
     {
@@ -301,12 +290,11 @@ class HTML_QuickForm_element extends HTML_Common {
     // {{{ _findValue()
 
     /**
-     * Tries to find the element value from the submitted values array
+     * Tries to find the element value from the values array
      * 
      * @since     2.7
      * @access    private
-     * @return    string
-     * @throws    
+     * @return    mixed
      */
     function _findValue(&$values)
     {
@@ -332,11 +320,10 @@ class HTML_QuickForm_element extends HTML_Common {
      *
      * @param     string    $event  Name of event
      * @param     mixed     $arg    event arguments
-     * @param     object    $callerLocal calling object
+     * @param     object    $caller calling object
      * @since     1.0
      * @access    public
      * @return    void
-     * @throws    
      */
     function onQuickFormEvent($event, $arg, &$caller)
     {

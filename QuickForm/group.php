@@ -30,8 +30,8 @@ require_once("HTML/QuickForm/element.php");
  * @since        PHP4.04pl1
  * @access       public
  */
-class HTML_QuickForm_group extends HTML_QuickForm_element {
-
+class HTML_QuickForm_group extends HTML_QuickForm_element
+{
     // {{{ properties
         
     /**
@@ -91,17 +91,10 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
      * @since     1.0
      * @access    public
      * @return    void
-     * @throws    
      */
     function HTML_QuickForm_group($elementName=null, $elementLabel=null, $elements=null, $separator=null, $appendName = true)
     {
-        HTML_Common::HTML_Common();
-        if (isset($elementName)) {
-            $this->setName($elementName);
-        }
-        if (isset($elementLabel)) {
-            $this->setLabel($elementLabel);
-        }
+        $this->HTML_QuickForm_element($elementName, $elementLabel);
         $this->_type = 'group';
         if (isset($elements) && is_array($elements)) {
             $this->setElements($elements);
@@ -118,13 +111,12 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
     // {{{ setName()
 
     /**
-     * Sets the input field name
+     * Sets the group name
      * 
-     * @param     string    $name   Input field name attribute
+     * @param     string    $name   Group name
      * @since     1.0
      * @access    public
      * @return    void
-     * @throws    
      */
     function setName($name)
     {
@@ -135,12 +127,11 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
     // {{{ getName()
 
     /**
-     * Returns the element name
+     * Returns the group name
      * 
      * @since     1.0
      * @access    public
      * @return    string
-     * @throws    
      */
     function getName()
     {
@@ -157,7 +148,6 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
      * @since     1.0
      * @access    public
      * @return    void
-     * @throws    
      */
     function setValue($value)
     {
@@ -186,12 +176,11 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
     // {{{ getValue()
 
     /**
-     * Returns the value of the form element
+     * Returns the value of the group
      *
      * @since     1.0
      * @access    public
-     * @return    void
-     * @throws    
+     * @return    mixed
      */
     function getValue()
     {
@@ -233,7 +222,6 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
      * @since     1.1
      * @access    public
      * @return    void
-     * @throws    
      */
     function setElements($elements)
     {
@@ -265,7 +253,6 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
      *
      * @access    public
      * @return    string    group elements type
-     * @throws    
      */
     function getGroupType()
     {
@@ -303,7 +290,7 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
     // {{{ setElementTemplate()
 
     /**
-     * Sets the template for the group elements
+     * Sets the template for the group elements (DEPRECATED)
      * 
      * @param     string     $template   Template string
      * @since     2.5
@@ -321,7 +308,7 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
     // {{{ setGroupTemplate()
 
     /**
-     * Sets the template for the group
+     * Sets the template for the group (DEPRECATED)
      * 
      * @param     string     $template   Template string
      * @since     2.5
@@ -385,14 +372,13 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
      * @since     1.3
      * @access    public
      * @return    string
-     * @throws    
      */
     function getFrozenHtml()
     {
-        $tmp = $this->_frozenFlag;
-        $this->_frozenFlag = true;
+        $tmp = $this->_flagFrozen;
+        $this->_flagFrozen = true;
         $html = $this->toHtml();
-        $this->_frozenFlag = $tmp;
+        $this->_flagFrozen = $tmp;
         return $html;
     } //end func getFrozenHtml
 
@@ -408,7 +394,6 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
      * @since     1.0
      * @access    public
      * @return    void
-     * @throws    
      */
     function onQuickFormEvent($event, $arg, &$caller)
     {

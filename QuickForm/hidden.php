@@ -30,7 +30,8 @@ require_once("HTML/QuickForm/input.php");
  * @since        PHP4.04pl1
  * @access       public
  */
-class HTML_QuickForm_hidden extends HTML_QuickForm_input {
+class HTML_QuickForm_hidden extends HTML_QuickForm_input
+{
     // {{{ constructor
 
     /**
@@ -43,17 +44,12 @@ class HTML_QuickForm_hidden extends HTML_QuickForm_input {
      * @since     1.0
      * @access    public
      * @return    void
-     * @throws    
      */
     function HTML_QuickForm_hidden($elementName=null, $value='', $attributes=null)
     {
         HTML_QuickForm_input::HTML_QuickForm_input($elementName, null, $attributes);
         $this->setType('hidden');
-        // don't override GET/POST settings if value is not set
-        $tmp_val = $this->getValue();            
-        if (empty($tmp_val)) {                  
-            $this->setValue($value);
-        }
+        $this->setValue($value);
     } //end constructor
         
     // }}}
@@ -64,7 +60,6 @@ class HTML_QuickForm_hidden extends HTML_QuickForm_input {
      * 
      * @access    public
      * @return    void
-     * @throws    
      */
     function freeze()
     {

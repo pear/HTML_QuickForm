@@ -31,23 +31,23 @@ require_once("HTML/QuickForm/element.php");
  * @access       public
  * @abstract
  */
-class HTML_QuickForm_input extends HTML_QuickForm_element {
-        
+class HTML_QuickForm_input extends HTML_QuickForm_element
+{
     // {{{ constructor
 
     /**
      * Class constructor
      * 
-     * @param    mixed   $attributes     (optional)Associative array of table tag attributes 
-     *                                   or HTML attributes name="value" pairs
+     * @param    string     Input field name attribute
+     * @param    mixed      Label(s) for the input field
+     * @param    mixed      Either a typical HTML attribute string or an associative array
      * @since     1.0
      * @access    public
      * @return    void
-     * @throws    
      */
     function HTML_QuickForm_input($elementName=null, $elementLabel=null, $attributes=null)
     {
-        HTML_QuickForm_element::HTML_QuickForm_element($elementName, $elementLabel, $attributes);
+        $this->HTML_QuickForm_element($elementName, $elementLabel, $attributes);
     } //end constructor
 
     // }}}
@@ -60,7 +60,6 @@ class HTML_QuickForm_input extends HTML_QuickForm_element {
      * @since     1.0
      * @access    public
      * @return    void
-     * @throws    
      */
     function setType($type)
     {
@@ -78,7 +77,6 @@ class HTML_QuickForm_input extends HTML_QuickForm_element {
      * @since     1.0
      * @access    public
      * @return    void
-     * @throws    
      */
     function setName($name)
     {
@@ -94,7 +92,6 @@ class HTML_QuickForm_input extends HTML_QuickForm_element {
      * @since     1.0
      * @access    public
      * @return    string
-     * @throws    
      */
     function getName()
     {
@@ -111,7 +108,6 @@ class HTML_QuickForm_input extends HTML_QuickForm_element {
      * @since     1.0
      * @access    public
      * @return    void
-     * @throws    
      */
     function setValue($value)
     {
@@ -126,8 +122,7 @@ class HTML_QuickForm_input extends HTML_QuickForm_element {
      *
      * @since     1.0
      * @access    public
-     * @return    void
-     * @throws    
+     * @return    string
      */
     function getValue()
     {
@@ -143,17 +138,14 @@ class HTML_QuickForm_input extends HTML_QuickForm_element {
      * @since     1.0
      * @access    public
      * @return    string
-     * @throws    
      */
     function toHtml()
     {
         if ($this->_flagFrozen) {
-            $html = $this->getFrozenHtml();
+            return $this->getFrozenHtml();
         } else {
-            $tabs = $this->_getTabs();
-            $html = "$tabs<input".$this->_getAttrString($this->_attributes)." />";
+            return $this->_getTabs() . '<input' . $this->_getAttrString($this->_attributes) . ' />';
         }
-        return $html;
     } //end func toHtml
 
     // }}}

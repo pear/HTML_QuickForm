@@ -30,8 +30,8 @@ require_once("HTML/QuickForm/input.php");
  * @since        PHP4.04pl1
  * @access       public
  */
-class HTML_QuickForm_reset extends HTML_QuickForm_input {
-    
+class HTML_QuickForm_reset extends HTML_QuickForm_input
+{
     // {{{ constructor
     
     /**
@@ -44,7 +44,6 @@ class HTML_QuickForm_reset extends HTML_QuickForm_input {
      * @since     1.0
      * @access    public
      * @return    void
-     * @throws    
      */
     function HTML_QuickForm_reset($elementName=null, $value=null, $attributes=null)
     {
@@ -61,7 +60,6 @@ class HTML_QuickForm_reset extends HTML_QuickForm_input {
      * 
      * @access    public
      * @return    void
-     * @throws    
      */
     function freeze()
     {

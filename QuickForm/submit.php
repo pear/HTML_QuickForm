@@ -30,21 +30,19 @@ require_once("HTML/QuickForm/input.php");
  * @since        PHP4.04pl1
  * @access       public
  */
-class HTML_QuickForm_submit extends HTML_QuickForm_input {
-    
+class HTML_QuickForm_submit extends HTML_QuickForm_input
+{
     // {{{ constructor
 
     /**
      * Class constructor
      * 
-     * @param     string    $elementName    (optional)Input field name attribute
-     * @param     string    $value          (optional)Input field value
-     * @param     mixed     $attributes     (optional)Either a typical HTML attribute string 
-     *                                      or an associative array
+     * @param     string    Input field name attribute
+     * @param     string    Input field value
+     * @param     mixed     Either a typical HTML attribute string or an associative array
      * @since     1.0
      * @access    public
      * @return    void
-     * @throws    
      */
     function HTML_QuickForm_submit($elementName=null, $value=null, $attributes=null)
     {
@@ -61,14 +59,24 @@ class HTML_QuickForm_submit extends HTML_QuickForm_input {
      * 
      * @access    public
      * @return    void
-     * @throws    
      */
     function freeze()
     {
-        return;
+        return false;
     } //end func freeze
 
     // }}}
+    // {{{ exportValue()
 
+   /**
+    * Only return the value if it is found within $submitValues (i.e. if
+    * this particular submit button was clicked)
+    */
+    function exportValue(&$submitValues, $assoc = false)
+    {
+        return $this->_prepareValue($this->_findValue($submitValues), $assoc);
+    }
+
+    // }}}
 } //end class HTML_QuickForm_submit
 ?>

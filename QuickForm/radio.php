@@ -30,8 +30,8 @@ require_once('HTML/QuickForm/input.php');
  * @since        PHP4.04pl1
  * @access       public
  */
-class HTML_QuickForm_radio extends HTML_QuickForm_input {
-
+class HTML_QuickForm_radio extends HTML_QuickForm_input
+{
     // {{{ properties
 
     /**
@@ -48,24 +48,18 @@ class HTML_QuickForm_radio extends HTML_QuickForm_input {
     /**
      * Class constructor
      * 
-     * @param     string    $elementName    (optional)Input field name attribute
-     * @param     string    $value          (optional)Input field value
-     * @param     mixed     $attributes     (optional)Either a typical HTML attribute string 
-     *                                      or an associative array
+     * @param     string    Input field name attribute
+     * @param     mixed     Label(s) for a field
+     * @param     string    Text to display near the radio
+     * @param     string    Input field value
+     * @param     mixed     Either a typical HTML attribute string or an associative array
      * @since     1.0
      * @access    public
      * @return    void
-     * @throws    
      */
     function HTML_QuickForm_radio($elementName=null, $elementLabel=null, $text=null, $value=null, $attributes=null)
     {
-        HTML_Common::HTML_Common($attributes);
-        if (isset($elementName)) {
-            $this->setName($elementName);
-        }
-        if (isset($elementLabel)) {
-            $this->setLabel($elementLabel);
-        }
+        $this->HTML_QuickForm_element($elementName, $elementLabel, $attributes);
         if (isset($value)) {
             $this->setValue($value);
         }
@@ -85,7 +79,6 @@ class HTML_QuickForm_radio extends HTML_QuickForm_input {
      * @since     1.0
      * @access    public
      * @return    void
-     * @throws    
      */
     function setChecked($checked)
     {
@@ -105,7 +98,6 @@ class HTML_QuickForm_radio extends HTML_QuickForm_input {
      * @since     1.0
      * @access    public
      * @return    string
-     * @throws    
      */
     function getChecked()
     {
@@ -121,7 +113,6 @@ class HTML_QuickForm_radio extends HTML_QuickForm_input {
      * @since     1.0
      * @access    public
      * @return    string
-     * @throws    
      */
     function toHtml()
     {
@@ -139,18 +130,15 @@ class HTML_QuickForm_radio extends HTML_QuickForm_input {
      * @since     1.0
      * @access    public
      * @return    string
-     * @throws    
      */
     function getFrozenHtml()
     {
-        $html = '';
         if ($this->getChecked()) {
-            $html .= '<tt>(x)</tt>';
-            $html .= '<input type="hidden" name="'.$this->getName().'" value="'.htmlspecialchars($this->getValue()).'" />';
+            return '<tt>(x)</tt>' .
+                   '<input type="hidden" name="'.$this->getName().'" value="'.htmlspecialchars($this->getValue()).'" />';
         } else {
-            $html .= '<tt>( )</tt>';
+            return '<tt>( )</tt>';
         }
-        return $html;
     } //end func getFrozenHtml
 
     // }}}
@@ -159,11 +147,10 @@ class HTML_QuickForm_radio extends HTML_QuickForm_input {
     /**
      * Sets the radio text
      * 
-     * @param     string    $text  
+     * @param     string    $text  Text to display near the radio button
      * @since     1.1
      * @access    public
      * @return    void
-     * @throws    
      */
     function setText($text)
     {
@@ -179,7 +166,6 @@ class HTML_QuickForm_radio extends HTML_QuickForm_input {
      * @since     1.1
      * @access    public
      * @return    string
-     * @throws    
      */
     function getText()
     {
@@ -198,7 +184,6 @@ class HTML_QuickForm_radio extends HTML_QuickForm_input {
      * @since     1.0
      * @access    public
      * @return    void
-     * @throws    
      */
     function onQuickFormEvent($event, $arg, &$caller)
     {
@@ -236,7 +221,7 @@ class HTML_QuickForm_radio extends HTML_QuickForm_input {
     // {{{ exportValue()
 
    /**
-    * Returns the value attribute if the radio is checked
+    * Returns the value attribute if the radio is checked, null if it is not
     */
     function exportValue(&$submitValues, $assoc = false)
     {

@@ -1375,6 +1375,7 @@ class HTML_QuickForm extends HTML_Common {
         }
 
         foreach ($this->_rules as $target => $rules) {
+            $elementType = $this->getElementType($target);
             $submitValue = $this->_findElementValue($target);
 
             foreach ($rules as $rule) {

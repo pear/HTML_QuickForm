@@ -34,20 +34,20 @@ require_once('HTML/QuickForm/select.php');
  * @since        2.1
  * @access       public
  */
-class HTML_QuickForm_hiddenselect extends HTML_QuickForm_select {
+class HTML_QuickForm_hiddenselect extends HTML_QuickForm_select
+{
     // {{{ constructor
         
     /**
      * Class constructor
      * 
-     * @param     string    $elementName    (optional)Input field name attribute
-     * @param     string    $options        (optional)Input field value
-     * @param     mixed     $attributes     (optional)Either a typical HTML attribute string 
-     *                                      or an associative array
+     * @param     string    Select name attribute
+     * @param     mixed     Label(s) for the select (not used)
+     * @param     mixed     Data to be used to populate options
+     * @param     mixed     Either a typical HTML attribute string or an associative array (not used)
      * @since     1.0
      * @access    public
      * @return    void
-     * @throws    
      */
     function HTML_QuickForm_hiddenselect($elementName=null, $elementLabel=null, $options=null, $attributes=null)
     {
@@ -72,27 +72,32 @@ class HTML_QuickForm_hiddenselect extends HTML_QuickForm_select {
      */
     function toHtml()
     {
-        // put this down here since it changes the name
-        if ($this->getAttribute('multiple')) {
-            $this->setMultiple(true);
-        }
-
-        $tabs = $this->_getTabs();
-        $name = isset($this->_attributes['name']) ? $this->_attributes['name'] : '' ;
+        $tabs    = $this->_getTabs();
+        $name    = $this->getPrivateName();
         $strHtml = '';
 
-        for ($counter=0; $counter < count($this->_options); $counter++) {
-            $value = $this->_options[$counter]['attr']['value'];
-            $attrString = $this->_getAttrString($this->_options[$counter]['attr']);
-        
-            if (is_array($this->_values) && in_array($value, $this->_values)) {
-                $strHtml .= $tabs . '<input type="hidden" name="' . $name . '" value="' . $value . '" />' . "\n";
+        foreach ($this->_values as $key => $val) {
+            for ($i = 0, $optCount = count($this->_options); $i < $optCount; $i++) {
+                if ($val == $this->_options[$i]['attr']['value']) {
+                    $strHtml .= $tabs . '<input type="hidden" name="' . $name . '" value="' . $val . '" />' . "\n";
+                }
             }
         }
 
         return $strHtml;
     } //end func toHtml
     
+    // }}}
+    // {{{ accept()
+
+   /**
+    * This is essentially a hidden element and should be rendered as one  
+    */
+    function accept(&$renderer)
+    {
+        $renderer->renderHidden($this);
+    }
+
     // }}}
 } //end class HTML_QuickForm_hiddenselect
 ?>

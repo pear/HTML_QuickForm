@@ -30,7 +30,8 @@ require_once("HTML/QuickForm/input.php");
  * @since        PHP4.04pl1
  * @access       public
  */
-class HTML_QuickForm_text extends HTML_QuickForm_input {
+class HTML_QuickForm_text extends HTML_QuickForm_input
+{
                 
     // {{{ constructor
 
@@ -44,7 +45,6 @@ class HTML_QuickForm_text extends HTML_QuickForm_input {
      * @since     1.0
      * @access    public
      * @return    void
-     * @throws    
      */
     function HTML_QuickForm_text($elementName=null, $elementLabel=null, $attributes=null)
     {
@@ -59,13 +59,12 @@ class HTML_QuickForm_text extends HTML_QuickForm_input {
     /**
      * Sets size of text field
      * 
-     * @param     string    $size  Size of password field
+     * @param     string    $size  Size of text field
      * @since     1.3
      * @access    public
      * @return    void
-     * @throws    
      */
-    function setSize($size='')
+    function setSize($size)
     {
         $this->updateAttributes(array('size'=>$size));
     } //end func setSize
@@ -76,13 +75,12 @@ class HTML_QuickForm_text extends HTML_QuickForm_input {
     /**
      * Sets maxlength of text field
      * 
-     * @param     string    $maxlength  Maximum length of password field
+     * @param     string    $maxlength  Maximum length of text field
      * @since     1.3
      * @access    public
      * @return    void
-     * @throws    
      */
-    function setMaxlength($maxlength='')
+    function setMaxlength($maxlength)
     {
         $this->updateAttributes(array('maxlength'=>$maxlength));
     } //end func setMaxlength
