@@ -36,7 +36,7 @@ Features:
       <user>avb</user>
       <name>Alexey Borzov</name>
       <email>borz_off@cs.msu.su</email>
-      <role>developer</role>
+      <role>lead</role>
     </maintainer>
     <maintainer>
       <user>jrust</user>
@@ -58,42 +58,19 @@ Features:
     </maintainer>
   </maintainers>
   <release>
-    <version>3.1</version>
-    <date>2003-07-19</date>
+    <version>3.2</version>
+    <date>2003-09-?</date>
     <state>stable</state>
     <notes>
 * New additions
-- Added a new hierselect element, a group of two selects where the first select changes the options of the second select using javascript (Bertrand Mansion)
-- Added exportValue() and exportValues() methods, these should now be the preferred way to get form values (Alexey Borzov)
-- Added addFormRule() method, this adds the rule that validates the whole form (Alexey Borzov)
-- Added Italian date/dategroup names (Marco Piarulli)
-- Added Slovak date/dategroup names (Peter Sablica)
-- Added Icelandic date/dategroup names (Birgir Stefansson)
+- Added flexy renderer examples (Ron McClain)
 
 * Changes
-- Rule-registering functions can now be called statically (Alexey Borzov)
-- File-related rules and methods are moved to HTML_QuickForm_file (Alexey Borzov)
-- Moved 'magic quotes' handling to QuickForm's constructor (Alexey Borzov)
-- Use strtr() instead of rawurlencode() for javascript messages (Bertrand Mansion)
-- Changed the nonzero rule to every numbers (negative or positive) except zero (David Sklar)
-- Date element has been entirely reworked and optimised (Alexey Borzov)
-- Updated the examples to use the latest changes (Alexey Borzov, Bertrand Mansion)
 
 * Bugfixes
-- Fixed a bug in HTML_QuickForm_group::getFrozenHtml() (Alexey Borzov, Wolfram Kriesing)
-- Fixed a problem in HTML_QuickForm_group::getValue(): value was not changed to array (Alexey Borzov)
-- Correctly set element's index in addElement() if some of the elements were previously removed (Alexey Borzov, Wolfram Kriesing)
-- Fixed notice in _findElementValue() for files (Bertrand Mansion)
-- Fixed passing a 'selected' attribute to addOption() (Alexey Borzov, Wolfram Kriesing)
+- Fixed a bug in HTML_QuickForm_Select found by Pascal Thuet (Bertrand Mansion)
 
 * Deprecated
-- setFormat(), setMinYear() and other accessors in date element are now deprecated. Set options and attributes in the constructor instead (Alexey Borzov)
-- Method getAttributesString() is deprecated (Alexey Borzov)
-- HTML_QuickForm's isUploadedFile(), moveUploadedFile(), getUploadeFile() are now deprecated (Alexey Borzov)
-
-Deprecated methods will be removed from QuickForm in the next release.
-In this release, they throw PEAR errors but still finish the job.
-Use this to catch them with an error handler function, the global error code is QUICKFORM_DEPRECATED.
      </notes>
     <filelist>
       <dir name="/" baseinstalldir="HTML">
@@ -142,13 +119,13 @@ Use this to catch them with an error handler function, the global error code is 
           <file role="doc">QuickForm_example6.php</file>
           <file role="doc">QuickForm_example7.php</file>
           <dir name="renderers">
+            <file role="doc">FlexyDynamic_example.php</file>
+            <file role="doc">FlexyStatic_example.php</file>
             <file role="doc">ITDynamic_example.php</file>
             <file role="doc">ITDynamic_example2.php</file>
             <file role="doc">ITStatic_example.php</file>
             <file role="doc">SmartyDynamic_example.php</file>
             <file role="doc">SmartyStatic_example.php</file>
-            <file role="doc">FlexyStatic_example.html</file>
-            <file role="doc">FlexyDynamic_example.html</file>
             <file role="doc">it-dynamic-2.html</file>
             <file role="doc">it-dynamic.html</file>
             <file role="doc">it-static.html</file>
@@ -177,6 +154,45 @@ Use this to catch them with an error handler function, the global error code is 
     </deps>
   </release>
   <changelog>
+  <release>
+    <version>3.1</version>
+    <date>2003-07-19</date>
+    <state>stable</state>
+    <notes>
+* New additions
+- Added a new hierselect element, a group of two selects where the first select changes the options of the second select using javascript (Bertrand Mansion)
+- Added exportValue() and exportValues() methods, these should now be the preferred way to get form values (Alexey Borzov)
+- Added addFormRule() method, this adds the rule that validates the whole form (Alexey Borzov)
+- Added Italian date/dategroup names (Marco Piarulli)
+- Added Slovak date/dategroup names (Peter Sablica)
+- Added Icelandic date/dategroup names (Birgir Stefansson)
+
+* Changes
+- Rule-registering functions can now be called statically (Alexey Borzov)
+- File-related rules and methods are moved to HTML_QuickForm_file (Alexey Borzov)
+- Moved 'magic quotes' handling to QuickForm's constructor (Alexey Borzov)
+- Use strtr() instead of rawurlencode() for javascript messages (Bertrand Mansion)
+- Changed the nonzero rule to every numbers (negative or positive) except zero (David Sklar)
+- Date element has been entirely reworked and optimised (Alexey Borzov)
+- Updated the examples to use the latest changes (Alexey Borzov, Bertrand Mansion)
+
+* Bugfixes
+- Fixed a bug in HTML_QuickForm_group::getFrozenHtml() (Alexey Borzov, Wolfram Kriesing)
+- Fixed a problem in HTML_QuickForm_group::getValue(): value was not changed to array (Alexey Borzov)
+- Correctly set element's index in addElement() if some of the elements were previously removed (Alexey Borzov, Wolfram Kriesing)
+- Fixed notice in _findElementValue() for files (Bertrand Mansion)
+- Fixed passing a 'selected' attribute to addOption() (Alexey Borzov, Wolfram Kriesing)
+
+* Deprecated
+- setFormat(), setMinYear() and other accessors in date element are now deprecated. Set options and attributes in the constructor instead (Alexey Borzov)
+- Method getAttributesString() is deprecated (Alexey Borzov)
+- HTML_QuickForm's isUploadedFile(), moveUploadedFile(), getUploadeFile() are now deprecated (Alexey Borzov)
+
+Deprecated methods will be removed from QuickForm in the next release.
+In this release, they throw PEAR errors but still finish the job.
+Use this to catch them with an error handler function, the global error code is QUICKFORM_DEPRECATED.
+     </notes>
+  </release>
   <release>
     <version>3.0</version>
     <date>2003-06-04</date>
