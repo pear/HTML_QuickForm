@@ -60,11 +60,35 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
 
     /**
      * String to seperator elements
-     * @var       string
-     * @since     1.1
+     * @var       mixed
+     * @since     2.5
      * @access    private
      */
-    var $_seperator = '';
+    var $_seperator = null;
+
+    /**
+     * Group template
+     * @var       string
+     * @since     2.5
+     * @access    private
+     */
+    var $_groupTemplate = '';
+
+    /**
+     * Grouped element template
+     * @var       string
+     * @since     2.5
+     * @access    private
+     */
+    var $_elementTemplate = '';
+
+    /**
+     * Required elements in this group
+     * @var       array
+     * @since     2.5
+     * @access    private
+     */
+    var $_required = array();
 
     // }}}
     // {{{ constructor
@@ -72,15 +96,18 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
     /**
      * Class constructor
      * 
-     * @param     string    $elementName    Input field name attribute
+     * @param     string    $elementName    (optional)Group name
+     * @param     array     $elementLabel   (optional)Group label
      * @param     array     $elements       (optional)Group elements
-     * @param     string    $layout         (optional)Group layout
+     * @param     mixed     $seperator      (optional)Use a string for one seperator,
+     *                                      use an array to alternate the seperators,
+     *                                      don't use seperator if you are using templates.
      * @since     1.0
      * @access    public
      * @return    void
      * @throws    
      */
-    function HTML_QuickForm_group($elementName=null, $elementLabel=null, $elements=null, $seperator='')
+    function HTML_QuickForm_group($elementName=null, $elementLabel=null, $elements=null, $seperator=null)
     {
         HTML_Common::HTML_Common();
         if (isset($elementName)) {
@@ -88,15 +115,6 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
         }
         if (isset($elementLabel)) {
             $this->setLabel($elementLabel);
-        }
-        $vars = array_merge($_GET, $_POST);
-        if (isset($vars[$this->getName()])) {
-            if (is_string($vars[$this->getName()]) && get_magic_quotes_gpc() == 1) {
-                $submitValue = stripslashes($vars[$this->getName()]);
-            } else {
-                $submitValue = $vars[$this->getName()];
-            }
-            $this->setValue($submitValue);
         }
         $this->_type = 'group';
         if (isset($elements) && is_array($elements)) {
@@ -236,9 +254,9 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
     /**
      * Returns the input field in HTML
      * 
-     * @since     1.0
-     * @access    public
-     * @return    string
+     * @since       1.0
+     * @access      public
+     * @return      string
      * @throws    
      */
     function toHtml()
@@ -256,7 +274,7 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
             
             $elementType = $element->getType();
             if (!empty($name) && isset($elementName)) {
-                $element->setName($name . "[$elementName]");
+                $element->setName($name . '['.$elementName.']');
             } elseif (!empty($name)) {
                 $element->setName($name);
             }
@@ -271,12 +289,114 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
                 $element->freeze();
             }
             $element->_tabOffset = $this->_tabOffset;
-            $htmlArr[] = $element->toHtml();
+            $required = in_array($element->getName(), $this->_required);
+            if ($this->_elementTemplate != '') {
+                $htmlArr[] = $this->_wrapElement($element->getLabel(), $element->toHtml(), $required);
+            } else {
+                $htmlArr[] = $element->toHtml(); 
+            }
         }
-        $html = implode((string)$this->_seperator, $htmlArr);
+        if ($this->_groupTemplate != '') {
+            $html = $this->_wrapGroup($htmlArr);
+        } elseif (is_array($this->_seperator)) {
+            $count = count($this->_seperator);
+            $i = 0;
+            foreach ($htmlArr as $content) {
+                if ($i >= $count)
+                    $i = 0;
+                $html .= $content.$this->_seperator[$i];
+                $i++;
+            }
+            $html = substr($html, 0, -(strlen($this->_seperator[$i-1])));
+        } else {
+            if (is_null($this->_seperator)) {
+                $this->_seperator = '&nbsp;';
+            }
+            $html = implode((string)$this->_seperator, $htmlArr);
+        }
         return $html;
     } //end func toHtml
     
+    // }}}
+    // {{{ setElementTemplate()
+
+    /**
+     * Sets the template for the group elements
+     * 
+     * @param     string     $template   Template string
+     * @since     2.5
+     * @access    public
+     * @return    void
+     */
+    function setElementTemplate($template)
+    {
+        $this->_elementTemplate = $template;
+    } //end func setElementTemplate
+
+    // }}}
+    // {{{ setGroupTemplate()
+
+    /**
+     * Sets the template for the group
+     * 
+     * @param     string     $template   Template string
+     * @since     2.5
+     * @access    public
+     * @return    void
+     */
+    function setGroupTemplate($template)
+    {
+        $this->_groupTemplate = $template;
+    } //end func setGroupTemplate
+
+    // }}}
+    // {{{ _wrapElement()
+
+    /**
+     * Create the formatted html for a group element
+     * 
+     * @param     string     $label     Label of the element if any
+     * @param     string     $raw       Raw html of the element
+     * @param     bool       $require   Is element required ?
+     * @since     2.5
+     * @access    public
+     * @return    string
+     * @throws    
+     */
+    function _wrapElement($label, $raw, $required)
+    {
+        $html = '';
+        $html = str_replace('{label}', $label, $this->_elementTemplate);
+        if ($required) {
+            $html = str_replace('<!-- BEGIN required -->', '', $html);
+            $html = str_replace('<!-- END required -->', '', $html);
+        } else {
+            $html = preg_replace("/([ \t\n\r]*)?<!-- BEGIN required -->(\s|\S)*<!-- END required -->([ \t\n\r]*)?/i", '', $html);
+        }
+        $html = str_replace('{element}', $raw, $html);
+        return $html;
+    } //end func _wrapElement
+
+    // }}}
+    // {{{ _wrapGroup()
+
+    /**
+     * Create the formatted html for the group
+     * 
+     * @param     array     $htmlArr    Array of formatted html for each elements in group
+     * @since     2.5
+     * @access    public
+     * @return    string
+     * @throws    
+     */
+    function _wrapGroup($htmlArr)
+    {
+        $html = '';
+        $content = implode('', $htmlArr);
+        $html = str_replace('{content}', $content, $this->_groupTemplate);
+        return $html;
+    } //end func _wrapGroup
+
     // }}}
     // {{{ getFrozenHtml()
 
@@ -311,21 +431,48 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
      * @return    void
      * @throws    
      */
-    function onQuickFormEvent($event, $arg, &$caller)
+    function onQuickFormEvent($event, $arg, &$callerLocal)
     {
+        global $caller;
+        // make it global so we can access it in any of the other methods if needed
+        $caller =& $callerLocal;
+
         $className = get_class($this);
         switch ($event) {
             case 'addElement':
             case 'createElement':
                 $this->$className($arg[0], $arg[1], $arg[2], $arg[3]);
-                break;
-            case 'setDefault':
-                $vars = array_merge($_GET, $_POST);
-                if (!isset($vars[$this->getName()])) {
-                    $this->setValue($arg);
+                // need to set the submit value in case setDefault never gets called
+                $elementName = $this->getName();
+                if (isset($caller->_submitValues[$elementName])) {
+                    $value = $caller->_submitValues[$elementName];
+                    if (is_string($value) && get_magic_quotes_gpc() == 1) {
+                        $value = stripslashes($value);
+                    }
+                    $this->setValue($value);
                 }
                 break;
+            case 'setDefault':
+                // In form display, default value is always overidden by submitted value
+                $elementName = $this->getName();
+                if (isset($caller->_submitValues[$elementName])) {
+                    $value = $caller->_submitValues[$elementName];
+                    if (is_string($value) && get_magic_quotes_gpc() == 1) {
+                        $value = stripslashes($value);
+                    }
+                } else {
+                    if (count($caller->_submitValues) > 0) {
+                        // Form has been submitted and value was not set
+                        $value = null;
+                    } else {
+                        $value = $arg;
+                    }
+                }
+                $this->setValue($value);
+                break;
             case 'setConstant':
+                // In form display, constant value overides submitted value
+                // but submitted value is kept in _submitValues array
                 $this->setValue($arg);
                 break;
             case 'setGroupValue':
