@@ -917,8 +917,10 @@ class HTML_QuickForm extends HTML_Common {
         if ($element == '__ALL__') {
             $this->_submitValues = $this->_recursiveFilter($filterData);
         } else {
-            if (isset($this->_submitValues[$element])) {
-                $this->_submitValues[$element] = $this->_recursiveFilter($filterData, $this->_submitValues[$element]);
+            if ($this->elementExists($element)) {
+                if (isset($this->_submitValues[$element])) {
+                    $this->_submitValues[$element] = $this->_recursiveFilter($filterData, $this->_submitValues[$element]);
+                }
             } else {
                 return PEAR::raiseError(null, QUICKFORM_NONEXIST_ELEMENT, null, E_USER_WARNING, "Element '$element' does not exist in HTML_QuickForm::applyFilter()", 'HTML_QuickForm_Error', true);
             }
