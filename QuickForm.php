@@ -593,6 +593,9 @@ class HTML_QuickForm extends HTML_Common {
             $this->_elements[] =& $elementObject;
             $this->_elementIndex[$elementName] = end(array_keys($this->_elements));
         }
+        if ($this->_freezeAll) {
+            $elementObject->freeze();
+        }
 
         return $elementObject;
     } // end func addElement
@@ -657,6 +660,9 @@ class HTML_QuickForm extends HTML_Common {
             $this->_duplicateIndex[$elementName][] = $targetIdx;
         }
         $element->onQuickFormEvent('updateValue', null, $this);
+        if ($this->_freezeAll) {
+            $element->freeze();
+        }
         // If not done, the elements will appear in reverse order
         ksort($this->_elements);
         return $element;
@@ -1472,27 +1478,26 @@ class HTML_QuickForm extends HTML_Common {
      */
     function freeze($elementList=null)
     {
-        $elementFlag = false;
-        if (isset($elementList) && !is_array($elementList)) {
-            $elementList = split('[ ]*,[ ]*', $elementList);
-        } elseif (!isset($elementList)) {
+        if (!isset($elementList)) {
             $this->_freezeAll = true;
+            $elementList = array();
+        } else {
+            if (!is_array($elementList)) {
+                $elementList = preg_split('/[ ]*,[ ]*/', $elementList);
+            }
+            $elementList = array_flip($elementList);
         }
 
-        foreach ($this->_elements as $key => $val) {
-            // need to get the element by reference
-            $element = &$this->_elements[$key];
-            if (is_object($element)) {
-                $name = $element->getName();
-                if ($this->_freezeAll || in_array($name, $elementList)) {
-                    $elementFlag = true;
-                    $element->freeze();
-                }
+        foreach (array_keys($this->_elements) as $key) {
+            $name = $this->_elements[$key]->getName();
+            if ($this->_freezeAll || isset($elementList[$name])) {
+                $this->_elements[$key]->freeze();
+                unset($elementList[$name]);
             }
         }
 
-        if (!$elementFlag) {
-            return PEAR::raiseError(null, QUICKFORM_NONEXIST_ELEMENT, null, E_USER_WARNING, "Element '$element' does not exist in HTML_QuickForm::freeze()", 'HTML_QuickForm_Error', true);
+        if (!empty($elementList)) {
+            return PEAR::raiseError(null, QUICKFORM_NONEXIST_ELEMENT, null, E_USER_WARNING, "Nonexistant element(s): '" . implode("', '", array_keys($elementList)) . "' in HTML_QuickForm::freeze()", 'HTML_QuickForm_Error', true);
         }
         return true;
     } // end func freeze
@@ -1549,11 +1554,8 @@ class HTML_QuickForm extends HTML_Common {
         $renderer->startForm($this);
         foreach (array_keys($this->_elements) as $key) {
             $element =& $this->_elements[$key];
-            if ($this->_freezeAll) {
-                $element->freeze();
-            }
             $elementName = $element->getName();
-            $required    = ($this->isElementRequired($elementName) && $this->_freezeAll == false);
+            $required    = ($this->isElementRequired($elementName) && !$element->isFrozen());
             $error       = $this->getElementError($elementName);
             $element->accept($renderer, $required, $error);
         }
@@ -1614,7 +1616,7 @@ class HTML_QuickForm extends HTML_Common {
      */
     function getValidationScript()
     {
-        if (empty($this->_rules) || $this->_freezeAll || empty($this->_attributes['onsubmit'])) {
+        if (empty($this->_rules) || empty($this->_attributes['onsubmit'])) {
             return '';
         }
 
