@@ -22,88 +22,85 @@
 require_once("HTML/QuickForm/element.php");
 require_once("HTML/QuickForm/select.php");
 
-// Still some features to be implemented and commented.
-// Use with care. This is only EXPERIMENTAL.
-// API might change.
-
 /**
- * Class to dynamically create an dates in HTML SELECT fields
+ * Class to dynamically create HTML Select elements from a date
  *
- * @author       Adam Daniel <adaniel1@eesus.jnj.com>
  * @author       Bertrand Mansion <bmansion@mamasam.com>
- * @version      2.3
- * @since        PHP4.04pl1
  * @access       public
  */
 class HTML_QuickForm_date extends HTML_QuickForm_element
-{
+{   
     /**
-     * Type of the field
-     * @var       
-     * @since     1.3
-     * @access    public
-     */
-    var $type = "date";
-    
-    /**
-     * Contains the date values
-     *
+     * Contains the select objects
      * @var       array
-     * @since     1.0
      * @access    private
      */
     var $dateSelect = array();
     
     /**
-     * Default values of the SELECT
-     * 
-     * @var       string
-     * @since     1.0
+     * Default values of the SELECTs
+     * @var       array
      * @access    private
      */
-    var $_values = array();
+    var $_selectedDate = array();
     
     /**
      * Options in different languages
-     * 
-     * @var       string
-     * @since     1.0
+     * @var       array
      * @access    private
      */
-    var $options = array(
+    var $_options = array(
                         "en"    => array (
                             "weekdays_short"=> array ("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"),
                             "weekdays_long" => array ("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"),
                             "months_short"  => array ("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"),
-                            "months_long"   => array ("January", "February", "March", "April", "May", "June", "Juli", "August", "September", "October", "November", "December")
+                            "months_long"   => array ("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December")
                         ),
                         "de"    => array (
                             "weekdays_short"=> array ("Mon", "Di", "Mi", "Do", "Fr", "Sa", "So"),
                             "weekdays_long" => array ("Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"),
-                            "months_short"  => array ("Jan", "Feb", "M0/00rz", "April", "Mai", "Juni", "Juli", "Aug", "Sept", "Okt", "Nov", "Dez"),
-                            "months_long"   => array ("Januar", "Februar", "M0/00rz", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember")
+                            "months_short"  => array ("Jan", "Feb", "Marz", "April", "Mai", "Juni", "Juli", "Aug", "Sept", "Okt", "Nov", "Dez"),
+                            "months_long"   => array ("Januar", "Februar", "Marz", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember")
                         ),
                         "fr"    => array (
                             "weekdays_short"=> array ("Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"),
                             "weekdays_long" => array ("Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"),
-                            "months_short"  => array ("Jan"=>"01", "Fev"=>"02", "Mar"=>"03", "Avr"=>"04", "Mai"=>"05", "Jun"=>"06", "Jul"=>"07", "Aou"=>"08", "Sep"=>"09", "Oct"=>"10", "Nov"=>"11", "Dec"=>"12"),
-                            "months_long"   => array ("Janvier"=>"01", "Fevrier"=>"02", "Mars"=>"03", "Avril"=>"04", "Mai"=>"05", "Juin"=>"06", "Juillet"=>"07", "Aout"=>"08", "Septembre"=>"09", "Octobre"=>"10", "Novembre"=>"11", "Decembre"=>"12")
+                            "months_short"  => array ("Jan", "Fev", "Mar", "Avr", "Mai", "Jun", "Jul", "Aou", "Sep", "Oct", "Nov", "Dec"),
+                            "months_long"   => array ("Janvier", "Fevrier", "Mars", "Avril", "Mai", "Juin", "Juillet", "Aout", "Septembre", "Octobre", "Novembre", "Decembre")
                         ),              
                     );
                     
     /**
      * Default date language
-     * 
      * @var       string
-     * @since     1.0
-     * @access    private
+     * @access    public
      */
-    var $language = "en";
-    
+    var $language = 'en';
+
+    /**
+     * Default date format
+     * @var       string
+     * @access    public
+     */
+    var $format = 'dMY';
+
+    /**
+     * Default minimum year Arthur C. Clarke style
+     * @var       int
+     * @access    public
+     */
+    var $minYear = 2001;
+
+    /**
+     * Default maximum year Arthur C. Clarke style again
+     * @var       int
+     * @access    public
+     */
+    var $maxYear = 2010;
+
     /**
      * Frozen flag tells if element is frozen or not
-     * @var       
-     * @since     1.3
+     * @var       bool
      * @access    private
      */
     var $_flagFrozen = false;
@@ -115,131 +112,280 @@ class HTML_QuickForm_date extends HTML_QuickForm_element
      * @param     string    $value          (optional)Input field value
      * @param     mixed     $attributes     (optional)Either a typical HTML attribute string 
      *                                      or an associative array. Date format is passed along the attributes.
-     * @since     2.3
      * @access    public
      * @return    void
-     * @throws    
      */
-    function HTML_QuickForm_date ($elementName, $value=null, $attributes = array('format'=>'dMY','minyear'=>'1990','maxyear'=>'2020'))
+    function HTML_QuickForm_date($elementName=null, $elementLabel=null, $options=array(), $attributes=null)
     {
-        HTML_QuickForm_element::HTML_QuickForm_element($elementName, $value, $attributes);
-        $elementData = array("type"=>$this->_type, "name"=>$elementName);
-        $this->updateAttributes($elementData);
-        if (is_string($value)) {
-            $this->_values = explode("-",$value);
-        } else {
-            $this->_values = $value;
-        }
+        HTML_QuickForm_element::HTML_QuickForm_element($elementName, $elementLabel, $attributes);
+        $this->_persistantFreeze = true;
+        $this->_type = 'date';
+        $this->_setDefaults($options);
     } //end constructor
-    
+
     /**
-     * Date format parser
-     *
-     * @since     1.0
+     * sets the defaults options
+     * Current options are:
+     * - format
+     * - minYear
+     * - maxYear
+     * - language
+     * 
+     * @param     array    $options    array of options
+     * @access    private
+     * @return    void
+     */
+    function _setdefaults($options)
+    {
+        if (isset($options['format'])) {
+            $this->setFormat($options['format']);
+        }
+        if (isset($options['language'])) {
+            $this->setLanguage($options['language']);
+        }
+        if (isset($options['minYear'])) {
+            $this->setMinYear($options['minYear']);
+        }
+        if (isset($options['maxYear'])) {
+            $this->setMaxYear($options['maxYear']);
+        }
+    } // end func _setDefaults
+
+    /**
+     * Sets the input field name
+     * @param     string    $name   Input field name attribute
      * @access    public
      * @return    void
-     * @throws    
      */
-    function _parseFormat ()
+    function setName($name)
     {
-        $format = $this->_attributes["format"];
-        $length = strlen($format);
-        $minyear = $this->_attributes["minyear"];
-        $maxyear = $this->_attributes["maxyear"];
-        $elementName = $this->_attributes["name"];
-        for ($i=0;$i<$length;$i++) {
+        $this->updateAttributes(array('name'=>$name));
+    } //end func setName
+
+    /**
+     * Returns the element name
+     * @access    public
+     * @return    string
+     */
+    function getName()
+    {
+        return $this->getAttribute('name');
+    } //end func getName
+
+    /**
+     * Sets the date element format
+     * @access    public
+     * @return    void
+     */
+    function setFormat($format)
+    {
+        $this->format = $format;
+    } // end func setFormat
+
+    /**
+     * Sets the date element minimum year
+     * @access    public
+     * @return    void
+     */
+    function setMinYear($year)
+    {
+        $this->minYear = $year;
+    } // end func setMinYear
+
+    /**
+     * Sets the date element maximum year
+     * @access    public
+     * @return    void
+     */
+    function setMaxYear($year)
+    {
+        $this->maxYear = $year;
+    } // end func setMaxYear
+
+    /**
+     * Sets the default language for date
+     * @param     string    $language  At the moment only 'en', 'de', 'fr'
+     * @access    public
+     * @return    void
+     */
+    function setLanguage($language)
+    {
+        if (in_array($language, array_keys($this->_options))) {
+            $this->language = $language;
+        } else {
+            // use defaults (send your translation please)
+            $this->language = 'en';
+        }
+    } //end func setLanguage
+
+    /**
+     * Creates the select objects
+     * @access    public
+     * @return    
+     */
+    function _createSelects()
+    {
+        $length = strlen($this->format);
+        $elementName = $this->_attributes['name'];
+        $minYear = $this->minYear;
+        $maxYear = $this->maxYear;
+        
+        for ($i = 0; $i < $length; $i++) {
             unset($options);
             unset($j);
-            $sign = substr($format,$i,1);
+
+            $sign = substr($this->format, $i, 1);
+
             $selectName = $elementName."[$sign]";
-            $selectedValue = $this->_values[$i];
+            $selectedValue = (isset($this->_selectedDate[$sign])) ? $this->_selectedDate[$sign] : null;
+
             switch ($sign) {
                 case "D" :
-                    $options = $this->options[$this->language]["weekdays_short"];
-                    array_unshift($options , '--');
+                    $options = $this->_options[$this->language]["weekdays_short"];
+                    array_unshift($options , '');
                     unset($options[0]);
-                    $this->dateSelect[$i] = &new HTML_QuickForm_select($selectName);
-                    $this->dateSelect[$i]->load($options,$selectedValue);
+                    $this->dateSelect[$sign] = &new HTML_QuickForm_select($selectName);
+                    $this->dateSelect[$sign]->load($options, $selectedValue);
                     break;
                 case "d":
                     for ($j = 1; $j <= 31; $j++) 
                         $options[$j] = sprintf("%02d", $j);
-                    $this->dateSelect[$i] = &new HTML_QuickForm_select($selectName);
-                    $this->dateSelect[$i]->load($options,$selectedValue);
+                    $this->dateSelect[$sign] = &new HTML_QuickForm_select($selectName);
+                    $this->dateSelect[$sign]->load($options, $selectedValue);
                     break;
                 case "M" :
-                    $options = $this->options[$this->language]["months_short"];
-                    array_unshift($options , '--');
+                    $options = $this->_options[$this->language]["months_short"];
+                    array_unshift($options , '');
                     unset($options[0]);
-                    $this->dateSelect[$i] = &new HTML_QuickForm_select($selectName);
-                    $this->dateSelect[$i]->load($options,$selectedValue);
+                    $this->dateSelect[$sign] = &new HTML_QuickForm_select($selectName);
+                    $this->dateSelect[$sign]->load($options,$selectedValue);
                     break;
                 case "m" :
                     for ($j = 1; $j <= 12; $j++)
                         $options[$j] = sprintf("%02d", $j);
-                    $this->dateSelect[$i] =  &new HTML_QuickForm_select($selectName);
-                    $this->dateSelect[$i]->load($options,$selectedValue);
+                    $this->dateSelect[$sign] =  &new HTML_QuickForm_select($selectName);
+                    $this->dateSelect[$sign]->load($options,$selectedValue);
                     break;
                 case "F" :
-                    $options = $this->options[$this->language]["months_long"];
-                    array_unshift($options ,'--');
+                    $options = $this->_options[$this->language]["months_long"];
+                    array_unshift($options , '');
                     unset($options[0]);
-                    $this->dateSelect[$i] = &new HTML_QuickForm_select($selectName);
-                    $this->dateSelect[$i]->load($options,$selectedValue);
+                    $this->dateSelect[$sign] = &new HTML_QuickForm_select($selectName);
+                    $this->dateSelect[$sign]->load($options, $selectedValue);
                     break;
                 case "Y" :
-                    if ($minyear > $maxyear) {
-                        for ($j = $maxyear; $j <= $minyear; $j++)
+                    if ($minYear > $maxYear) {
+                        for ($j = $maxYear; $j <= $minYear; $j++)
                             $options[$j] = $j;
                     } else {
-                        for ($j = $minyear; $j <= $maxyear; $j++)
+                        for ($j = $minYear; $j <= $maxYear; $j++)
                             $options[$j] = $j;
                     }   
-                    $this->dateSelect[$i] = &new HTML_QuickForm_select($selectName);
-                    $this->dateSelect[$i]->load($options,$selectedValue);
+                    $this->dateSelect[$sign] = &new HTML_QuickForm_select($selectName);
+                    $this->dateSelect[$sign]->load($options, $selectedValue);
                     break;
+                default:
+                    $this->dateSelect[] = $sign;
             }
         }
-
-    }
+    } // end func _createSelects
 
     /**
-     * Sets the default language for date
-     * 
-     * @param     string    $language  At the moment only 'en', 'de', 'fr'
-     * @since     1.0
+     * Sets the selected date
+     * @param     mixed     an associative array corresponding to the format you chose
+     *                      for your date or an unix epoch timestamp
      * @access    public
      * @return    void
-     * @throws    
      */
-    function setLanguage($language)
+    function setSelectedDate($date)
     {
-        if (!empty($language)) {
-            $this->language = $language;
-        } 
-    } //end func setLanguage
-    
+        if (is_array($date)) {
+            $this->_selectedDate = $date;
+        } elseif (is_int($date)) {
+            // might be a unix epoch, then we fill all possible values
+            $arr = explode('-', date('D-d-M-m-F-Y', $date));
+            $this->_selectedDate = array('D' => $arr[0],
+                                         'd' => $arr[1],
+                                         'M' => $arr[2],
+                                         'm' => $arr[3],
+                                         'F' => $arr[4],
+                                         'Y' => $arr[5]);
+        }
+    } // end func setSelectedDate
+
     /**
      * Returns the SELECT in HTML
-     *
-     * @since     1.0
      * @access    public
      * @return    string
      * @throws    
      */
     function toHtml()
     {
-        $this->_parseFormat();
-        $tabs = $this->_getTabs();
-        $strHtml='';
+        $this->_createSelects();
+        $strHtml = '';
         foreach ($this->dateSelect as $key => $val) {
             if ($this->_flagFrozen) {
-                $strHtml .= $this->dateSelect[$key]->getFrozen();
+                if (is_string($this->dateSelect[$key])) {
+                    $strHtml .= $this->dateSelect[$key];
+                } else {
+                    $strHtml .= $this->dateSelect[$key]->getFrozen();
+                }
             } else {
-                $strHtml .= $this->dateSelect[$key]->toHtml();
+                if (is_string($this->dateSelect[$key])) {
+                    $strHtml .= $this->dateSelect[$key];
+                } else {
+                    $strHtml .= $this->dateSelect[$key]->toHtml();
+                }
             }
         }
         return $strHtml;
     } // end func toHtml
-}
+
+    /**
+     * Called by HTML_QuickForm whenever form event is made on this element
+     *
+     * @param     string    $event  Name of event
+     * @param     mixed     $arg    event arguments
+     * @param     object    $caller calling object
+     * @since     1.0
+     * @access    public
+     * @return    void
+     * @throws    
+     */
+    function onQuickFormEvent($event, $arg, &$caller)
+    {
+        global $caller;
+        // make it global so we can access it in any of the other methods if needed
+        $caller =& $callerLocal;
+        $className = get_class($this);
+        switch ($event) {
+            case 'addElement':
+            case 'createElement':
+                $this->$className($arg[0], $arg[1], $arg[2], $arg[3], $arg[4]);
+                // need to set the submit value in case setDefault never gets called
+                $elementName = $this->getName();
+                if (isset($caller->_submitValues[$elementName])) {
+                    $date = $caller->_submitValues[$elementName];
+                    $this->setSelectedDate($date);
+                }
+                break;
+            case 'setDefault':
+                // In form display, default value is always overidden by submitted value
+                $elementName = $this->getName();
+                if (isset($caller->_submitValues[$elementName])) {
+                    $date = $caller->_submitValues[$elementName];
+                } else {
+                    $date = $arg;
+                }
+                $this->setSelectedDate($date);
+                break;
+            case 'setConstant':
+                // In form display, constant value overides submitted value
+                // but submitted value is kept in _submitValues array
+                $this->setSelectedDate($arg);
+                break;
+        }
+        return true;
+    } // end func onQuickFormEvent
+} // end class HTML_QuickForm_date
 ?>
