@@ -645,17 +645,20 @@ class HTML_QuickForm extends HTML_Common {
     // {{{ getSubmitValue()
 
     /**
-     * Returns the elements value after filters
+     * Returns the elements value after submit and filter
      *
      * @param     string     $element    Element name
      * @since     2.0
      * @access    public
-     * @return    element value
+     * @return    submitted element value or null if not set
      * @throws    
      */    
     function getSubmitValue($element)
     {
-        return $this->_submitValues[$element];
+        if (isset($this->_submitValues[$element])) {
+            return $this->_submitValues[$element];
+        }
+        return null;
     } // end func getSubmitValue
 
     // }}}
