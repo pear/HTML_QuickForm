@@ -884,12 +884,7 @@ class HTML_QuickForm extends HTML_Common {
                       'reset'       => $reset);
 
         if ($type != 'function' && $this->getElementType($element) == 'group') {
-            $group =& $this->getElement($element);
-            if ($type == 'required' && $group->getGroupType() == 'radio') {
-                $rule['howmany'] = 1;
-            } else {
-                $rule['howmany'] = 0;
-            }
+            $rule['howmany'] = 1;
         }
         $this->_rules[$element][] = $rule;
     } // end func addRule
