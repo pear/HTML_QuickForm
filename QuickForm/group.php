@@ -280,7 +280,12 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
      */
     function setElementTemplate($template)
     {
-        $this->_elementTemplate = $template;
+        if (!empty($this->_name)) {
+            $renderer =& HTML_QuickForm::defaultRenderer();
+            $renderer->setGroupElementTemplate($template, $this->_name);
+        } else {
+            $this->_elementTemplate = $template;
+        }
     } //end func setElementTemplate
 
     // }}}
@@ -296,7 +301,12 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
      */
     function setGroupTemplate($template)
     {
-        $this->_groupTemplate = $template;
+        if (!empty($this->_name)) {
+            $renderer =& HTML_QuickForm::defaultRenderer();
+            $renderer->setGroupTemplate($template, $this->_name);
+        } else {
+            $this->_groupTemplate = $template;
+        }
     } //end func setGroupTemplate
 
     // }}}

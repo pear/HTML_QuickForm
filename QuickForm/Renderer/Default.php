@@ -77,6 +77,24 @@ class HTML_QuickForm_Renderer_Default extends HTML_QuickForm_Renderer
     var $_templates = array();
 
    /**
+    * Array containing the templates for group wraps.
+    * 
+    * These templates are wrapped around group elements and groups' own
+    * templates wrap around them. This is set by setGroupTemplate().
+    * 
+    * @var      array
+    * @access   private
+    */
+    var $_groupWraps = array();
+
+   /**
+    * Array containing the templates for elements within groups
+    * @var      array
+    * @access   private
+    */
+    var $_groupTemplates = array();
+
+   /**
     * True if we are inside a group 
     * @var      bool
     * @access   private
@@ -103,6 +121,13 @@ class HTML_QuickForm_Renderer_Default extends HTML_QuickForm_Renderer
     * @access   private
     */
     var $_groupWrap = '';
+
+   /**
+    * HTML for the current group
+    * @var      string
+    * @access   private
+    */
+    var $_groupTemplate = '';
     
    /**
     * Constructor
@@ -278,9 +303,19 @@ class HTML_QuickForm_Renderer_Default extends HTML_QuickForm_Renderer
     */
     function startGroup(&$group, $required, $error)
     {
-        $this->_groupWrap = $this->_prepareTemplate($group->getName(), $group->getLabel(), $required, $error);
+        $name = $group->getName();
+        $this->_groupTemplate = $this->_prepareTemplate($name, $group->getLabel(), $required, $error);
         $this->_groupElements = array();
-        $this->_groupElementTemplate = $group->_elementTemplate;
+        if (!empty($this->_groupTemplates[$name])) {
+            $this->_groupElementTemplate = $this->_groupTemplates[$name];
+        } else {
+            $this->_groupElementTemplate = $group->_elementTemplate;
+        }
+        if (!empty($this->_groupWraps[$name])) {
+            $this->_groupWrap = $this->_groupWraps[$name];
+        } else {
+            $this->_groupWrap = $group->_groupTemplate;
+        }
         $this->_inGroup = true;
     } // end func startGroup
 
@@ -293,8 +328,8 @@ class HTML_QuickForm_Renderer_Default extends HTML_QuickForm_Renderer
     */
     function finishGroup(&$group)
     {
-        if (!empty($group->_groupTemplate)) {
-            $html = str_replace('{content}', implode('', $this->_groupElements), $group->_groupTemplate);
+        if (!empty($this->_groupWrap)) {
+            $html = str_replace('{content}', implode('', $this->_groupElements), $this->_groupWrap);
         } else {
             $separator = $group->_seperator;
             if (is_array($separator)) {
@@ -311,7 +346,7 @@ class HTML_QuickForm_Renderer_Default extends HTML_QuickForm_Renderer
                 $html = implode((string)$separator, $this->_groupElements);
             }
         }
-        $this->_html   .= str_replace('{element}', $html, $this->_groupWrap);
+        $this->_html   .= str_replace('{element}', $html, $this->_groupTemplate);
         $this->_inGroup = false;
     } // end func finishGroup
 
@@ -331,6 +366,37 @@ class HTML_QuickForm_Renderer_Default extends HTML_QuickForm_Renderer
             $this->_templates[$element] = $html;
         }
     } // end func setElementTemplate
+
+
+    /**
+     * Sets template for a group wrapper 
+     * 
+     * This template is contained within a group-as-element template 
+     * set via setTemplate() and contains group's element templates, set
+     * via setGroupElementTemplate()
+     *
+     * @param       string      The HTML surrounding group elements
+     * @param       string      Name of the group to apply template for
+     * @access      public
+     * @return      void
+     */
+    function setGroupTemplate($html, $group)
+    {
+        $this->_groupWraps[$group] = $html;
+    } // end func setGroupTemplate
+
+    /**
+     * Sets element template for elements within a group
+     *
+     * @param       string      The HTML surrounding an element 
+     * @param       string      Name of the group to apply template for
+     * @access      public
+     * @return      void
+     */
+    function setGroupElementTemplate($html, $group)
+    {
+        $this->_groupTemplates[$group] = $html;
+    } // end func setGroupElementTemplate
 
     /**
      * Sets header template
