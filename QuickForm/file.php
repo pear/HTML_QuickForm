@@ -179,8 +179,6 @@ class HTML_QuickForm_file extends HTML_QuickForm_input
             case 'createElement':
                 $className = get_class($this);
                 $this->$className($arg[0], $arg[1], $arg[2]);
-                $caller->updateAttributes(array('method' => 'post', 'enctype' => 'multipart/form-data'));
-                $caller->setMaxFileSize();
                 break;
         }
         return true;
