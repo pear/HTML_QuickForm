@@ -306,14 +306,21 @@ class HTML_QuickForm_select extends HTML_QuickForm_element {
      */
     function addOption($text, $value, $attributes=null)
     {
-        $attributes = $this->_parseAttributes($attributes);
-        if ($this->getAttribute('selected') && !in_array($value, $this->_values)) {
-            $this->_values[] = $value;
-            array_unique($this->_values);
+        if (null === $attributes) {
+            $attributes = array('value' => $value);
+        } else {
+            $attributes = $this->_parseAttributes($attributes);
+            if (isset($attributes['selected']) || null !== ($this->_getAttrKey('selected', $attributes))) {
+                // the 'selected' attribute will be set in toHtml()
+                $this->_removeAttr('selected', $attributes);
+                if (!in_array($value, $this->_values)) {
+                    $this->_values[] = $value;
+                    array_unique($this->_values);
+                }
+            }
+            $this->_updateAttrArray($attributes, array('value' => $value));
         }
-        $attr = array('value'=>$value);
-        $this->_updateAttrArray($attributes, $attr);
-        $this->_options[] = array('text'=>$text, 'attr'=>$attributes);
+        $this->_options[] = array('text' => $text, 'attr' => $attributes);
     } // end func addOption
     
     // }}}
@@ -468,39 +475,35 @@ class HTML_QuickForm_select extends HTML_QuickForm_element {
     function toHtml()
     {
         if ($this->_flagFrozen) {
-            $strHtml = $this->getFrozenHtml();
+            return $this->getFrozenHtml();
         } else {
-            $tabs = $this->_getTabs();
-
+            $tabs    = $this->_getTabs();
             $strHtml = '';
 
             if ($this->getComment() != '') {
                 $strHtml .= $tabs . '<!-- ' . $this->getComment() . " //-->\n";
             }
 
-            if ($this->getMultiple()) {
-                $attrString = preg_replace('/name="([^"]*)"/', 'name="'.$this->getName().'[]"', $this->_getAttrString($this->_attributes));
-            } else {
+            if (!$this->getMultiple()) {
                 $attrString = $this->_getAttrString($this->_attributes);
+            } else {
+                $myName = $this->getName();
+                $this->setName($myName . '[]');
+                $attrString = $this->_getAttrString($this->_attributes);
+                $this->setName($myName);
             }
             $strHtml .= $tabs . '<select' . $attrString . ">\n";
 
-            for ($counter=0; $counter < count($this->_options); $counter++) {
-                $value = $this->_options[$counter]["attr"]["value"];
-                $attrString = $this->_getAttrString($this->_options[$counter]['attr']);
-
-                if (is_array($this->_values) && in_array($value, $this->_values)) {
-                    $attrString = " selected=\"selected\"" . $attrString;
+            foreach ($this->_options as $option) {
+                if (is_array($this->_values) && in_array($option['attr']['value'], $this->_values)) {
+                    $this->_updateAttrArray($option['attr'], array('selected'));
                 }
-
-                $strHtml .=
-                    $tabs . "\t<option" . $attrString . '>' .
-                    $this->_options[$counter]["text"] . "</option>\n";
+                $strHtml .= $tabs . "\t<option" . $this->_getAttrString($option['attr']) . '>' .
+                            $option['text'] . "</option>\n";
             }
 
-            $strHtml .= $tabs . '</select>';
+            return $strHtml . $tabs . '</select>';
         }
-        return $strHtml;
     } //end func toHtml
     
     // }}}
