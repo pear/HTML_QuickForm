@@ -213,6 +213,7 @@ class HTML_QuickForm extends HTML_Common {
             'email'         =>array('regex', '/^.+\@(\[?)[a-zA-Z0-9\-\.]+\.([a-zA-Z]{2,3}|[0-9]{1,3})(\]?)$/'),
             'lettersonly'   =>array('regex', '/^[a-zA-Z]*$/'),
             'alphanumeric'  =>array('regex', '/^[a-zA-Z0-9]*$/'),
+            'numeric'       =>array('regex', '/(^-?\d\d*\.\d*$)|(^-?\d\d*$)|(^-?\.\d\d*$)/'),
             'uploadedfile'  =>array('function', '_ruleIsUploadedFile'),
             'maxfilesize'   =>array('function', '_ruleCheckMaxFileSizeRule'),
             'mimetype'      =>array('function', '_ruleCheckMimeTypeRule'),
@@ -478,11 +479,11 @@ class HTML_QuickForm extends HTML_Common {
         include_once $includeFile;
         $elementObject = new $className();
         foreach (range(0, 4) as $i) {
-        	if (!isset($args[$i])) {
-        		$args[$i] = null;
-        	}
+            if (!isset($args[$i])) {
+                $args[$i] = null;
+            }
         }
-        $err = $elementObject->onQuickFormEvent($event, $args, &$this);
+        $err = $elementObject->onQuickFormEvent($event, $args, $this);
         if ($err != true) {
             return $err;
         }
@@ -514,10 +515,10 @@ class HTML_QuickForm extends HTML_Common {
         $elementName = $elementObject->getName();
         $elementLabel = $elementObject->getLabel();
         if (isset($this->_defaultValues[$elementName])) {
-            $elementObject->onQuickFormEvent('setDefault', $this->_defaultValues[$elementName], &$this);
+            $elementObject->onQuickFormEvent('setDefault', $this->_defaultValues[$elementName], $this);
         }
         if (isset($this->_constantValues[$elementName])) {
-            $elementObject->onQuickFormEvent('setConstant', $this->_constantValues[$elementName], &$this);
+            $elementObject->onQuickFormEvent('setConstant', $this->_constantValues[$elementName], $this);
         }
         $index = count($this->_elements);
         $this->_elementIndex[$elementName] = $index;
@@ -776,31 +777,51 @@ class HTML_QuickForm extends HTML_Common {
     {
         $filterData = $this->_registeredFilters[$type];
         if ($element == '__ALL__') {
-            foreach ($this->_submitValues as $element=>$value) {
-                if (method_exists($this, $filterData)) {
-                    $this->_submitValues[$element] = $this->$filterData(
-                        $this->_submitValues[$element]);
-                } else {
-                    $this->_submitValues[$element] = $filterData(
-                        $this->_submitValues[$element]);
-                }
-            }
+            $this->_submitValues = $this->_arrayMap($filterData);
         } else {
             if (isset($this->_submitValues[$element])) {
-                if (method_exists($this, $filterData)) {
-                    $this->_submitValues[$element] = $this->$filterData(
-                        $this->_submitValues[$element]);
-                } elseif (function_exists($filterData)) {
-                    $this->_submitValues[$element] = $filterData(
-                        $this->_submitValues[$element]);
-                } else {
-                    return PEAR::raiseError(null, QUICKFORM_INVALID_FILTER, null, E_USER_WARNING, "Invalid filter function '$type' in QuickForm::applyFilter()", 'HTML_QuickForm_Error', true);
-                }
+                $this->_submitValues[$element] = $this->_arrayMap($filterData, $this->_submitValues[$element]);
             } else {
                 return PEAR::raiseError(null, QUICKFORM_NONEXIST_ELEMENT, null, E_USER_WARNING, "Element '$element' does not exist in HTML_QuickForm::applyFilter()", 'HTML_QuickForm_Error', true);
             }
         }
     } // end func applyFilter
+
+    // }}}
+    // {{{ _arrayMap()
+
+    /**
+     * Recursively apply a filter function
+     *
+     * @param     string   $filter    filter to apply
+     * @param     mixed    $value     submitted values
+     * @since     2.0
+     * @access    private
+     * @return    cleaned values
+     * @throws    
+     */
+    function _arrayMap($filter, $value = null)
+    {
+        if (!isset($value)) {
+            $value = $this->_submitValues;
+        }
+        if (is_array($value)) {
+            $cleanValues = array();
+            foreach ($value as $k => $v) {
+                $cleanValues[$k] = $this->_arrayMap($filter, $value[$k]);
+            }
+            return $cleanValues;
+        } else {
+            if (method_exists($this, $filter)) {
+                return $this->$filter($value);
+            } elseif (function_exists($filter)) {
+                return $filter($value);
+            } else {
+                return PEAR::raiseError(null, QUICKFORM_INVALID_FILTER, null, E_USER_WARNING, "Invalid filter function '$type' used in QuickForm::_arrayMap()", 'HTML_QuickForm_Error', true);
+            }
+            return $this->$filter($value);
+        }
+    } // end func _arrayMap
 
     // }}}
     // {{{ _wrapElement()
@@ -876,14 +897,6 @@ class HTML_QuickForm extends HTML_Common {
         $tabs = $this->_getTabs();
         $html = str_replace('{content}', $content, $html);
         $html = str_replace("\n", "\n$tabs\t", $html);
-        /*
-        $html .= 
-            "\n$tabs<table border=\"0\">\n" .
-            "$tabs\t<form".$this->_getAttrString($this->_attributes).">" .
-            $content .
-            "\n$tabs\t</form>\n" .
-            "$tabs</table>";
-        */
         return $html;
     } // end func _wrapForm
 
@@ -966,21 +979,22 @@ class HTML_QuickForm extends HTML_Common {
      */
     function _buildRules()
     {
-        $html = "";
+        $html = '';
         $tabs = $this->_getTabs();
-        for (reset($this->_rules); $elementName=key($this->_rules); next($this->_rules)) {
+        $test = array();
+        for (reset($this->_rules); $elementName = key($this->_rules); next($this->_rules)) {
             $rules = pos($this->_rules);
             foreach ($rules as $rule) {
                 $type       = $rule['type'];
+                // error out if the rule is not registered
+                if (!$this->isRuleRegistered($type)) {
+                    return PEAR::raiseError(null, QUICKFORM_INVALID_RULE, null, E_USER_WARNING, "Rule '$type' is not registered in HTML_QuickForm::addRule()", 'HTML_QuickForm_Error', true);
+                }
                 $validation = $rule['validation'];
                 $message    = $rule['message'];
                 $format     = $rule['format'];
                 $reset      = $rule['reset'];
                 $ruleData = $this->_registeredRules[$type];
-                // error out if the rule does not exist
-                if (empty($ruleData)) {
-                    return PEAR::raiseError(null, QUICKFORM_INVALID_RULE, null, E_USER_WARNING, "Tried to register rulle of type '$type'", 'HTML_QuickForm_Error', true);
-                }
                 if ($validation == 'client') {
                     $tmp_reset = ($reset) ? "$tabs\t\tfield.value = field.defaultValue;\n" : '';
                     switch ($ruleData[0]) {
@@ -1283,10 +1297,14 @@ class HTML_QuickForm extends HTML_Common {
             }
             foreach ($rules as $rule) {
                 $type = $format = $message = null;
-                $type = $rule["type"];
-                $format = $rule["format"];
-                $message = $rule["message"];
-                $validation = $rule["validation"];
+                $type = $rule['type'];
+                // error out if the rule is not registered
+                if (!$this->isRuleRegistered($type)) {
+                    return PEAR::raiseError(null, QUICKFORM_INVALID_RULE, null, E_USER_WARNING, "Rule '$type' is not registered in HTML_QuickForm::validate()", 'HTML_QuickForm_Error', true);
+                }
+                $format = $rule['format'];
+                $message = $rule['message'];
+                $validation = $rule['validation'];
                 $ruleData = $this->_registeredRules[$type];
                 switch ($ruleData[0]) {
                     case 'regex':
