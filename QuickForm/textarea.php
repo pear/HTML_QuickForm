@@ -225,7 +225,7 @@ class HTML_QuickForm_textarea extends HTML_QuickForm_element {
         if ($this->getAttribute('wrap') == 'off') {
             $html = "$tabs<pre>".$value."</pre>\n";
         } else {
-            $html = nl2br(str_replace(' ', '&nbsp;', $value))."\n";
+            $html = nl2br($value)."\n";
         }
         if ($this->_persistantFreeze) {
             $html .= $tabs.'<input type="hidden" name="' . 
