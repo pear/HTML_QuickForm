@@ -211,6 +211,7 @@ class HTML_QuickForm extends HTML_Common {
             'rangelength'   =>array('regex', '/^(\s|\S){%data%}$/'),
             'regex'         =>array('regex', '%data%'),
             'email'         =>array('regex', '/^.+\@(\[?)[a-zA-Z0-9\-\.]+\.([a-zA-Z]{2,3}|[0-9]{1,3})(\]?)$/'),
+            'emailorblank'  =>array('regex', '/(^$|^.+\@(\[?)[a-zA-Z0-9\-\.]+\.([a-zA-Z]{2,3}|[0-9]{1,3})(\]?)$)/'),
             'lettersonly'   =>array('regex', '/^[a-zA-Z]*$/'),
             'alphanumeric'  =>array('regex', '/^[a-zA-Z0-9]*$/'),
             'numeric'       =>array('regex', '/(^-?\d\d*\.\d*$)|(^-?\d\d*$)|(^-?\.\d\d*$)/'),
