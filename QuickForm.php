@@ -1830,10 +1830,11 @@ class HTML_QuickForm extends HTML_Common {
      * it will return a value set by setValue()/setDefaults()/setConstants()
      * if submitted value does not exist for the given element.
      *
+     * @param  string   Name of an element
      * @access public
      * @return mixed
      */
-    function exportValue($elementName)
+    function exportValue($element)
     {
         // XXX: do _duplicateIndex processing
         if (isset($this->_elementIndex[$element])) {

@@ -56,15 +56,7 @@ class HTML_QuickForm_advcheckbox extends HTML_QuickForm_checkbox {
      * @var boolean
      * @access private
      */
-    var $_defaultValue = null;
-
-    /**
-     * The constant value
-     *
-     * @var boolean
-     * @access private
-     */
-    var $_constantValue = null;
+    var $_currentValue = null;
 
     // }}}
     // {{{ constructor
@@ -86,18 +78,8 @@ class HTML_QuickForm_advcheckbox extends HTML_QuickForm_checkbox {
      */
     function HTML_QuickForm_advcheckbox($elementName=null, $elementLabel=null, $text=null, $attributes=null, $values=null)
     {
+        $this->HTML_QuickForm_checkbox($elementName, $elementLabel, $text, $attributes);
         $this->setValues($values);
-        HTML_QuickForm_input::HTML_QuickForm_input($elementName, $elementLabel, $attributes);
-        $this->_persistantFreeze = true;
-        $this->_text = $text;
-        $this->setType('checkbox');
-        $this->updateAttributes(array('value'=>1));
-        if (isset($this->_attributes['onclick'])) {
-            $this->_attributes['onclick'] .= $this->getOnclickJs($elementName);
-        }
-        else {
-            $this->updateAttributes(array('onclick' => $this->getOnclickJs($elementName)));
-        }
     } //end constructor
     
     // }}}
@@ -150,20 +132,48 @@ class HTML_QuickForm_advcheckbox extends HTML_QuickForm_checkbox {
     {
         if (empty($values)) {
             // give it default checkbox behavior
-            $vals[0] = '';
-            $vals[1] = 1;
-        }
-        elseif (is_scalar($values)) {
+            $this->_values = array('', 1);
+        } elseif (is_scalar($values)) {
             // if it's string, then assume the value to 
             // be passed is for when the element is checked
-            $vals[0] =  '';
-            $vals[1] = $values;
+            $this->_values = array('', $values);
+        } else {
+            $this->_values = $values;
         }
-        else {
-            $vals = $values;
-        }
+        $this->setChecked($this->_currentValue == $this->_values[1]);
+    }
 
-        $this->_values = $vals;
+    // }}}
+    // {{{ setValue()
+
+   /**
+    * Sets the element's value
+    * 
+    * @param    mixed   Element's value
+    * @access   public
+    */
+    function setValue($value)
+    {
+        $this->setChecked(isset($this->_values[1]) && $value == $this->_values[1]);
+        $this->_currentValue = $value;
+    }
+
+    // }}}
+    // {{{ getValue()
+
+   /**
+    * Returns the element's value
+    *
+    * @access   public
+    * @return   mixed
+    */
+    function getValue()
+    {
+        if (is_array($this->_values)) {
+            return $this->_values[$this->getChecked()? 1: 0];
+        } else {
+            return null;
+        }
     }
 
     // }}}
@@ -179,35 +189,29 @@ class HTML_QuickForm_advcheckbox extends HTML_QuickForm_checkbox {
     function toHtml()
     {
         $oldName = $this->getName();
-        $newName = $this->getPrivateName($oldName); 
-        // set it to unchecked to begin with and let it be set
-        // by GET/POST, defaultValue, or constantValue
-        // run it through the input constructor again with the new name
-        HTML_QuickForm_input::HTML_QuickForm_input($newName, $this->getLabel(), $this->getAttributes());
-        $vars = array_merge($_GET, $_POST);
-        if (isset($vars[$oldName]) && $vars[$oldName] == $this->_values[1]) {
-            $this->setChecked(true);
-        }
-        elseif ($this->_defaultValue == $this->_values[1]) {
-            $this->setChecked(true);
-        }
-        else {
-            $this->setChecked(false);
-        }
-
-        if ($this->_constantValue == $this->_values[1]) {
-            $this->setChecked(true);
-        }
-        elseif ($this->_constantValue === $this->_values[0]) {
-            $this->setChecked(false);
-        }
-
-        // set hidden element's default value
-        $tmp_value = $this->_values[(int) $this->getChecked()];
-
-        return HTML_QuickForm_input::toHtml() . $this->_text . '<input type="hidden" name="'.$oldName.'" value="'.$tmp_value.'" />';
+        $oldJs   = $this->getAttribute('onclick');
+        $this->updateAttributes(array(
+            'name'    => $this->getPrivateName($oldName),
+            'onclick' => $oldJs . $this->getOnclickJs($oldName)
+        ));
+        $html = parent::toHtml() . '<input type="hidden" name="' . $oldName . 
+                '" value="' . $this->_values[$this->getChecked()? 1: 0] . '" />';
+        // revert the name and JS, in case this method will be called once more
+        $this->updateAttributes(array('name' => $oldName, 'onclick' => $oldJs));
+        return $html;
     } //end func toHtml
     
+    // }}}
+    // {{{ getFrozenHtml()
+
+   /**
+    * Do not append hidden element, this is done in toHtml() 
+    */
+    function getFrozenHtml()
+    {
+        return $this->getChecked()? '<tt>[x]</tt>': '<tt>[ ]</tt>';
+    }
+
     // }}}
     // {{{ onQuickFormEvent()
 
@@ -233,16 +237,9 @@ class HTML_QuickForm_advcheckbox extends HTML_QuickForm_checkbox {
                     $value = $this->_findValue($caller->_submitValues);
                     if (null === $value) {
                         $value = $this->_findValue($caller->_defaultValues);
-                        if (null !== $value && empty($caller->_submitValues)) {
-                            $this->_defaultValue = $value;
-                        }
                     }
-                } else {
-                    $this->_constantValue = $value;
                 }
-                if (null !== $value) {
-                    $this->setChecked($value);
-                }
+                $this->setValue($value);
                 break;
             default:
                 parent::onQuickFormEvent($event, $arg, $caller);
@@ -250,6 +247,23 @@ class HTML_QuickForm_advcheckbox extends HTML_QuickForm_checkbox {
         return true;
     } // end func onQuickFormLoad
 
+    // }}}
+    // {{{ exportValue()
+
+   /**
+    * This element has a value even if it is not checked, thus we override
+    * checkbox's behaviour here
+    */
+    function exportValue(&$submitValues, $assoc)
+    {
+        $value = $this->_findValue($submitValues);
+        if (null === $value) {
+            $value = $this->getValue();
+        } elseif (is_array($this->_values) && ($value != $this->_values[0]) && ($value != $this->_values[1])) {
+            $value = null;
+        }
+        return $this->_prepareValue($value, $assoc);
+    }
     // }}}
 } //end class HTML_QuickForm_advcheckbox
 ?>

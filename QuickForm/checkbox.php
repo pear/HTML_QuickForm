@@ -211,31 +211,6 @@ class HTML_QuickForm_checkbox extends HTML_QuickForm_input {
     } // end func getValue
 
     // }}}
-    // {{{ _findValue()
-
-    /**
-     * Tries to find the element value from the submitted values array
-     * 
-     * @since     2.7
-     * @access    private
-     * @return    string
-     * @throws    
-     */
-    function _findValue(&$values)
-    {
-        if (empty($values)) return;
-        $elementName = $this->getName();
-        if (isset($values[$elementName])) {
-            $value = $values[$elementName];
-            return $value;
-        }
-        $myVar = str_replace(array(']', '['), array('', "']['"), $elementName);
-        $myVar = "['".$myVar."']";
-        $value = eval("return (isset(\$values$myVar)) ? \$values$myVar : null;");
-        return $value;
-    } //end func _findValue
-
-    // }}}
     // {{{ onQuickFormEvent()
 
     /**
