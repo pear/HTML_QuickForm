@@ -331,9 +331,7 @@ class HTML_QuickForm_file extends HTML_QuickForm_input
             foreach ($props as $prop) {
                 $code .= "    \$value['{$prop}'] = \$_FILES['{$base}']['{$prop}']{$idx};\n";
             }
-            $code .= "    return \$value;\n}\n";
-            echo $code;
-            return eval($code);
+            return eval($code . "    return \$value;\n}\n");
         } else {
             return null;
         }
