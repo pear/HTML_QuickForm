@@ -450,7 +450,7 @@ class HTML_QuickForm_element extends HTML_Common {
                 return array($name => $value);
             } else {
                 $valueAry = array();
-                $myIndex  = "['" . str_replace(array(']', '['), array('', "']['"), $elementName) . "']";
+                $myIndex  = "['" . str_replace(array(']', '['), array('', "']['"), $name) . "']";
                 eval("\$valueAry$myIndex = \$value;");
                 return $valueAry;
             }

@@ -208,6 +208,7 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
                 default:
                     $v = $element->getValue();
             }
+            // XXX: this doesn't always work as expected, have to fix later
             if (null !== $v) {
                 $elementName = $element->getName();
                 if (is_null($elementName)) {
@@ -484,6 +485,54 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
     } // end func accept
 
     // }}}
+    // {{{ exportValue()
 
+   /**
+    * As usual, to get the group's value we access its elements and call
+    * their exportValue() methods
+    */
+    function exportValue(&$submitValues, $assoc = false)
+    {
+        $value = null;
+        foreach (array_keys($this->_elements) as $key) {
+            $elementName = $this->_elements[$key]->getName();
+            if ($this->_appendName) {
+                if (is_null($elementName)) {
+                    $this->_elements[$key]->setName($this->getName());
+                } elseif ('' == $elementName) {
+                    $this->_elements[$key]->setName($this->getName() . '[' . $key . ']');
+                } else {
+                    $this->_elements[$key]->setName($this->getName() . '[' . $elementName . ']');
+                }
+            }
+            $v = $this->_elements[$key]->exportValue($submitValues, $assoc);
+            if ($this->_appendName) {
+                $this->_elements[$key]->setName($elementName);
+            }
+            if (null !== $v) {
+                // Make $value an array, we will use it like one
+                if (null === $value) {
+                    $value = array();
+                }
+                if ($assoc) {
+                    // just like HTML_QuickForm::exportValues()
+                    $value = @array_merge_recursive($value, $v);
+                } else {
+                    // just like getValue(), but should work OK every time here
+                    if (is_null($elementName)) {
+                        $value = $v;
+                    } elseif ('' == $elementName) {
+                        $value[] = $v;
+                    } else {
+                        $value[$elementName] = $v;
+                    }
+                }
+            }
+        }
+        // do not pass the value through _prepareValue, we took care of this already
+        return $value;
+    }
+
+    // }}}
 } //end class HTML_QuickForm_group
 ?>
