@@ -447,7 +447,7 @@ class HTML_QuickForm_select extends HTML_QuickForm_element {
             case (get_class($options) == "db_result" || is_subclass_of($options, "db_result")):
                 return $this->loadDbResult($options, $param1, $param2, $param3);
                 break;
-            case (is_string($options) || is_subclass_of($options, "db_common") && !empty($options)):
+            case (is_string($options) && !empty($options) || is_subclass_of($options, "db_common")):
                 return $this->loadQuery($options, $param1, $param2, $param3, $param4);
                 break;
         }
