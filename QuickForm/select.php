@@ -429,7 +429,7 @@ class HTML_QuickForm_select extends HTML_QuickForm_element {
     {
         $name = $this->getName();
         $value = $this->getValue();
-        $html = "<input type=\"hidden\" name=\"$name\" value=\"$value\" \>\n";
+        $html = "<input type=\"hidden\" name=\"$name\" value=\"$value\" />\n";
         return $html;
     } //end func getHidden
 
