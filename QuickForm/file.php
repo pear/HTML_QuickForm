@@ -253,7 +253,7 @@ class HTML_QuickForm_file extends HTML_QuickForm_input
      */
     function _ruleCheckMaxFileSize($elementValue, $maxSize)
     {
-        if (!$this->_ruleIsUploadedFile($elementValue)) {
+        if (!HTML_QuickForm_file::_ruleIsUploadedFile($elementValue)) {
             return true;
         }
         return ($maxSize >= @filesize($elementValue['tmp_name']));
@@ -272,7 +272,7 @@ class HTML_QuickForm_file extends HTML_QuickForm_input
      */
     function _ruleCheckMimeType($elementValue, $mimeType)
     {
-        if (!$this->_ruleIsUploadedFile($elementValue)) {
+        if (!HTML_QuickForm_file::_ruleIsUploadedFile($elementValue)) {
             return true;
         }
         if (is_array($mimeType)) {
@@ -294,7 +294,7 @@ class HTML_QuickForm_file extends HTML_QuickForm_input
      */
     function _ruleCheckFileName($elementValue, $regex)
     {
-        if (!$this->_ruleIsUploadedFile($elementValue)) {
+        if (!HTML_QuickForm_file::_ruleIsUploadedFile($elementValue)) {
             return true;
         }
         return preg_match($regex, $elementValue['name']);
