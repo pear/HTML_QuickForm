@@ -153,7 +153,7 @@ class HTML_QuickForm_advcheckbox extends HTML_QuickForm_checkbox {
             $vals[0] = '';
             $vals[1] = 1;
         }
-        elseif (is_string($values)) {
+        elseif (!is_array($values)) {
             // if it's string, then assume the value to 
             // be passed is for when the element is checked
             $vals[0] =  '';
