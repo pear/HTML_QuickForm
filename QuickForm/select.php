@@ -357,8 +357,7 @@ class HTML_QuickForm_select extends HTML_QuickForm_element {
      */
     function loadDbResult(&$result, $textCol=null, $valueCol=null, $values=null)
     {
-        if (!is_object($result) || (get_class($result) != "db_result" && 
-            is_subclass_of($result, "db_result"))) {
+        if (!is_object($result) || !is_a($result, 'db_result')) {
             return PEAR::raiseError('Argument 1 of HTML_Select::loadDbResult is not a valid DB_result');
         }
         if (isset($values)) {
@@ -444,7 +443,7 @@ class HTML_QuickForm_select extends HTML_QuickForm_element {
             case is_array($options):
                 return $this->loadArray($options, $param1);
                 break;
-            case (get_class($options) == "db_result" || is_subclass_of($options, "db_result")):
+            case (is_a($options, 'db_result')):
                 return $this->loadDbResult($options, $param1, $param2, $param3);
                 break;
             case (is_string($options) && !empty($options) || is_subclass_of($options, "db_common")):

@@ -1189,11 +1189,11 @@ class HTML_QuickForm extends HTML_Common {
         include_once 'HTML/QuickForm/RuleRegistry.php';
         $ruleName = false;
         if (is_object($name) && is_a($name, 'html_quickform_rule')) {
-            $ruleName = !empty($name->name)? $name->name: get_class($name);
+            $ruleName = !empty($name->name)? $name->name: strtolower(get_class($name));
         } elseif (is_string($name) && class_exists($name)) {
             $parent = strtolower($name);
             do {
-                if ('html_quickform_rule' == $parent) {
+                if ('html_quickform_rule' == strtolower($parent)) {
                     $ruleName = strtolower($name);
                     break;
                 }
@@ -1723,7 +1723,7 @@ class HTML_QuickForm extends HTML_Common {
      */
     function isError($value)
     {
-        return (is_object($value) && (get_class($value) == 'html_quickform_error' || is_subclass_of($value, 'html_quickform_error')));
+        return (is_object($value) && is_a($value, 'html_quickform_error'));
     } // end func isError
 
     // }}}
