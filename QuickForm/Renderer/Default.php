@@ -304,19 +304,11 @@ class HTML_QuickForm_Renderer_Default extends HTML_QuickForm_Renderer
     function startGroup(&$group, $required, $error)
     {
         $name = $group->getName();
-        $this->_groupTemplate = $this->_prepareTemplate($name, $group->getLabel(), $required, $error);
-        $this->_groupElements = array();
-        if (!empty($this->_groupTemplates[$name])) {
-            $this->_groupElementTemplate = $this->_groupTemplates[$name];
-        } else {
-            $this->_groupElementTemplate = $group->_elementTemplate;
-        }
-        if (!empty($this->_groupWraps[$name])) {
-            $this->_groupWrap = $this->_groupWraps[$name];
-        } else {
-            $this->_groupWrap = $group->_groupTemplate;
-        }
-        $this->_inGroup = true;
+        $this->_groupTemplate        = $this->_prepareTemplate($name, $group->getLabel(), $required, $error);
+        $this->_groupElementTemplate = empty($this->_groupTemplates[$name])? '': $this->_groupTemplates[$name];
+        $this->_groupWrap            = empty($this->_groupWraps[$name])? '': $this->_groupWraps[$name];
+        $this->_groupElements        = array();
+        $this->_inGroup              = true;
     } // end func startGroup
 
    /**

@@ -67,22 +67,6 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
     var $_separator = null;
 
     /**
-     * Group template
-     * @var       string
-     * @since     2.5
-     * @access    private
-     */
-    var $_groupTemplate = '';
-
-    /**
-     * Grouped element template
-     * @var       string
-     * @since     2.5
-     * @access    private
-     */
-    var $_elementTemplate = '';
-
-    /**
      * Required elements in this group
      * @var       array
      * @since     2.5
