@@ -200,7 +200,8 @@ class HTML_QuickForm_textarea extends HTML_QuickForm_element {
             $tabs = $this->_getTabs();
             $html = "$tabs<textarea".$this->_getAttrString($this->_attributes).">";
             // because we wrap the form later we don't want the text indented
-            $html .= preg_replace("/(\r\n|\n|\r)/", '&#010;', $this->_value);
+            $value = htmlspecialchars($this->_value);
+            $html .= preg_replace("/(\r\n|\n|\r)/", '&#010;', $value);
             $html .= "</textarea>";
         }
         return $html;
