@@ -252,6 +252,13 @@ class HTML_QuickForm_date extends HTML_QuickForm_group
                             $this->_options['minYear'] > $this->_options['maxYear']? -1: 1
                         );
                         break;
+                    case 'y':
+                        $options = $this->_createOptionList(
+                            substr($this->_options['minYear'], -2),
+                            substr($this->_options['maxYear'], -2), 
+                            $this->_options['minYear'] > $this->_options['maxYear']? -1: 1
+                        );
+                        break;
                     case 'h':
                         $options = $this->_createOptionList(1, 12);
                         break;
@@ -325,7 +332,7 @@ class HTML_QuickForm_date extends HTML_QuickForm_group
     {
         if (!is_array($value)) {
             // might be a unix epoch, then we fill all possible values
-            $arr = explode('-', date('w-d-n-Y-h-H-i-s-a-A', (int)$value));
+            $arr = explode('-', date('w-d-n-Y-y-h-H-i-s-a-A', (int)$value));
             $value = array(
                 'D' => $arr[0],
                 'l' => $arr[0],
@@ -334,6 +341,7 @@ class HTML_QuickForm_date extends HTML_QuickForm_group
                 'm' => $arr[2],
                 'F' => $arr[2],
                 'Y' => $arr[3],
+                'y' => $arr[3],
                 'h' => $arr[4],
                 'H' => $arr[5],
                 'i' => $arr[6],
