@@ -56,17 +56,20 @@ Features:
 
 - Fixed bug with selected values in select element
 - Fixed bug when form method was changed from get to post by adding a file element
+- addRule() and addGroupRule() now return a PEAR error when the rule is not registered
+- &lt;label&gt; tags are no more generated for frozen checkboxes and radios
 
 * Changes
 
-- Added new renderer for Smarty (Thomas Schulz)
-- toArray() returns more info on the form (Thomas Schulz)
-- Default templates are XHTML compliant (Klaus Guenther, Alexey Borzov)
+- Added new Array-based renderer for Smarty, with examples (Thomas Schulz)
+- Array renderer generates more info on the form, possibility to set styles for elements (Thomas Schulz)
+- Example of usage for Array renderer with Smarty (Thomas Schulz)
+- Better XHTML compliance for Default renderer output (Klaus Guenther, Alexey Borzov)
 - Added possibility to have multiple labels for one element (Jon Wood)
-- Added support for multiple labels in ITStatic and ITDynamic renderers (Alexey, Bertrand)
+- Added support for multiple labels in ITStatic and ITDynamic renderers (Jon Wood, Alexey, Bertrand)
 
 - Added client-side validation parameter to addGroupRule() (Bertrand Mansion)
-- addRule() and addGroupRule() now return a PEAR error when the rule is not registered (Bertrand Mansion)
+- Modified validation logic for group elements when 'howmany' parameter is set (Alexey Borzov)
 
 - getSubmitValues() can now return uploaded files (Markus Wolff, Alexey Borzov)
 - Added new methods set/getMaxFileSize (Tommy Ipsen)
