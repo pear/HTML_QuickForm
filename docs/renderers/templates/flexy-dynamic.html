@@ -31,14 +31,7 @@
 </head> 
 <body> 
  
-
-{if:form.javascript} 
-<script language="javascript"> 
-//<![CDATA[
-    {form.javascript} 
-//]]>
-</script> 
-{end:} 
+{form.javascript:h}
 
 {form.outputHeader():h}
 <table border="0" class="maintable" align="center"> 

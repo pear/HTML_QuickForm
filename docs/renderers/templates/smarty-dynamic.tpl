@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<!--  $Id: smarty-dynamic.tpl,v 1.3 2003-05-21 13:27:59 avb Exp $ -->
+<!--  $Id: smarty-dynamic.tpl,v 1.4 2004-06-25 19:39:55 ths Exp $ -->
 <html>
 <head>
     <title>Smarty template for Array renderer</title>
@@ -33,13 +33,7 @@
 </head>
 <body>
 
-{if $form.javascript}
-<script language="javascript">
-<!-- 
-    {$form.javascript}
-//-->
-</script>
-{/if}
+{$form.javascript}
 
 <table border="0" class="maintable" align="center">
     <form{$form.attributes}>{$form.hidden}
