@@ -356,10 +356,10 @@ class HTML_QuickForm_date extends HTML_QuickForm_element
                     $options = $this->_createNumericOptionList(0, 23);
                     break;
                 case 'i':
-                    $options = $this->_createNumericOptionList(1, 59);
+                    $options = $this->_createNumericOptionList(0, 59);
                     break;
                 case 's':
-                    $options = $this->_createNumericOptionList(1, 59);
+                    $options = $this->_createNumericOptionList(0, 59);
                     break;
                 case 'a':
                     $options = array('am' => 'am', 'pm' => 'pm');
@@ -504,6 +504,48 @@ class HTML_QuickForm_date extends HTML_QuickForm_element
         }
         return true;
     } // end func onQuickFormEvent
+
+    // }}}
+    // {{{ setValue()
+
+    function setValue($value)
+    {
+        $this->setSelectedDate($value);
+    }
+
+    // }}}
+    // {{{ getValue()
+
+    function getValue()
+    {
+        return $this->_selectedDate;
+    }
+
+    // }}}
+    // {{{ exportValue()
+
+    function exportValue(&$submitValues, $assoc = false)
+    {
+        $this->_createSelects();
+        $value = null;
+        foreach (array_keys($this->dateSelect) as $key) {
+            // selects have string keys, separators have numeric ones
+            if (is_string($key)) {
+                $v = $this->dateSelect[$key]->exportValue($submitValues, $assoc);
+                if (null !== $v) {
+                    if (null === $value) {
+                        $value = array();
+                    }
+                    if ($assoc) {
+                        $value = @array_merge_recursive($value, $v);
+                    } else {
+                        $value[$key] = $v;
+                    }
+                }
+            }
+        }
+        return $value;
+    }
 
     // }}}
 } // end class HTML_QuickForm_date
