@@ -343,6 +343,9 @@ class HTML_QuickForm extends HTML_Common {
     /**
      * Sets a datasource object for this form object
      *
+     * Datasource default and constant values will feed the QuickForm object if
+     * the datasource implements defaultValues() and constantValues() methods.
+     *
      * @param     object   $datasource          datasource object implementing the informal datasource protocol
      * @param     mixed    $defaultsFilter      string or array of filter(s) to apply to default values
      * @param     mixed    $constantsFilter     string or array of filter(s) to apply to constants values
@@ -355,7 +358,7 @@ class HTML_QuickForm extends HTML_Common {
         if (is_object($datasource)) {
             $this->_datasource =& $datasource;
             if (is_callable(array($datasource, 'defaultValues'))) {
-                $this->setDefaultValues($datasource->defaultValues($this), $defaultsFilter);
+                $this->setDefaults($datasource->defaultValues($this), $defaultsFilter);
             }
             if (is_callable(array($datasource, 'constantValues'))) {
                 $this->setConstants($datasource->constantValues($this), $constantsFilter);
