@@ -27,6 +27,63 @@ require_once 'HTML/QuickForm/Renderer.php';
  *
  * Based on old toArray() code.
  * 
+ * The form array structure is the following:
+ * array(
+ *   'validationScript' => 'javascript for client-side validation',
+ *   'atributes'        => 'attributes for <form> tag',
+ *   'requiredNote      => 'note about the required elements',
+ *   // if there were some validation errors:
+ *   'errors' => array(
+ *     '1st element name' => 'Error for the 1st element',
+ *     ...
+ *     'nth element name' => 'Error for the nth element'
+ *   ),
+ *   // if there are no headers in the form:
+ *   'elements' => array(
+ *     element_1,
+ *     ...
+ *     element_N
+ *   )
+ *   // if there are headers in the form:
+ *   'sections' => array(
+ *     array(
+ *       'header'   => 'Header text for the first header',
+ *       'elements' => array(
+ *          element_1,
+ *          ...
+ *          element_K1
+ *       )
+ *     ),
+ *     ...
+ *     array(
+ *       'header'   => 'Header text for the Mth header',
+ *       'elements' => array(
+ *          element_1,
+ *          ...
+ *          element_KM
+ *       )
+ *     )
+ *   )
+ * );
+ * 
+ * where element_i is an array of the form:
+ * array(
+ *   'name'      => 'element name',
+ *   'value'     => 'element value',
+ *   'type'      => 'type of the element',
+ *   'frozen'    => 'whether element is frozen',
+ *   'label'     => 'label for the element',
+ *   'required'  => 'whether element is required',
+ *   // if element is not a group
+ *   'html'      => 'HTML for the element'
+ *   // if element is a group
+ *   'elements'  => array(
+ *     element_1,
+ *     ...
+ *     element_N
+ *   )
+ * );
+ * 
  * @access public
  */
 class HTML_QuickForm_Renderer_Array extends HTML_QuickForm_Renderer
@@ -178,21 +235,11 @@ class HTML_QuickForm_Renderer_Array extends HTML_QuickForm_Renderer
     {
         // where should we put this element...
         if (is_array($this->_currentGroup) && ('group' != $elAry['type'])) {
-            $ary =& $this->_currentGroup['elements'];
+            $this->_currentGroup['elements'][] = $elAry;
         } elseif (isset($this->_currentSection)) {
-            $ary =& $this->_ary['sections'][$this->_currentSection]['elements'];
+            $this->_ary['sections'][$this->_currentSection]['elements'][] = $elAry;
         } else {
-            $ary =& $this->_ary['elements'];
-        }
-        // should we create an array of such elements?
-        if (isset($ary[$elAry['name']])) {
-            if (isset($ary[$elAry['name']][0])) {
-                $ary[$elAry['name']][] = $elAry;
-            } else {
-                $ary[$elAry['name']] = array($ary[$elAry['name']], $elAry);
-            }
-        } else {
-            $ary[$elAry['name']] = $elAry;
+            $this->_ary['elements'][] = $elAry;
         }
     }
 }
