@@ -46,6 +46,99 @@ Features:
     </maintainer>
   </maintainers>
   <release>
+    <version>3.0Beta2</version>
+    <date>2003-05-13</date>
+    <state>beta</state>
+    <notes>
+- PHP 4.2+ is now required for file uploads
+
+* Bugfixes
+
+- Fixed bug with selected values in select element
+- Fixed bug when form method was changed from get to post by adding a file element
+
+* Changes
+
+- Added new renderer for Smarty (Thomas Schulz)
+- toArray() returns more info on the form (Thomas Schulz)
+- Default templates are XHTML compliant (Klaus Guenther, Alexey Borzov)
+- Added possibility to have multiple labels for one element (Jon Wood)
+- Added support for multiple labels in ITStatic and ITDynamic renderers (Alexey, Bertrand)
+
+- Added client-side validation parameter to addGroupRule() (Bertrand Mansion)
+- addRule() and addGroupRule() now return a PEAR error when the rule is not registered (Bertrand Mansion)
+
+- getSubmitValues() can now return uploaded files (Markus Wolff, Alexey Borzov)
+- Added new methods set/getMaxFileSize (Tommy Ipsen)
+
+- Removed unwanted linefeeds in frozen checkboxes (Thomas Schulz)
+- Added Spanish translation for date element (The PhP_KiD)
+- Added a setValue() method to static element (Jon Wood)
+    </notes>
+    <filelist>
+      <dir name="/" baseinstalldir="HTML">
+        <file role="php">QuickForm.php</file>
+        <dir name="QuickForm">
+          <file role="php">advcheckbox.php</file>
+          <file role="php">button.php</file>
+          <file role="php">checkbox.php</file>
+          <file role="php">date.php</file>
+          <file role="php">element.php</file>
+          <file role="php">file.php</file>
+          <file role="php">group.php</file>
+          <file role="php">header.php</file>
+          <file role="php">hidden.php</file>
+          <file role="php">hiddenselect.php</file>
+          <file role="php">html.php</file>
+          <file role="php">image.php</file>
+          <file role="php">input.php</file>
+          <file role="php">link.php</file>
+          <file role="php">password.php</file>
+          <file role="php">radio.php</file>
+          <file role="php">reset.php</file>
+          <file role="php">select.php</file>
+          <file role="php">static.php</file>
+          <file role="php">submit.php</file>
+          <file role="php">text.php</file>
+          <file role="php">textarea.php</file>
+          <file role="php">Renderer.php</file>
+          <dir name="Renderer">
+            <file role="php">Array.php</file>
+            <file role="php">ArraySmarty.php</file>
+            <file role="php">Default.php</file>
+            <file role="php">ITDynamic.php</file>
+            <file role="php">ITStatic.php</file>
+          </dir>
+        </dir>
+        <dir name="docs">
+          <file role="doc">QuickForm_example.php</file>
+          <file role="doc">QuickForm_example2.php</file>
+          <file role="doc">QuickForm_example3.php</file>
+          <file role="doc">QuickForm_example4.php</file>
+          <file role="doc">QuickForm_example5.php</file>
+          <file role="doc">QuickForm_example6.php</file>
+          <file role="doc">QuickForm_example7.php</file>
+          <dir name="renderers">
+            <file role="doc">ITDynamic_example.php</file>
+            <file role="doc">ITDynamic_example2.php</file>
+            <file role="doc">ITStatic_example.php</file>
+            <file role="doc">SmartyDynamic_example.php</file>
+            <file role="doc">SmartyStatic_example.php</file>
+            <file role="doc">it-dynamic-2.html</file>
+            <file role="doc">it-dynamic.html</file>
+            <file role="doc">it-static.html</file>
+            <file role="doc">labels-default.php</file>
+          </dir>
+        </dir>
+      </dir>
+    </filelist>
+    <deps>
+       <dep type="php" rel="ge" version="4.2"/>
+       <dep type="pkg" rel="ge" version="1.1">HTML_Common</dep>
+    </deps>
+  </release>
+  <changelog>
+  <release>
     <version>3.0Beta1</version>
     <date>2003-04-17</date>
     <state>beta</state>
@@ -117,66 +210,7 @@ Deprecated features:
 - Fix bug when setting attributes in date element (Bertrand Mansion)
 - Removed method display(), exists in parent class (Bertrand Mansion)
     </notes>
-    <filelist>
-      <dir name="/" baseinstalldir="HTML">
-        <file role="php">QuickForm.php</file>
-        <dir name="QuickForm">
-          <file role="php">advcheckbox.php</file>
-          <file role="php">button.php</file>
-          <file role="php">checkbox.php</file>
-          <file role="php">element.php</file>
-          <file role="php">date.php</file>
-          <file role="php">file.php</file>
-          <file role="php">group.php</file>
-          <file role="php">header.php</file>
-          <file role="php">hidden.php</file>
-          <file role="php">html.php</file>
-          <file role="php">hiddenselect.php</file>
-          <file role="php">image.php</file>
-          <file role="php">input.php</file>
-          <file role="php">link.php</file>
-          <file role="php">password.php</file>
-          <file role="php">radio.php</file>
-          <file role="php">reset.php</file>
-          <file role="php">select.php</file>
-          <file role="php">static.php</file>
-          <file role="php">submit.php</file>
-          <file role="php">text.php</file>
-          <file role="php">textarea.php</file>
-          <file role="php">Renderer.php</file>
-          <dir name="Renderer">
-            <file role="php">Array.php</file>
-            <file role="php">Default.php</file>
-            <file role="php">ITDynamic.php</file>
-            <file role="php">ITStatic.php</file>
-          </dir>
-        </dir>
-        <dir name="docs">
-          <file role="doc">QuickForm_example.php</file>
-          <file role="doc">QuickForm_example2.php</file>
-          <file role="doc">QuickForm_example3.php</file>
-          <file role="doc">QuickForm_example4.php</file>
-          <file role="doc">QuickForm_example5.php</file>
-          <file role="doc">QuickForm_example6.php</file>
-          <file role="doc">QuickForm_example7.php</file>
-          <dir name="renderers">
-            <file role="doc">ITDynamic_example.php</file>
-            <file role="doc">ITDynamic_example2.php</file>
-            <file role="doc">ITStatic_example.php</file>
-            <file role="doc">SmartyDynamic_example.php</file>
-            <file role="doc">it-dynamic-2.html</file>
-            <file role="doc">it-dynamic.html</file>
-            <file role="doc">it-static.html</file>
-            <file role="doc">smarty-dynamic.html</file>
-          </dir>
-        </dir>
-      </dir>
-    </filelist>
-    <deps>
-       <dep type="pkg" rel="ge" version="1.1">HTML_Common</dep>
-    </deps>
   </release>
-  <changelog>
   <release>
     <version>2.10</version>
     <date>2003-03-07</date>
