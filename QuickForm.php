@@ -39,7 +39,8 @@ $GLOBALS['HTML_QUICKFORM_ELEMENT_TYPES'] =
             'text'          =>array('HTML/QuickForm/text.php','HTML_QuickForm_text'),
             'textarea'      =>array('HTML/QuickForm/textarea.php','HTML_QuickForm_textarea'),
             'link'          =>array('HTML/QuickForm/link.php','HTML_QuickForm_link'),
-            'advcheckbox'   =>array('HTML/QuickForm/advcheckbox.php','HTML_QuickForm_advcheckbox')
+            'advcheckbox'   =>array('HTML/QuickForm/advcheckbox.php','HTML_QuickForm_advcheckbox'),
+            'date'   		=>array('HTML/QuickForm/date.php','HTML_QuickForm_date')
         );
 
 // {{{ error codes
@@ -553,7 +554,7 @@ class HTML_QuickForm extends HTML_Common {
      * @return   index of element 
      * @access   public
      */
-    function addElement($element)
+    function &addElement($element)
     {
         if (is_object($element) && is_subclass_of($element, 'html_quickform_element')) {
            $elementObject = &$element;
@@ -575,12 +576,12 @@ class HTML_QuickForm extends HTML_Common {
         if (isset($this->_constantValues[$elementName])) {
             $elementObject->onQuickFormEvent('setConstant', $this->_constantValues[$elementName], $this);
         }
-        $this->_elements[] = $elementObject;
+        $this->_elements[] =& $elementObject;
         end($this->_elements);
         $index = key($this->_elements);
         $this->_elementIndex[$elementName] = $index;
 
-        return $index;
+        return $elementObject;
     } // end func addElement
     
     // }}}
@@ -2139,5 +2140,5 @@ class HTML_QuickForm_Error extends PEAR_Error {
     }
 
     // }}}
-}
+} // end class HTML_QuickForm_Error
 ?>
