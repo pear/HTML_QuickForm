@@ -256,8 +256,11 @@ class HTML_QuickForm_checkbox extends HTML_QuickForm_input {
                 // default values are overriden by submitted
                 $value = $this->_findValue($caller->_constantValues);
                 if (null === $value) {
-                    $value = $this->_findValue($caller->_submitValues);
-                    if (null === $value) {
+                    // if no boxes were checked, then there is no value in the array
+                    // yet we don't want to display default value in this case
+                    if (isset($caller->_submitValues) && 0 < count($caller->_submitValues)) {
+                        $value = $this->_findValue($caller->_submitValues);
+                    } else {
                         $value = $this->_findValue($caller->_defaultValues);
                     }
                 }
