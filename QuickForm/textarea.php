@@ -19,7 +19,7 @@
 //
 // $Id$
 
-require_once("HTML/QuickForm/Elements/element.php");
+require_once("HTML/QuickForm/element.php");
 
 /**
  * HTML class for a textarea type field
@@ -167,9 +167,10 @@ class HTML_QuickForm_textarea extends HTML_QuickForm_element {
             $html = $this->getFrozenHtml();
         } else {
             $tabs = $this->_getTabs();
-            $html = "\n$tabs<TEXTAREA".$this->_getAttrString($this->_attributes).">";
-            $html .= $this->_value;
-            $html .= "</TEXTAREA>";
+            $html = "\n$tabs<textarea".$this->_getAttrString($this->_attributes).">";
+            // because we wrap the form later we don't want the text indented
+            $html .= preg_replace("/(\r\n|\n|\r)/", '&#010;', $this->_value);
+            $html .= "</textarea>";
         }
         return $html;
     } //end func toHtml
@@ -184,7 +185,7 @@ class HTML_QuickForm_textarea extends HTML_QuickForm_element {
      */
     function getFrozenHtml()
     {
-        $html = "<PRE>$this->_value</PRE>";
+        $html = "<pre>$this->_value</pre>";
         return $html;
     } //end func getFrozenHtml
 
