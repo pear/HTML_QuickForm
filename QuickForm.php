@@ -24,19 +24,19 @@ require_once("HTML/Common.php");
 
 $GLOBALS['HTML_QUICKFORM_ELEMENT_TYPES'] = 
         array(
-            'group'     =>array('HTML/QuickForm/Elements/group.php','HTML_QuickForm_group'),
-            'hidden'    =>array('HTML/QuickForm/Elements/hidden.php','HTML_QuickForm_hidden'),
-            'reset'     =>array('HTML/QuickForm/Elements/reset.php','HTML_QuickForm_reset'),
-            'checkbox'  =>array('HTML/QuickForm/Elements/checkbox.php','HTML_QuickForm_checkbox'),
-            'file'      =>array('HTML/QuickForm/Elements/file.php','HTML_QuickForm_file'),
-            'image'     =>array('HTML/QuickForm/Elements/image.php','HTML_QuickForm_image'),
-            'password'  =>array('HTML/QuickForm/Elements/password.php','HTML_QuickForm_password'),
-            'radio'     =>array('HTML/QuickForm/Elements/radio.php','HTML_QuickForm_radio'),
-            'button'    =>array('HTML/QuickForm/Elements/button.php','HTML_QuickForm_button'),
-            'submit'    =>array('HTML/QuickForm/Elements/submit.php','HTML_QuickForm_submit'),
-            'select'    =>array('HTML/QuickForm/Elements/select.php','HTML_QuickForm_select'),
-            'text'      =>array('HTML/QuickForm/Elements/text.php','HTML_QuickForm_text'),
-            'textarea'  =>array('HTML/QuickForm/Elements/textarea.php','HTML_QuickForm_textarea')
+            'group'     =>array('HTML/QuickForm/group.php','HTML_QuickForm_group'),
+            'hidden'    =>array('HTML/QuickForm/hidden.php','HTML_QuickForm_hidden'),
+            'reset'     =>array('HTML/QuickForm/reset.php','HTML_QuickForm_reset'),
+            'checkbox'  =>array('HTML/QuickForm/checkbox.php','HTML_QuickForm_checkbox'),
+            'file'      =>array('HTML/QuickForm/file.php','HTML_QuickForm_file'),
+            'image'     =>array('HTML/QuickForm/image.php','HTML_QuickForm_image'),
+            'password'  =>array('HTML/QuickForm/password.php','HTML_QuickForm_password'),
+            'radio'     =>array('HTML/QuickForm/radio.php','HTML_QuickForm_radio'),
+            'button'    =>array('HTML/QuickForm/button.php','HTML_QuickForm_button'),
+            'submit'    =>array('HTML/QuickForm/submit.php','HTML_QuickForm_submit'),
+            'select'    =>array('HTML/QuickForm/select.php','HTML_QuickForm_select'),
+            'text'      =>array('HTML/QuickForm/text.php','HTML_QuickForm_text'),
+            'textarea'  =>array('HTML/QuickForm/textarea.php','HTML_QuickForm_textarea')
         );
 
 // {{{ error codes
