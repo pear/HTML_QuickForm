@@ -85,7 +85,13 @@ class HTML_QuickForm_Renderer_ArraySmarty extends HTML_QuickForm_Renderer_Array
     * Current element index
     * @var integer
     */
-    var $_elementIdx;
+    var $_elementIdx = 0;
+
+   /**
+    * If elements have been added with the same name
+    * @var array
+    */
+    var $_duplicateElements = array();
 
    /**
     * The current element index inside a group
@@ -118,6 +124,20 @@ class HTML_QuickForm_Renderer_ArraySmarty extends HTML_QuickForm_Renderer_Array
         $this->_tpl =& $tpl;
     } // end constructor
 
+
+    function startForm(&$form)
+    {
+        parent::startForm($form);
+
+        $this->_formName = $form->getAttribute('name');
+
+        if (count($form->_duplicateIndex) > 0) {
+            // Take care of duplicate elements
+            foreach ($form->_duplicateIndex as $elementName => $indexes) {
+                $this->_duplicateElements[$elementName] = 0;
+            }
+        }
+    } // end func startForm
 
     function renderHeader(&$header)
     {
@@ -165,13 +185,43 @@ class HTML_QuickForm_Renderer_ArraySmarty extends HTML_QuickForm_Renderer_Array
         
         // create a simple element key
         $ret['key'] = $ret['name'];
-        if (strstr($ret['key'], '[')) {
-            preg_match('/\\[([^]]*)\\]/', $ret['key'], $matches);
-            $ret['key'] = $matches[1];
-            if (empty($ret['key'])) {
-                $ret['key'] = $this->_groupElementIdx++;
+
+        // grouped elements
+        if (strstr($ret['key'], '[') or $this->_currentGroup) {
+            // TODO: this should scale...
+            preg_match('/([^]]*)\\[([^]]*)\\]/', $ret['key'], $matches);
+            // pseudo group element
+            if (empty($this->_currentGroup)) {
+                if ($matches[2] != '') {
+                    $newret['key'] = $matches[1];
+                    $newret[$matches[2]] = $ret;
+                    $ret = $newret;
+                } else {
+                    $ret['key'] = $matches[1];
+                }
+            // real group element
+            } elseif (empty($matches[2])) {
+                if ($ret['type'] == 'radio') {
+                    $ret['key'] = $ret['value'];
+                } else {
+                    $ret['key'] = $this->_groupElementIdx++;
+                }
+            } else {
+                $ret['key'] = $matches[2];
             }
-        } elseif (empty($ret['key'])) {
+        // element is a duplicate
+        } elseif (isset($this->_duplicateElements[$ret['key']])) {
+            $newret['key'] = $ret['key'];
+            if ($ret['type'] == 'radio') {
+                $subkey = $ret['value'];
+            } else {
+                $subkey = intval($this->_duplicateElements[$ret['key']]);
+            }
+            $newret[$subkey] = $ret;
+            $ret = $newret;
+            $this->_duplicateElements[$ret['key']]++;
+        // element has no name
+        } elseif ($ret['key'] == '') {
             $ret['key'] = 'element_' . $this->_elementIdx;
         }
         $this->_elementIdx++;
@@ -193,6 +243,8 @@ class HTML_QuickForm_Renderer_ArraySmarty extends HTML_QuickForm_Renderer_Array
         // where should we put this element...
         if (is_array($this->_currentGroup) && ('group' != $elAry['type'])) {
             $this->_currentGroup[$key] = $elAry;
+        } elseif (isset($this->_ary[$key])) {
+            $this->_ary[$key] = $this->_ary[$key] + $elAry;
         } else {
             $this->_ary[$key] = $elAry;
         }
