@@ -681,7 +681,22 @@ class HTML_QuickForm extends HTML_Common {
     function &getElementValue($element)
     {
         if (isset($this->_elementIndex[$element])) {
-            return $this->_elements[$this->_elementIndex[$element]]->getValue();
+            $value = $this->_elements[$this->_elementIndex[$element]]->getValue();
+            if (isset($this->_duplicateIndex[$element])) {
+                foreach ($this->_duplicateIndex[$element] as $index) {
+                    $v = $this->_elements[$index]->getValue();
+                    if (null !== $v) {
+                        if (is_null($value)) {
+                            $value = $v;
+                        } elseif(!is_array($value)) {
+                            $value = array($value, $v);
+                        } else {
+                            $value[] = $v;
+                        }
+                    }
+                }
+            }
+            return $value;
         } else {
             return PEAR::raiseError(null, QUICKFORM_NONEXIST_ELEMENT, null, E_USER_WARNING, "Element '$element' does not exist in HTML_QuickForm::getElementValue()", 'HTML_QuickForm_Error', true);
         }
@@ -1774,15 +1789,16 @@ class HTML_QuickForm extends HTML_Common {
     // {{{ getAttributesString()
 
     /**
-     * Returns the HTML attributes of the form
+     * Returns the HTML attributes of the form (DEPRECATED)
      *
      * @since     2.0
      * @access    public
      * @return    string
+     * @deprecated  Use HTML_Common::getAttributes(true)
      */
     function getAttributesString()
     {
-        return $this->_getAttrString($this->_attributes);
+        return $this->getAttributes(true);
     } // end func getAttributesString
 
     // }}}
@@ -1837,9 +1853,23 @@ class HTML_QuickForm extends HTML_Common {
      */
     function exportValue($element)
     {
-        // XXX: do _duplicateIndex processing
         if (isset($this->_elementIndex[$element])) {
-            return $this->_elements[$this->_elementIndex[$element]]->exportValue($this->_submitValues, false);
+            $value = $this->_elements[$this->_elementIndex[$element]]->exportValue($this->_submitValues, false);
+            if (isset($this->_duplicateIndex[$element])) {
+                foreach ($this->_duplicateIndex[$element] as $index) {
+                    $v = $this->_elements[$index]->exportValue($this->_submitValues, false);
+                    if (null !== $v) {
+                        if (is_null($value)) {
+                            $value = $v;
+                        } elseif(!is_array($value)) {
+                            $value = array($value, $v);
+                        } else {
+                            $value[] = $v;
+                        }
+                    }
+                }
+            }
+            return $value;
         } else {
             return PEAR::raiseError(null, QUICKFORM_NONEXIST_ELEMENT, null, E_USER_WARNING, "Element '$element' does not exist in HTML_QuickForm::getElementValue()", 'HTML_QuickForm_Error', true);
         }

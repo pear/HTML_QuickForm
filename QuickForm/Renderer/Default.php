@@ -177,7 +177,7 @@ class HTML_QuickForm_Renderer_Default extends HTML_QuickForm_Renderer
             $this->_html .= str_replace('{requiredNote}', $form->getRequiredNote(), $this->_requiredNoteTemplate);
         }
         // add form attributes and content
-        $html = str_replace('{attributes}', $form->getAttributesString(), $this->_formTemplate);
+        $html = str_replace('{attributes}', $form->getAttributes(true), $this->_formTemplate);
         $this->_html = str_replace('{content}', $this->_html, $html);
         // add a validation script
         if ('' != ($script = $form->getValidationScript())) {

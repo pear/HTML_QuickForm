@@ -106,7 +106,7 @@ class HTML_QuickForm_Renderer_ITDynamic extends HTML_QuickForm_Renderer
             $this->_tpl->setVariable('qf_required_note', $form->getRequiredNote());
         }
         // assign form attributes
-        $this->_tpl->setVariable('qf_attributes', $form->getAttributesString());
+        $this->_tpl->setVariable('qf_attributes', $form->getAttributes(true));
         // assign javascript validation rules
         $this->_tpl->setVariable('qf_javascript', $form->getValidationScript());
     }

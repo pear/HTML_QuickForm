@@ -138,7 +138,7 @@ class HTML_QuickForm_Renderer_ITStatic extends HTML_QuickForm_Renderer
             $this->_tpl->setVariable($this->_formName.'_required_note', $form->getRequiredNote());
         }
         // assign form attributes
-        $this->_tpl->setVariable($this->_formName.'_attributes', $form->getAttributesString());
+        $this->_tpl->setVariable($this->_formName.'_attributes', $form->getAttributes(true));
         // assign javascript validation rules
         $this->_tpl->setVariable($this->_formName.'_javascript', $form->getValidationScript());
     } // end func finishForm

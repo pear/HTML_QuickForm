@@ -161,7 +161,7 @@ class HTML_QuickForm_Renderer_Array extends HTML_QuickForm_Renderer
         $this->_ary = array(
             'frozen'            => $form->isFrozen(),
             'javascript'        => $form->getValidationScript(),
-            'attributes'        => $form->getAttributesString(),
+            'attributes'        => $form->getAttributes(true),
             'requirednote'      => $form->getRequiredNote(),
             'errors'            => array()
         );

@@ -197,15 +197,19 @@ class HTML_QuickForm_group extends HTML_QuickForm_element
                 default:
                     $v = $element->getValue();
             }
-            // XXX: this doesn't always work as expected, have to fix later
             if (null !== $v) {
                 $elementName = $element->getName();
                 if (is_null($elementName)) {
                     $value = $v;
-                } elseif ('' == $elementName) {
-                    $value[] = $v;
                 } else {
-                    $value[$elementName] = $v;
+                    if (!is_array($value)) {
+                        $value = is_null($value)? array(): array($value);
+                    }
+                    if ('' == $elementName) {
+                        $value[] = $v;
+                    } else {
+                        $value[$elementName] = $v;
+                    }
                 }
             }
         }
