@@ -53,7 +53,7 @@ class HTML_QuickForm_element extends HTML_Common {
 
     /**
      * Flag to tell if element is frozen
-     * @var       
+     * @var       boolean
      * @since     1.0
      * @access    private
      */

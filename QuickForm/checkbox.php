@@ -35,7 +35,7 @@ class HTML_QuickForm_checkbox extends HTML_QuickForm_input {
 
     /**
      * Checkbox display text
-     * @var       
+     * @var       string
      * @since     1.1
      * @access    private
      */

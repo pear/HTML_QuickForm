@@ -251,7 +251,7 @@ class HTML_QuickForm_date extends HTML_QuickForm_element
     /**
      * Creates the select objects
      * @access    public
-     * @return    
+     * @return    void
      */
     function _createSelects()
     {

@@ -36,7 +36,7 @@ class HTML_QuickForm_radio extends HTML_QuickForm_input {
 
     /**
      * Radio display text
-     * @var       
+     * @var       string
      * @since     1.1
      * @access    private
      */
