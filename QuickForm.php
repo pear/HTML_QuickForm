@@ -477,9 +477,9 @@ class HTML_QuickForm extends HTML_Common {
      * @since    2.10
      * @access   public
      */
-    function getUploadedFile($element)
+    function &getUploadedFile($element)
     {
-        $file = $this->_submitFiles[$element];
+        $file =& $this->_submitFiles[$element];
         return $file['tmp_name'];
     } // end func getUploadedFile
 
@@ -816,6 +816,9 @@ class HTML_QuickForm extends HTML_Common {
     /**
      * Adds a header element to the form
      *
+     * This method is kept for compatibility reason. Use addElement('header', 'myheader', 'Form Header') instead.
+     *
+     * @param     string    $name       element name, should be defined if you don't use addElement
      * @param     string    $label      label of header
      * @since     1.0   
      * @access    public
@@ -823,9 +826,13 @@ class HTML_QuickForm extends HTML_Common {
      * @return    object A reference to a header element
      * @throws    PEAR_Error
      */
-    function &addHeader($label)
+    function &addHeader($name, $label = null)
     {
-        return $this->addElement('header', null, $label);
+        if (empty($label)) {
+            $label = $name;
+            $name = null;
+        }
+        return $this->addElement('header', $name, $label);
     } // end func addHeader
 
     // }}}
@@ -1312,7 +1319,8 @@ class HTML_QuickForm extends HTML_Common {
             $files = $this->_submitFiles;
             for (reset($files); $element=key($files); next($files)) {
                 $file = pos($files);
-                if (isset($file['tmp_name'])) {
+                if (isset($file['tmp_name']) && 
+                    $this->isUploadedFile($file['tmp_name'])) {
                     @unlink($file['tmp_name']);
                 }
             }
@@ -1370,9 +1378,14 @@ class HTML_QuickForm extends HTML_Common {
                     break;
                 case 'function':
                     if (empty($submitValue) && isset($this->_submitFiles[$elementName])) {
-                        $submitValue = $this->_submitFiles[$elementName];
-                    }
-                    if (empty($submitValue) && !$this->isElementRequired($elementName)) {
+                        // Element is an uploaded file
+                        if (!$this->isUploadedFile($elementName) &&
+                            !$this->isElementRequired($elementName)) {
+                            continue 2;
+                        } else {
+                            $submitValue = $this->_submitFiles[$elementName];
+                        }
+                    } elseif (empty($submitValue) && !$this->isElementRequired($elementName)) {
                         continue 2;
                     }
                     if (isset($ruleData[2])) {
@@ -1498,7 +1511,13 @@ class HTML_QuickForm extends HTML_Common {
      */
     function _ruleIsUploadedFile($element)
     {
-        return is_uploaded_file($this->_submitFiles[$element]['tmp_name']);
+        $file =& $this->_submitFiles[$element];
+        if ((isset($file['error']) && $file['error'] == UPLOAD_ERR_OK) ||
+            (!empty($file['tmp_name']) && $file['tmp_name'] != 'none')) {
+            return is_uploaded_file($file['tmp_name']);
+        } else {
+            return false;
+        }
     } // end func _ruleIsUploadedFile
     
     // }}}
