@@ -43,7 +43,7 @@ class HTML_QuickForm_Renderer_Default extends HTML_QuickForm_Renderer
     * @access   private
     */
     var $_headerTemplate = 
-        "\n\t<tr>\n\t\t<td style=\"white-space:nowrap;text-align:left;vertical-align:top;background-color:#cccccc;\" nowrap=\"nowrap\" align=\"left\" valign=\"top\" colspan=\"2\"><b>{header}</b></td>\n\t</tr>";
+        "\n\t<tr>\n\t\t<td style=\"white-space: nowrap; background-color: #CCCCCC;\" align=\"left\" valign=\"top\" colspan=\"2\"><b>{header}</b></td>\n\t</tr>";
 
    /**
     * Element template string
@@ -51,7 +51,7 @@ class HTML_QuickForm_Renderer_Default extends HTML_QuickForm_Renderer
     * @access   private
     */
     var $_elementTemplate = 
-        "\n\t<tr>\n\t\t<td style=\"text-align:right;vertical-align:top;\" align=\"right\" valign=\"top\"><!-- BEGIN required --><span style=\"text-color:#ff0000\">*</span><!-- END required --><b>{label}</b></td>\n\t\t<td style=\"text-align:left;vertical-align:top;\" valign=\"top\" align=\"left\"><!-- BEGIN error --><span style=\"text-color:#ff0000\">{error}</span><br /><!-- END error -->\t{element}</td>\n\t</tr>";
+        "\n\t<tr>\n\t\t<td align=\"right\" valign=\"top\"><!-- BEGIN required --><span style=\"color: #ff0000\">*</span><!-- END required --><b>{label}</b></td>\n\t\t<td valign=\"top\" align=\"left\"><!-- BEGIN error --><span style=\"color: #ff0000\">{error}</span><br /><!-- END error -->\t{element}</td>\n\t</tr>";
 
    /**
     * Form template string
@@ -59,7 +59,7 @@ class HTML_QuickForm_Renderer_Default extends HTML_QuickForm_Renderer
     * @access   private
     */
     var $_formTemplate = 
-        "\n<table style=\"border:0px;\">\n\t<form{attributes}>{content}\n\t</form>\n</table>";
+        "\n<form{attributes}>\n<table border=\"0\">\n{content}\n</table>\n</form>";
 
    /**
     * Required Note template string
@@ -67,7 +67,7 @@ class HTML_QuickForm_Renderer_Default extends HTML_QuickForm_Renderer
     * @access   private
     */
     var $_requiredNoteTemplate = 
-        "\n\t<tr>\n\t\t<td></td>\n\t<td style=\"text-align:left;vertical-align:top;\" align=\"left\" valign=\"top\">{requiredNote}</td>\n\t</tr>";
+        "\n\t<tr>\n\t\t<td></td>\n\t<td align=\"left\" valign=\"top\">{requiredNote}</td>\n\t</tr>";
 
    /**
     * Array containing the templates for customised elements
@@ -206,7 +206,7 @@ class HTML_QuickForm_Renderer_Default extends HTML_QuickForm_Renderer
     * Helper method for renderElement
     *
     * @param    string      Element name
-    * @param    string      Element label
+    * @param    mixed       Element label (if using an array of labels, you should set the appropriate template)
     * @param    bool        Whether an element is required
     * @param    string      Error message associated with the element
     * @access   private
@@ -215,10 +215,15 @@ class HTML_QuickForm_Renderer_Default extends HTML_QuickForm_Renderer
     */
     function _prepareTemplate($name, $label, $required, $error)
     {
-        if (isset($this->_templates[$name])) {
-            $html = str_replace('{label}', $label, $this->_templates[$name]);
+        if (is_array($label)) {
+            $nameLabel = array_shift($label);
         } else {
-            $html = str_replace('{label}', $label, $this->_elementTemplate);
+            $nameLabel = $label;
+        }
+        if (isset($this->_templates[$name])) {
+            $html = str_replace('{label}', $nameLabel, $this->_templates[$name]);
+        } else {
+            $html = str_replace('{label}', $nameLabel, $this->_elementTemplate);
         }
         if ($required) {
             $html = str_replace('<!-- BEGIN required -->', '', $html);
@@ -232,6 +237,17 @@ class HTML_QuickForm_Renderer_Default extends HTML_QuickForm_Renderer
             $html = str_replace('<!-- END error -->', '', $html);
         } else {
             $html = preg_replace("/([ \t\n\r]*)?<!-- BEGIN error -->(\s|\S)*<!-- END error -->([ \t\n\r]*)?/i", '', $html);
+        }
+        if (is_array($label)) {
+            foreach($label as $key => $text) {
+                $key  = is_int($key)? $key + 2: $key;
+                $html = str_replace("{label_{$key}}", $text, $html);
+                $html = str_replace("<!-- BEGIN label_{$key} -->", '', $html);
+                $html = str_replace("<!-- END label_{$key} -->", '', $html);
+            }
+        }
+        if (strpos($html, '{label_')) {
+            $html = preg_replace('/\s*<!-- BEGIN label_(\S+) -->.*<!-- END label_\1 -->\s*/i', '', $html);
         }
         return $html;
     } // end func _prepareTemplate

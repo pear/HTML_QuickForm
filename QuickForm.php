@@ -202,7 +202,7 @@ class HTML_QuickForm extends HTML_Common {
      * @since     1.0
      * @access    public
      */
-    var $_requiredNote = '<span style="font-size:60%;font-color:#ff0000;">*</span><span style="font-size:60%;"> denotes required field</span>';
+    var $_requiredNote = '<span style="font-size:60%; color:#ff0000;">*</span><span style="font-size:60%;"> denotes required field</span>';
 
     /**
      * Array of registered element types
