@@ -58,7 +58,7 @@ Features:
   </maintainers>
   <release>
     <version>3.2.3</version>
-    <date>2004-06-??</date>
+    <date>2004-06-28</date>
     <state>stable</state>
     <notes>
 * Additions and changes
@@ -74,6 +74,8 @@ Features:
   (Sebastien Montagne)
 - Implemented #553: ITStatic renderer can use special blocks for required
   elements and errors, if present in the template
+- Implemented #1576: Enclose js code between //&lt;![CDATA[ and //]]&gt;
+  to make it xhtml compliant
 
 * Bugfixes
 - Fixed #1235 (setChecked() and setValue() did not work on advcheckbox)
