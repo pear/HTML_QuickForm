@@ -26,7 +26,7 @@ $GLOBALS['HTML_QUICKFORM_ELEMENT_TYPES'] =
         array(
             'group'     =>array('HTML/QuickForm/group.php','HTML_QuickForm_group'),
             'hidden'    =>array('HTML/QuickForm/hidden.php','HTML_QuickForm_hidden'),
-            'date'    	=>array('HTML/QuickForm/date.php','HTML_QuickForm_date'),
+            'date'      =>array('HTML/QuickForm/date.php','HTML_QuickForm_date'),
             'reset'     =>array('HTML/QuickForm/reset.php','HTML_QuickForm_reset'),
             'checkbox'  =>array('HTML/QuickForm/checkbox.php','HTML_QuickForm_checkbox'),
             'file'      =>array('HTML/QuickForm/file.php','HTML_QuickForm_file'),
@@ -718,25 +718,28 @@ class HTML_QuickForm extends HTML_Common {
      * @param    string     $type          Rule type use getRegisteredType to get types
      * @param    string     $format        (optional)Required for extra rule data
      * @param    string     $validation    (optional)Where to perform validation: "server", "client"
+     * @param    boolean    $reset         Reset the form element to it's original val if there is an error?
+     * @param    boolean    $force         Force the rule to be applied, even if the target form element does not exist
      * @since    1.0
      * @access   public
      */
-    function addRule($element, $message="", $type="", $format="", $validation="server")
+    function addRule($element, $message='', $type='', $format='', $validation='server', $reset = false, $force = false)
     {
-        if (!$this->elementExists($element)) {
-            return PEAR::raiseError(null, QUICKFORM_UNREGISTERED_ELEMENT, null, E_USER_WARNING, "Element '$element' does not exist in HTML_QuickForm::addRule()", 'HTML_QuickForm_Error', true);
+        if (!$force) {
+            if (!$this->elementExists($element)) {
+                return PEAR::raiseError(null, QUICKFORM_UNREGISTERED_ELEMENT, null, E_USER_WARNING, "Element '$element' does not exist in HTML_QuickForm::addRule()", 'HTML_QuickForm_Error', true);
+            }
         }
-        if ($type == "required") {
+        if ($type == 'required') {
             $this->_required[] = $element;
         }
         if (!isset($this->_rules[$element])) {
             $this->_rules[$element] = array();
         }
         if ($validation == 'client') {
-            $this->updateAttributes(array('onsubmit'=>'return validate_' . $this->_attributes['name'] . '();'));
+            $this->updateAttributes(array('onsubmit'=>'return validate_'.$this->_attributes['name'] . '();'));
         }
-        $this->_rules[$element][] = array("type"=>$type, 
-            "format"=>$format, "message"=>$message, "validation"=>$validation);
+        $this->_rules[$element][] = array('type'=>$type, 'format'=>$format, 'message'=>$message, 'validation'=>$validation, 'reset'=>$reset);
     } // end func addRule
 
     // }}}
@@ -789,8 +792,8 @@ class HTML_QuickForm extends HTML_Common {
                     return PEAR::raiseError(null, QUICKFORM_INVALID_FILTER, null, E_USER_WARNING, "Invalid filter function '$type' in QuickForm::applyFilter()", 'HTML_QuickForm_Error', true);
                 }
             } else {
-				return PEAR::raiseError(null, QUICKFORM_NONEXIST_ELEMENT, null, E_USER_WARNING, "Element '$element' does not exist in HTML_QuickForm::applyFilter()", 'HTML_QuickForm_Error', true);
-        	}
+                return PEAR::raiseError(null, QUICKFORM_NONEXIST_ELEMENT, null, E_USER_WARNING, "Element '$element' does not exist in HTML_QuickForm::applyFilter()", 'HTML_QuickForm_Error', true);
+            }
         }
     } // end func applyFilter
 
@@ -963,16 +966,18 @@ class HTML_QuickForm extends HTML_Common {
         for (reset($this->_rules); $elementName=key($this->_rules); next($this->_rules)) {
             $rules = pos($this->_rules);
             foreach ($rules as $rule) {
-                $type       = $rule["type"];
-                $validation = $rule["validation"];
-                $message    = $rule["message"];
-                $format     = $rule["format"];
+                $type       = $rule['type'];
+                $validation = $rule['validation'];
+                $message    = $rule['message'];
+                $format     = $rule['format'];
+                $reset      = $rule['reset'];
                 $ruleData = $this->_registeredRules[$type];
                 // error out if the rule does not exist
                 if (empty($ruleData)) {
                     return PEAR::raiseError(null, QUICKFORM_INVALID_RULE, null, E_USER_WARNING, "Tried to register rulle of type '$type'", 'HTML_QuickForm_Error', true);
                 }
-                if ($validation == "client") {
+                if ($validation == 'client') {
+                    $tmp_reset = ($reset) ? "$tabs\t\tfield.value = field.defaultValue;\n" : '';
                     switch ($ruleData[0]) {
                         case 'regex':
                             $regex = str_replace('%data%', $format, $ruleData[1]);
@@ -981,7 +986,8 @@ class HTML_QuickForm extends HTML_Common {
                                 "$tabs\t\tvar regex = $regex;\n"  .
                                 "$tabs\t\tif (!regex.test(field.value) && !errFlag['$elementName']) {\n" .
                                 "$tabs\t\t\terrFlag['$elementName'] = true;\n" .
-                                "$tabs\t\t\tmsg = unescape(msg + '\\n - ".rawurlencode($message)."');\n" .
+                                "$tabs\t\t\tmsg = unescape(msg + '\\n - ".rawurlencode($message)."');\n".
+                                $tmp_reset.
                                 "$tabs\t\t}";
                             break;
                         case 'function':
@@ -1280,13 +1286,13 @@ class HTML_QuickForm extends HTML_Common {
                 switch ($ruleData[0]) {
                     case 'regex':
                         $regex = str_replace('%data%', $format, $ruleData[1]);
-                       	if (!preg_match($regex, $this->_submitValues[$elementName])) {
-	                        if (empty($this->_submitValues[$elementName]) && !$this->isElementRequired($elementName)) {
-    	                        continue 2;
-							} else {
-	                            $this->_errors[$elementName] = $message;
-    	                        continue 2;
-							}
+                        if (!preg_match($regex, $this->_submitValues[$elementName])) {
+                            if (empty($this->_submitValues[$elementName]) && !$this->isElementRequired($elementName)) {
+                                continue 2;
+                            } else {
+                                $this->_errors[$elementName] = $message;
+                                continue 2;
+                            }
                         }
                         break;
                     case 'function':
