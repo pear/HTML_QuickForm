@@ -48,7 +48,7 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
      * @since     1.0
      * @access    private
      */
-    var $_name = "";
+    var $_name = '';
 
     /**
      * Array of grouped elements
@@ -56,7 +56,7 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
      * @since     1.0
      * @access    private
      */
-    var $_elements = "";
+    var $_elements = '';
 
     /**
      * String to seperator elements
@@ -64,7 +64,7 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
      * @since     1.1
      * @access    private
      */
-    var $_seperator = "";
+    var $_seperator = '';
 
     // }}}
     // {{{ constructor
@@ -91,8 +91,11 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
         }
         $vars = array_merge($GLOBALS['HTTP_GET_VARS'], $GLOBALS['HTTP_POST_VARS']);
         if (isset($vars[$this->getName()])) {
-            $submitValue = (is_string($vars[$this->getName()])) ? 
-                stripslashes($vars[$this->getName()]) : $vars[$this->getName()];
+            if (is_string($vars[$this->getName()]) && get_magic_quotes_gpc() == 1) {
+                $submitValue = stripslashes($vars[$this->getName()]);
+            } else {
+                $submitValue = $vars[$this->getName()];
+            }
             $this->setValue($submitValue);
         }
         $this->_type = 'group';
