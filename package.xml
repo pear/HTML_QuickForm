@@ -40,21 +40,15 @@ Features:
     </maintainer>
   </maintainers>
   <release>
-    <version>2.7</version>
-    <date>2003-02-12</date>
+    <version>2.8</version>
+    <date>2003-02-18</date>
     <state>stable</state>
     <notes>
-* Use moveUploadedFile() (PHP 4.1) for file uploads instead of copy() and unlink(). (Matthias Englert)
-* Added support for element names with brackets ie. element[name][firstname].
-* Added static element to add static text in form. (Wojciech Gdela)
-* Removed extra tabs created when wrapping form elements (Tim Glen)
-* Added validation for whole group with addRule('group') in complement to validation for group elements with addGroupRule('group').
-* Added ability to use a method from a class or from an object for validation using registerRule().
-* Fixed bug with radio button validation. (Jack Kline)
-* Fixed bug when validating checkboxes named with backets ie. checkbox[A]
-* Fixed a problem with stripslashes() in element.php
-* Fixed a bug in hidden.php preventing its value to be set under some conditions. (Arne Gellhaus)
-* In progress : fix bug with toArray() for the date element, use a layout object (templates), implement function validation for elements in group.
+* IMPORTANT: favour the use of addGroup() instead of addElementGroup().
+* Fix bug when validating grouped elements.
+* Removed useless call to toHtml() in toArray(), was disturbing the date element.
+* Fix bug with select multiple for display and validation.
+* Textarea element now uses nl2br() instead of pre tags so it won't mess your layout.
     </notes>
     <filelist>
       <dir name="/" baseinstalldir="HTML">
@@ -97,6 +91,24 @@ Features:
     </filelist>
   </release>
   <changelog>
+  <release>
+    <version>2.7</version>
+    <date>2003-02-12</date>
+    <state>stable</state>
+    <notes>
+* Use moveUploadedFile() (PHP 4.1) for file uploads instead of copy() and unlink(). (Matthias Englert)
+* Added support for element names with brackets ie. element[name][firstname].
+* Added static element to add static text in form. (Wojciech Gdela)
+* Removed extra tabs created when wrapping form elements (Tim Glen)
+* Added validation for whole group with addRule('group') in complement to validation for group elements with addGroupRule('group').
+* Added ability to use a method from a class or from an object for validation using registerRule().
+* Fixed bug with radio button validation. (Jack Kline)
+* Fixed bug when validating checkboxes named with backets ie. checkbox[A]
+* Fixed a problem with stripslashes() in element.php
+* Fixed a bug in hidden.php preventing its value to be set under some conditions. (Arne Gellhaus)
+* In progress : fix bug with toArray() for the date element, use a layout object (templates), implement function validation for elements in group.
+    </notes>
+  </release>
   <release>
     <version>2.6</version>
     <date>2003-01-29</date>
