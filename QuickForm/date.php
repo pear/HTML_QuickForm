@@ -153,6 +153,12 @@ class HTML_QuickForm_date extends HTML_QuickForm_group
             'weekdays_long' => array ('Nede¾a', 'Pondelok', 'Utorok', 'Streda', 'Štvrtok', 'Piatok', 'Sobota'),
             'months_short'  => array ('Jan', 'Feb', 'Mar', 'Apr', 'Máj', 'Jún', 'Júl', 'Aug', 'Sep', 'Okt', 'Nov', 'Dec'),
             'months_long'   => array ('Január', 'Ferbruár', 'Marec', 'Apríl', 'Máj', 'Jún', 'Júl', 'August', 'September', 'Október', 'November', 'December')
+        ),
+        'cs'    => array (
+            'weekdays_short'=> array ('Ne', 'Po', 'Út', 'St', 'Èt', 'Pá', 'So'),
+            'weekdays_long' => array ('Nedìle', 'Pondìlí', 'Úterı', 'Støeda', 'Ètvrtek', 'Pátek', 'Sobota'),
+            'months_short'  => array ('Led', 'Úno', 'Bøe', 'Dub', 'Kvì', 'Èen', 'Èec', 'Srp', 'Záø', 'Øíj', 'Lis', 'Pro'),
+            'months_long'   => array ('Leden', 'Únor', 'Bøezen', 'Duben', 'Kvìten', 'Èerven', 'Èervenec', 'Srpen', 'Záøí', 'Øíjen', 'Listopad', 'Prosinec')
         )
     );
 
