@@ -230,7 +230,7 @@ class HTML_QuickForm_checkbox extends HTML_QuickForm_input {
                 $this->$className($arg[0], $arg[1], $arg[2], $arg[3]);
                 // need to set the submit value in case setDefault never gets called
                 $elementName = $this->getName();
-                if (count($caller->_submitValues) > 0) {
+                if (isset($caller->_submitValues) && count($caller->_submitValues) > 0) {
                     $tmp_checked = isset($caller->_submitValues[$elementName]) ? $caller->_submitValues[$elementName] : false;
                     $this->setChecked($tmp_checked);
                 }
