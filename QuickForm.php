@@ -1491,6 +1491,7 @@ class HTML_QuickForm extends HTML_Common {
                     }
 
                     $test[] = $registry->getValidationScript($element, $elementName, $rule);
+                    unset($element);
                 }
             }
         }
