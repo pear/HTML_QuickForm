@@ -53,16 +53,16 @@ Features:
 * Bugfixes
 
 - setMaxfileSize() does not throw pear error anymore (Alexey Borzov)
-- Mass onQuickFormEvent 'updateValue' fixes (Alexey Borzov)
+- onQuickFormEvent 'updateValue' fixes, elements that cannot actually have a submit value do not try to use one (Alexey Borzov)
+- _loadElement() now returns a reference (Alexey Borzov)
+- Several fixes to usage examples (Alexey Borzov, Thomas Schulz, Joerg Bruckmann)
 
 * Changes
 
-- _loadElement() now returns a reference (Alexey Borzov)
 - Added time to the date element (Jason Rust)
 - Required groups now show the asterisk (Bertrand Mansion)
 - Optimizations in HTML_QuickForm_group's methods (Alexey Borzov)
-- ArraySmarty renderer now requires a Smarty object (Thomas Schulz)
-- Updated SmartyStatic and ITStatic examples (Thomas Schulz, Alexey Borzov)
+- ArraySmarty renderer now requires a Smarty object and uses Smarty templates for 'required' and errors output (Thomas Schulz)
     </notes>
     <filelist>
       <dir name="/" baseinstalldir="HTML">
