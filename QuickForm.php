@@ -402,14 +402,14 @@ class HTML_QuickForm extends HTML_Common {
         if (is_array($defaultValues)) {
             if (isset($filter)) {
                 if (is_array($filter)) {
-                    while(list(,$val) = each($filter)) {
+                    foreach ($filter as $val) {
                         $defaultValues = $this->_recursiveFilter($val, $defaultValues);
                     }
                 } else {
                     $defaultValues = $this->_recursiveFilter($filter, $defaultValues);
                 }
             }
-            while(list($key, $value) = each($defaultValues)) {
+            foreach ($defaultValues as $key => $value) {
                 $this->_defaultValues[$key] = $value;
             }
         }
@@ -423,15 +423,25 @@ class HTML_QuickForm extends HTML_Common {
      * These values won't get overridden by POST or GET vars
      *
      * @param     array   $constantValues        values used to fill the form    
+     * @param     mixed    $filter              (optional) filter(s) to apply to all default values    
+     *
      * @since     2.0
      * @access    public
      * @return    void
      */
-    function setConstants($constantValues=null)
+    function setConstants($constantValues=null, $filter=null)
     {
         if (is_array($constantValues)) {
+            if (isset($filter)) {
+                if (is_array($filter)) {
+                    foreach ($filter as $val) {
+                        $constantValues = $this->_recursiveFilter($val, $constantValues);
+                    }
+                } else {
+                    $constantValues = $this->_recursiveFilter($filter, $constantValues);
+                }
+            }
             foreach ($constantValues as $key => $value) {
-                $value = is_string($value) ? stripslashes($value) : $value;             
                 $this->_constantValues[$key] = $value;
             }
         }
@@ -1692,7 +1702,7 @@ class HTML_QuickForm extends HTML_Common {
     {
         $html = "";
         reset($this->_elements);
-        while (list(, $element) = each($this->_elements)) {
+        foreach ($this->_elements as $element) {
             if (isset($element["header"])) {
                 $html .= $this->_buildHeader($element);
             } elseif (isset($element["data"])) {
