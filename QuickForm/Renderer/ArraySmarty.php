@@ -166,8 +166,8 @@ class HTML_QuickForm_Renderer_ArraySmarty extends HTML_QuickForm_Renderer_Array
         // create a simple element key
         $ret['key'] = $ret['name'];
         if (strstr($ret['key'], '[')) {
-            $keys = explode('_', str_replace(array('[', ']'), '_', $ret['key']));
-            $ret['key'] = $keys[1];
+            preg_match('/\\[([^]]*)\\]/', $ret['key'], $matches);
+            $ret['key'] = $matches[1];
             if (empty($ret['key'])) {
                 $ret['key'] = $this->_groupElementIdx++;
             }
