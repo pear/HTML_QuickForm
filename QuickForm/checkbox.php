@@ -135,10 +135,10 @@ class HTML_QuickForm_checkbox extends HTML_QuickForm_input {
     function getFrozenHtml()
     {
         if ($this->getChecked()) {
-            $html = "<tt>[x]</tt>\n";
+            $html = '<tt>[x]</tt>';
             $html .= '<input type="hidden" name="'.$this->getName().'" value="1" />';
         } else {
-            $html = "<tt>[ ]</tt>\n";
+            $html = '<tt>[ ]</tt>';
         }
         return $html;
     } //end func getFrozenHtml
