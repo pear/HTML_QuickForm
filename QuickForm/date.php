@@ -27,6 +27,7 @@ require_once('HTML/QuickForm/select.php');
  *
  * @author       Bertrand Mansion <bmansion@mamasam.com>
  * @access       public
+ * @deprecated   Use dategroup element instead
  */
 class HTML_QuickForm_date extends HTML_QuickForm_element
 {   

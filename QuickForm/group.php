@@ -151,6 +151,9 @@ class HTML_QuickForm_group extends HTML_QuickForm_element
      */
     function setValue($value)
     {
+        if (empty($this->_elements)) {
+            $this->_createElements();
+        }
         foreach (array_keys($this->_elements) as $key) {
             if (!$this->_appendName) {
                 $v = $this->_elements[$key]->_findValue($value);
@@ -260,6 +263,9 @@ class HTML_QuickForm_group extends HTML_QuickForm_element
      */
     function getGroupType()
     {
+        if (empty($this->_elements)) {
+            $this->_createElements();
+        }
         $prevType = '';
         foreach (array_keys($this->_elements) as $key) {
             $type = $this->_elements[$key]->getType();
@@ -339,6 +345,9 @@ class HTML_QuickForm_group extends HTML_QuickForm_element
      */
     function getElementName($index)
     {
+        if (empty($this->_elements)) {
+            $this->_createElements();
+        }
         $elementName = false;
         if (is_int($index) && isset($this->_elements[$index])) {
             $elementName = $this->_elements[$index]->getName();
@@ -403,6 +412,9 @@ class HTML_QuickForm_group extends HTML_QuickForm_element
     {
         switch ($event) {
             case 'updateValue':
+                if (empty($this->_elements)) {
+                    $this->_createElements();
+                }
                 foreach (array_keys($this->_elements) as $key) {
                     if ($this->_appendName) {
                         $elementName = $this->_elements[$key]->getName();
@@ -441,13 +453,13 @@ class HTML_QuickForm_group extends HTML_QuickForm_element
     */
     function accept(&$renderer, $required = false, $error = null)
     {
+        if (empty($this->_elements)) {
+            $this->_createElements();
+        }
         $renderer->startGroup($this, $required, $error);
         $name = $this->getName();
         foreach (array_keys($this->_elements) as $key) {
             $element =& $this->_elements[$key];
-            if (PEAR::isError($element)) {
-                return $element;
-            }
             
             if ($this->_appendName) {
                 $elementName = $element->getName();
@@ -520,6 +532,25 @@ class HTML_QuickForm_group extends HTML_QuickForm_element
         }
         // do not pass the value through _prepareValue, we took care of this already
         return $value;
+    }
+
+    // }}}
+    // {{{ _createElements()
+
+   /**
+    * Creates the group's elements.
+    * 
+    * This should be overriden by child classes that need to create their 
+    * elements. The method will be called automatically when needed, calling
+    * it from the constructor is discouraged as the constructor is usually
+    * called _twice_ on element creation, first time with _no_ parameters.
+    * 
+    * @access private
+    * @abstract
+    */
+    function _createElements()
+    {
+        // abstract
     }
 
     // }}}
