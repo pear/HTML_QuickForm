@@ -354,17 +354,9 @@ class HTML_QuickForm_element extends HTML_Common {
                 }
                 break;
             case 'setDefault':
-                // In form display, default value is always overidden by submitted value
-                $elementName = $this->getName();
-                if (isset($caller->_submitValues[$elementName])) {
-                    $value = $caller->_submitValues[$elementName];
-                    if (is_string($value) && get_magic_quotes_gpc() == 1) {
-                        $value = stripslashes($value);
-                    }
-                } else {
-                    $value = $arg;
+                if (isset($arg)) {
+                    $this->setValue($arg);
                 }
-                $this->setValue($value);
                 break;
             case 'setConstant':
                 // In form display, constant value overides submitted value

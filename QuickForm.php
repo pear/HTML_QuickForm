@@ -211,8 +211,8 @@ class HTML_QuickForm extends HTML_Common {
             'minlength'     =>array('regex', '/^(\s|\S){%data%,}$/'),
             'rangelength'   =>array('regex', '/^(\s|\S){%data%}$/'),
             'regex'         =>array('regex', '%data%'),
-            'email'         =>array('regex', '/^.+\@(\[?)[a-zA-Z0-9\-\.]+\.([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/'),
-            'emailorblank'  =>array('regex', '/(^$)|(^.+\@(\[?)[a-zA-Z0-9\-\.]+\.([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$)/'),
+            'email'         =>array('regex', '/^.+\@(\[?)[a-zA-Z0-9\-\.]+\.([a-zA-Z]{2,3}|[0-9]{1,3})(\]?)$/'),
+            'emailorblank'  =>array('regex', '/(^$)|(^.+\@(\[?)[a-zA-Z0-9\-\.]+\.([a-zA-Z]{2,3}|[0-9]{1,3})(\]?)$)/'),
             'lettersonly'   =>array('regex', '/^[a-zA-Z]*$/'),
             'alphanumeric'  =>array('regex', '/^[a-zA-Z0-9]*$/'),
             'numeric'       =>array('regex', '/(^-?\d\d*\.\d*$)|(^-?\d\d*$)|(^-?\.\d\d*$)/'),
@@ -566,7 +566,10 @@ class HTML_QuickForm extends HTML_Common {
         }
         $elementName = $elementObject->getName();
         $elementLabel = $elementObject->getLabel();
-        if (isset($this->_defaultValues[$elementName])) {
+        $elementValue = null;
+        if (isset($this->_submitValues[$elementName])) {
+            $elementObject->onQuickFormEvent('setDefault', $this->_submitValues[$elementName], $this);
+        } elseif (isset($this->_defaultValues[$elementName])) {
             $elementObject->onQuickFormEvent('setDefault', $this->_defaultValues[$elementName], $this);
         }
         if (isset($this->_constantValues[$elementName])) {
