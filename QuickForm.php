@@ -466,9 +466,10 @@ class HTML_QuickForm extends HTML_Common {
 
     /**
      * Moves an uploaded file into the destination 
-     * @param    string  $element  
-     * @param    string  $dest
-     * @since     1.0
+     * @param    string  $element       Element name
+     * @param    string  $dest          Destination directory path
+     * @param    string  $fileName      (optional) New file name
+     * @since    1.0
      * @access   public
      */
     function moveUploadedFile($element, $dest, $fileName='')
@@ -484,6 +485,37 @@ class HTML_QuickForm extends HTML_Common {
         }
     } // end func moveUploadedFile
     
+    // }}}
+    // {{{ isUploadedFile()
+
+    /**
+     * Checks if the given element contains an uploaded file
+     *
+     * @param     string    $element    Element name
+     * @since     2.10
+     * @access    public
+     * @return    bool      true if file has been uploaded, false otherwise
+     */
+    function isUploadedFile($element)
+    {
+        return $this->_ruleIsUploadedFile($element);
+    } // end func isUploadedFile
+
+    // }}}
+    // {{{ getUploadedFile()
+
+    /**
+     * Returns temporary filename of uploaded file
+     * @param    string  $element  
+     * @since    2.10
+     * @access   public
+     */
+    function getUploadedFile($element)
+    {
+        $file = $this->_submitFiles[$element];
+        return $file['tmp_name'];
+    } // end func getUploadedFile
+
     // }}}
     // {{{ &createElement()
 
