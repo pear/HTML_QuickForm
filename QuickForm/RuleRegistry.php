@@ -225,7 +225,7 @@ class HTML_QuickForm_RuleRegistry
                 "  var valueIdx = 0;\n" .
                 "  for (var i = 0; i < frm.elements.length; i++) {\n" .
                 "    var _element = frm.elements[i];\n" .
-                "    if ({$elementName}Elements.indexOf(_element.name) > 0) {\n" . 
+                "    if ({$elementName}Elements.indexOf('::' + _element.name + '::') >= 0) {\n" . 
                 "      switch (_element.type) {\n" .
                 "        case 'checkbox':\n" .
                 "        case 'radio':\n" .
@@ -247,7 +247,7 @@ class HTML_QuickForm_RuleRegistry
                 $tmp_reset =
                     "    for (var i = 0; i < frm.elements.length; i++) {\n" .
                     "      var _element = frm.elements[i];\n" .
-                    "      if ({$elementName}Elements.indexOf(_element.name) > 0) {\n" . 
+                    "      if ({$elementName}Elements.indexOf('::' + _element.name + '::') >= 0) {\n" . 
                     "        switch (_element.type) {\n" .
                     "          case 'checkbox':\n" .
                     "          case 'radio':\n" .
