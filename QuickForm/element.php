@@ -343,7 +343,11 @@ class HTML_QuickForm_element extends HTML_Common {
         }
         $myVar = str_replace(array(']', '['), array('', "']['"), $elementName);
         $myVar = "['".$myVar."']";
-        return eval("return (isset(\$values$myVar)) ? \$values$myVar : null;");
+        $value = eval("return (isset(\$values$myVar)) ? \$values$myVar : null;");
+        if (is_string($value) && get_magic_quotes_gpc() == 1) {
+            $value = stripslashes($value);
+        }
+        return $value;
     } //end func _findValue
 
     // }}}
