@@ -88,6 +88,8 @@ contact the package maintainers.
   HTML Unicode entities to prevent encoding problems
 - Renamed labels-default.php example to multiple-labels.php
   (suggested by Ignatius Reilly)
+- Date element accepts non numeric default values compatible with
+  function strtotime() (Kellan Elliot-Mccrea)
 
 * Bugfixes
 - Fixed #735 (applyFilter() failed for elements with "complex" names and

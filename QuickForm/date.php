@@ -369,6 +369,9 @@ class HTML_QuickForm_date extends HTML_QuickForm_group
         if ($this->_options['addEmptyOption'] && empty($value)) {
             $value = array();
         } else  if (!is_array($value)) {
+            if (!is_numeric($value)) {
+                $value = strtotime($value);
+            }
             // might be a unix epoch, then we fill all possible values
             $arr = explode('-', date('w-d-n-Y-h-H-i-s-a-A', (int)$value));
             $value = array(
