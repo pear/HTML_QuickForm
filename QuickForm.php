@@ -1682,8 +1682,10 @@ class HTML_QuickForm extends HTML_Common {
         } elseif (!isset($elementList)) {
             $this->_freezeAll = true;
         }
-        for ($i=0; $i<count($this->_elements); $i++) {
-            $element = &$this->_elements[$i];
+
+        foreach ($this->_elements as $key => $val) {
+            // need to get the element by reference
+            $element = &$this->_elements[$key];
             if (is_object($element)) {
                 $name = $element->getName();
                 if ($this->_freezeAll || in_array($name, $elementList)) {
@@ -1692,6 +1694,7 @@ class HTML_QuickForm extends HTML_Common {
                 }
             }
         }
+
         if (!$elementFlag) {
             return PEAR::raiseError(null, QUICKFORM_NONEXIST_ELEMENT, null, E_USER_WARNING, "Element '$element' does not exist in HTML_QuickForm::freeze()", 'HTML_QuickForm_Error', true);
         }
