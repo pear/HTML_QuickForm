@@ -40,7 +40,7 @@ $GLOBALS['HTML_QUICKFORM_ELEMENT_TYPES'] =
             'textarea'      =>array('HTML/QuickForm/textarea.php','HTML_QuickForm_textarea'),
             'link'          =>array('HTML/QuickForm/link.php','HTML_QuickForm_link'),
             'advcheckbox'   =>array('HTML/QuickForm/advcheckbox.php','HTML_QuickForm_advcheckbox'),
-            'date'   		=>array('HTML/QuickForm/date.php','HTML_QuickForm_date')
+            'date'          =>array('HTML/QuickForm/date.php','HTML_QuickForm_date')
         );
 
 // {{{ error codes
@@ -304,9 +304,9 @@ class HTML_QuickForm extends HTML_Common {
         $method = (strtoupper($method) == 'GET') ? 'GET' : 'POST';
         $action = ($action == '') ? $_SERVER['PHP_SELF'] : $action;
         $this->updateAttributes(array('action'=>$action, 'method'=>$method, 'name'=>$formName, 'target'=>$target));
-        $this->_registeredTypes = &$GLOBALS['HTML_QUICKFORM_ELEMENT_TYPES'];
+        $this->_registeredTypes =& $GLOBALS['HTML_QUICKFORM_ELEMENT_TYPES'];
         $this->_submitValues = $GLOBALS['_' . $method];
-        $this->_submitFiles = $_FILES;
+        $this->_submitFiles =& $_FILES;
     } // end constructor
 
     // }}}
@@ -472,12 +472,11 @@ class HTML_QuickForm extends HTML_Common {
      */
     function moveUploadedFile($element, $dest, $fileName='')
     {
-        $file = $this->_submitFiles[$element];
+        $file =& $this->_submitFiles[$element];
         if ($dest != ''  && substr($dest, -1) != '/')
             $dest .= '/';
         $fileName = ($fileName != '') ? $fileName : $file['name'];
-        if (copy($file['tmp_name'], $dest . $fileName)) {
-            @unlink($file['tmp_name']);
+        if (move_uploaded_file($file['tmp_name'], $dest . $fileName) {
             return true;
         } else {
             return false;
