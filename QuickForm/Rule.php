@@ -52,15 +52,16 @@ class HTML_QuickForm_Rule
         $this->name = $ruleName;
     }
 
-   /**
-    * Returns the javascript validation test
-    * 
-    * @access public
-    * @abstract
-    */
-    function getValidationScript($jsValue, $jsField, $jsMessage, $jsReset, $options = null)
+    /**
+     * Returns the javascript test (the test should return true if the value is INVALID)
+     *
+     * @param     mixed     Options for the rule
+     * @access    public
+     * @return    array     first element is code to setup validation, second is the check itself
+     */
+    function getValidationScript($options = null)
     {
-        return '';
+        return array('', '');
     }
 }
 ?>

@@ -81,20 +81,15 @@ class HTML_QuickForm_Rule_Compare extends HTML_QuickForm_Rule
     }
 
 
-    function getValidationScript($jsValue, $jsField, $jsMessage, $jsReset = '', $operator = null)
+    function getValidationScript($operator = null)
     {
         $operator = $this->_findOperator($operator);
         if ('==' != $operator && '!=' != $operator) {
-            $check = "!(Number(value[0]) {$operator} Number(value[1]))";
+            $check = "!(Number({jsVar}[0]) {$operator} Number({jsVar}[1]))";
         } else {
-            $check = "!(value[0] {$operator} value[1])";
+            $check = "!({jsVar}[0] {$operator} {jsVar}[1])";
         }
-        return $jsValue .
-               "\n  if ('' != value[0] && {$check} && !errFlag['{$jsField}']) {\n" .
-               "    errFlag['{$jsField}'] = true;\n" .
-               "    _qfMsg = _qfMsg + '\\n - {$jsMessage}';\n" .
-               $jsReset .
-               "  }\n";
+        return array('', "'' != {jsVar}[0] && {$check}");
     }
 }
 ?>

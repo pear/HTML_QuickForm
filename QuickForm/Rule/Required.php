@@ -42,26 +42,10 @@ class HTML_QuickForm_Rule_Required extends HTML_QuickForm_Rule
         return true;
     } // end func validate
 
-    /**
-     * Returns the javascript test
-     *
-     * @param     string    $jsValue    JS code to find the element value
-     * @param     string    $jsField    Element name in the form
-     * @param     string    $jsMessage  Error message encoded for javascript
-     * @param     string    $jsReset    JS code to revert the value back to default if error
-     * @param     mixed     $options    Options for this rule, not used yet
-     * @access    public
-     * @return    string    javascript code
-     */
-    function getValidationScript($jsValue, $jsField, $jsMessage, $jsReset = '', $options = null)
+
+    function getValidationScript($options = null)
     {
-        $js = "$jsValue\n" .
-              "  if (value == '' && !errFlag['$jsField']) {\n" .
-              "    errFlag['$jsField'] = true;\n" .
-              "    _qfMsg = _qfMsg + '\\n - $jsMessage';\n" .
-              $jsReset .
-              "  }\n";
-        return $js;
+        return array('', "{jsVar} == ''");
     } // end func getValidationScript
 
 } // end class HTML_QuickForm_Rule_Required

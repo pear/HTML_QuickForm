@@ -1431,66 +1431,6 @@ class HTML_QuickForm extends HTML_Common {
     } // end func toHtml
 
     // }}}
-    // {{{ _getJsValue()
-
-   /**
-    * Returns JavaScript to get and to reset the element's value 
-    * 
-    * @access private
-    * @param  object HTML_QuickForm_element     element being processed
-    * @param  string    element's name
-    * @param  bool      whether to generate JavaScript to reset the value
-    * @param  integer   value's index in the array (only used for multielement rules)
-    * @return array     first item is value javascript, second is reset
-    */
-    function _getJsValue(&$element, $elementName, $reset = false, $index = null)
-    {
-        $jsIndex = isset($index)? '[' . $index . ']': '';
-        $tmp_reset = $reset? "    var field = frm.elements['$elementName'];\n": '';
-        if ($element->getType() == 'group' && $element->getGroupType() != 'radio' ||
-           ($element->getType() == 'select' && $element->getMultiple())) {
-            $value =
-                "  value{$jsIndex} = '';\n" .
-                "  for (var i = 0; i < frm.elements.length; i++) {\n" .
-                "    if (frm.elements[i].name.indexOf('$elementName') == 0) {\n" .
-                "      value{$jsIndex} += frm.elements[i].value;\n" .
-                "    }\n" .
-                "  }";
-            if ($reset) {
-                $tmp_reset =
-                    "    for (var i = 0; i < frm.elements.length; i++) {\n" .
-                    "      if (frm.elements[i].name.indexOf('$elementName') == 0) {\n" .
-                    "        frm.elements[i].value = frm.elements[i].defaultValue;\n" .
-                    "      }\n" .
-                    "    }\n";
-            }
-        } elseif ($element->getType() == 'checkbox') {
-            $value = "  if (frm.elements['$elementName'].checked) {\n" .
-                     "    value{$jsIndex} = '1';\n" .
-                     "  } else {\n" .
-                     "    value{$jsIndex} = '';\n" .
-                     "  }";
-            $tmp_reset .= ($reset) ? "    field.checked = field.defaultChecked;\n" : '';
-        } elseif ($element->getType() == 'group' && $element->getGroupType() == 'radio') {
-            $value = "  value{$jsIndex} = '';\n" .
-                     "  for (var i = 0; i < frm.elements['$elementName'].length; i++) {\n" .
-                     "    if (frm.elements['$elementName'][i].checked) {\n" .
-                     "      value{$jsIndex} = frm.elements['$elementName'][i].value;\n" .
-                     "    }\n" .
-                     "  }";
-            if ($reset) {
-                $tmp_reset .= "    for (var i = 0; i < field.length; i++) {\n" .
-                              "      field[i].checked = field[i].defaultChecked;\n" .
-                              "    }";
-            }
-        } else {
-            $value = "  value{$jsIndex} = frm.elements['$elementName'].value;";
-            $tmp_reset .= ($reset) ? "    field.value = field.defaultValue;\n" : '';
-        }
-        return array($value, $tmp_reset);
-    }
-
-    // }}}
     // {{{ getValidationScript()
 
     /**
@@ -1520,39 +1460,29 @@ class HTML_QuickForm extends HTML_Common {
 
         foreach ($this->_rules as $elementName => $rules) {
             foreach ($rules as $rule) {
-                if ($rule['validation'] == 'client') {
-                    $reset      = (isset($rule['reset'])) ? $rule['reset'] : false;
+                if ('client' == $rule['validation']) {
                     $dependent  = isset($rule['dependent']) && is_array($rule['dependent']);
-                    $jsReset    = '';
-                    $jsValue    = '';
+                    $rule['message'] = strtr($rule['message'], $js_escape);
 
                     if (isset($rule['group'])) {
-                        $group =& $this->getElement($rule['group']);
+                        $group    =& $this->getElement($rule['group']);
                         $elements =& $group->getElements();
-                        $element =& $elements[$group->getElementName($elementName)];
+                        $element  =& $elements[$group->getElementName($elementName)];
+                    } elseif ($dependent) {
+                        $element   =  array();
+                        $element[] =& $this->getElement($elementName);
+                        foreach ($rule['dependent'] as $idx => $elName) {
+                            $element[] =& $this->getElement($elName);
+                        }
                     } else {
                         $element =& $this->getElement($elementName);
                     }
-                    list($jsValue, $jsReset) = $this->_getJsValue($element, $elementName, $reset, $dependent? 0: null);
-                    if ($dependent) {
-                        foreach ($rule['dependent'] as $idx => $elName) {
-                            list($tmp_value, $tmp_reset) = $this->_getJsValue($this->getElement($elName), $elName, $reset, $idx + 1);
-                            $jsValue .= "\n" . $tmp_value;
-                            $jsReset .= $tmp_reset;
-                        }
-                        $jsValue = "  value = new Array();\n" . $jsValue;
-                    }
 
-                    $test[] = $registry->getValidationScript($rule['type'],
-                                                             $jsValue, 
-                                                             $elementName,
-                                                             strtr($rule['message'], $js_escape),
-                                                             $jsReset,
-                                                             $rule['format']);
+                    $test[] = $registry->getValidationScript($element, $elementName, $rule);
                 }
             }
         }
-        if (is_array($test) && count($test) > 0) {
+        if (count($test) > 0) {
             return
                 "\n<script type=\"text/javascript\">\n" .
                 "<!-- \n" . 

@@ -95,33 +95,17 @@ class HTML_QuickForm_Rule_Callback extends HTML_QuickForm_Rule
         $this->_BCMode[$name] = $BCMode;
     } // end func addData
 
-    /**
-     * Returns the javascript test
-     *
-     * @param     string    $jsValue    JS code to find the element value
-     * @param     string    $jsField    Element name in the form
-     * @param     string    $jsMessage  Error message encoded for javascript
-     * @param     string    $jsReset    JS code to revert the value back to default if error
-     * @param     mixed     $options    Options for this rule, not used yet
-     * @access    public
-     * @return    string    javascript code
-     */
-    function getValidationScript($jsValue, $jsField, $jsMessage, $jsReset, $options = null)
+
+    function getValidationScript($options = null)
     {
         if (isset($this->_data[$this->name])) {
             $callback = $this->_data[$this->name][0];
-            $params   = $this->_BCMode[$this->name]? "'{$jsField}', value": 'value';
+            $params   = $this->_BCMode[$this->name]? "'', {jsVar}": $jsVar;
         } else {
             $callback = is_array($options)? $options[1]: $options;
-            $params   = 'value';
+            $params   = $jsVar;
         }
-        $js = "$jsValue\n" .
-              "  if (value != '' && !{$callback}({$params}) && !errFlag['$jsField']) {\n" .
-              "    errFlag['$jsField'] = true;\n" .
-              "    _qfMsg = _qfMsg + '\\n - $jsMessage';\n" .
-              $jsReset .
-              "  }\n";
-        return $js;
+        return array('', "{jsVar} != '' && !{$callback}({$params})");
     } // end func getValidationScript
 
 } // end class HTML_QuickForm_Rule_Callback

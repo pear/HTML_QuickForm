@@ -44,37 +44,20 @@ class HTML_QuickForm_Rule_Range extends HTML_QuickForm_Rule
         }
     } // end func validate
 
-    /**
-     * Returns the javascript test
-     *
-     * @param     string    $jsValue    JS code to find the element value
-     * @param     string    $jsField    Element name in the form
-     * @param     string    $jsMessage  Error message encoded for javascript
-     * @param     string    $jsReset    JS code to revert the value back to default if error
-     * @param     mixed     $options    Int for length, array for range
-     * @access    public
-     * @return    string    javascript code
-     */
-    function getValidationScript($jsValue, $jsField, $jsMessage, $jsReset, $options = null)
+
+    function getValidationScript($options = null)
     {
         switch ($this->name) {
             case 'minlength': 
-                $test = 'value.length < '.$options;
+                $test = '{jsVar}.length < '.$options;
                 break;
             case 'maxlength': 
-                $test = 'value.length > '.$options;
+                $test = '{jsVar}.length > '.$options;
                 break;
             default: 
-                $test = '(value.length < '.$options[0].' || value.length > '.$options[1].')';
+                $test = '({jsVar}.length < '.$options[0].' || {jsVar}.length > '.$options[1].')';
         }
-
-        $js = "$jsValue\n" .
-              "  if (value != '' && ".$test." && !errFlag['$jsField']) {\n" .
-              "    errFlag['$jsField'] = true;\n" .
-              "    _qfMsg = _qfMsg + '\\n - $jsMessage';\n" .
-              $jsReset .
-              "  }\n";
-        return $js;
+        return array('', "{jsVar} != '' && {$test}");
     } // end func getValidationScript
 
 } // end class HTML_QuickForm_Rule_Range

@@ -152,20 +152,156 @@ class HTML_QuickForm_RuleRegistry
     /**
      * Returns the validation test in javascript code
      *
-     * @param     string    $ruleName   Name of rule to be used for validation
-     * @param     string    $jsValue    JS code to find the element value
-     * @param     string    $jsField    Element name in the form
-     * @param     string    $jsMessage  Error message encoded for javascript
-     * @param     string    $jsReset    JS code to revert the value back to default if error
-     * @param     mixed     $options    Options for this rule, not used yet
+     * @param     mixed     Element(s) the rule applies to
+     * @param     string    Element name, in case $element is not array
+     * @param     array     Rule data
      * @access    public
-     * @return    mixed   false if error or the number of valid elements
+     * @return    string    JavaScript for the rule
      */
-    function getValidationScript($ruleName, $jsValue, $jsField, $jsMessage, $jsReset = '', $options = null)
+    function getValidationScript(&$element, $elementName, $ruleData)
     {
-        $rule =& $this->getRule($ruleName);
-        return $rule->getValidationScript($jsValue, $jsField, $jsMessage, $jsReset, $options);
+        $reset =  (isset($ruleData['reset'])) ? $ruleData['reset'] : false;
+        $rule  =& $this->getRule($ruleData['type']);
+        if (!is_array($element)) {
+            list($jsValue, $jsReset) = $this->_getJsValue($element, $elementName, $reset, null);
+        } else {
+            $jsValue = "  value = new Array();\n";
+            for ($i = 0; $i < count($element); $i++) {
+                list($tmp_value, $tmp_reset) = $this->_getJsValue($element[$i], $element[$i]->getName(), $reset, $i);
+                $jsValue .= "\n" . $tmp_value;
+                $jsReset .= $tmp_reset;
+            }
+        }
+        $jsField = isset($ruleData['group'])? $ruleData['group']: $elementName;
+        list ($jsPrefix, $jsCheck) = $rule->getValidationScript($ruleData['format']);
+        if (!isset($ruleData['howmany'])) {
+            $js = $jsValue . "\n" . $jsPrefix . 
+                  "  if (" . str_replace('{jsVar}', 'value', $jsCheck) . " && !errFlag['{$jsField}']) {\n" .
+                  "    errFlag['{$jsField}'] = true;\n" .
+                  "    _qfMsg = _qfMsg + '\\n - {$ruleData['message']}';\n" .
+                  $jsReset .
+                  "  }\n";
+        } else {
+            $js = $jsValue . "\n" . $jsPrefix . 
+                  "  var res = 0;\n" .
+                  "  for (var i = 0; i < value.length; i++) {\n" .
+                  "    if (!(" . str_replace('{jsVar}', 'value[i]', $jsCheck) . ")) {\n" .
+                  "      res++;\n" .
+                  "    }\n" .
+                  "  }\n" . 
+                  "  if (res < {$ruleData['howmany']} && !errFlag['{$jsField}']) {\n" . 
+                  "    errFlag['{$jsField}'] = true;\n" .
+                  "    _qfMsg = _qfMsg + '\\n - {$ruleData['message']}';\n" .
+                  $jsReset .
+                  "  }\n";
+        }
+        return $js;
     } // end func getValidationScript
 
+
+   /**
+    * Returns JavaScript to get and to reset the element's value 
+    * 
+    * @access private
+    * @param  object HTML_QuickForm_element     element being processed
+    * @param  string    element's name
+    * @param  bool      whether to generate JavaScript to reset the value
+    * @param  integer   value's index in the array (only used for multielement rules)
+    * @return array     first item is value javascript, second is reset
+    */
+    function _getJsValue(&$element, $elementName, $reset = false, $index = null)
+    {
+        $jsIndex = isset($index)? '[' . $index . ']': '';
+        $tmp_reset = $reset? "    var field = frm.elements['$elementName'];\n": '';
+        if ($element->getType() == 'group' && $element->getGroupType() != 'radio') {
+            $value =
+                "  value{$jsIndex} = new Array();\n" .
+                "  var valueIdx = 0;\n" .
+                "  for (var i = 0; i < frm.elements.length; i++) {\n" .
+                "    var _element = frm.elements[i];\n" .
+                "    if (_element.name.indexOf('$elementName') == 0) {\n" .
+                "      switch (_element.type) {\n" .
+                "        case 'checkbox':\n" .
+                "        case 'radio':\n" .
+                "          if (_element.checked) {\n" .
+                "            value{$jsIndex}[valueIdx++] = _element.value;\n" .
+                "          }\n" .
+                "          break;\n" .
+                "        case 'select':\n" .
+                "          if (-1 != _element.selectedIndex) {\n" .
+                "            value{$jsIndex}[valueIdx++] = _element.options[_element.selectedIndex].value;\n" .
+                "          }\n" .
+                "          break;\n" .
+                "        default:\n" .
+                "          value{$jsIndex}[valueIdx++] = frm.elements[i].value;\n" .
+                "      }\n" .
+                "    }\n" .
+                "  }\n";
+            if ($reset) {
+                $tmp_reset =
+                    "    for (var i = 0; i < frm.elements.length; i++) {\n" .
+                    "      var _element = frm.elements[i];\n" .
+                    "      if (_element.name.indexOf('$elementName') == 0) {\n" .
+                    "      switch (_element.type) {\n" .
+                    "        case 'checkbox':\n" .
+                    "        case 'radio':\n" .
+                    "          _element.checked = _element.defaultChecked;\n" .
+                    "          break;\n" .
+                    "        case 'select':\n" .
+                    "          for (var j = 0; j < _element.options.length; j++) {\n" .
+                    "            _element.options[j].selected = _element.options[j].defaultSelected;\n" .
+                    "          }\n" .
+                    "          break;\n" .
+                    "        default:\n" .
+                    "          _element.value = _element.defaultValue;\n" .
+                    "      }\n" .
+                    "    }\n";
+            }
+        } elseif ($element->getType() == 'select') {
+            $elementName .= $element->getMultiple()? '[]': '';
+            if ($element->getMultiple()) {
+                $value =
+                    "  value{$jsIndex} = new Array();\n" .
+                    "  var valueIdx = 0;\n" .
+                    "  for (var i = 0; i < frm.elements['{$elementName}'].options.length; i++) {\n" . 
+                    "    if (frm.elements['{$elementName}'].options[i].selected) {\n" .
+                    "      value{$jsIndex}[valueIdx++] = frm.elements['{$elementName}'].options[i].value;\n" .
+                    "    }\n" .
+                    "  }\n";
+            } else {
+                $value = "  value{$jsIndex} = frm.elements['{$elementName}'].options[frm.elements['{$elementName}'].selectedIndex].value;\n";
+            }
+            if ($reset) {
+                $tmp_reset = 
+                    "    var _select = frm.elements['{$elementName}'];\n" .
+                    "    for (var i = 0; i < _select.options.length; i++) {\n" .
+                    "      _select.options[i].selected = _select.options[i].defaultSelected;\n" .
+                    "    }\n";
+            }
+        } elseif ($element->getType() == 'checkbox') {
+            $value = "  if (frm.elements['$elementName'].checked) {\n" .
+                     "    value{$jsIndex} = '1';\n" .
+                     "  } else {\n" .
+                     "    value{$jsIndex} = '';\n" .
+                     "  }";
+            $tmp_reset .= ($reset) ? "    field.checked = field.defaultChecked;\n" : '';
+        } elseif ($element->getType() == 'radio') {
+            $value = "  value{$jsIndex} = '';\n" .
+                     "  for (var i = 0; i < frm.elements['$elementName'].length; i++) {\n" .
+                     "    if (frm.elements['$elementName'][i].checked) {\n" .
+                     "      value{$jsIndex} = frm.elements['$elementName'][i].value;\n" .
+                     "    }\n" .
+                     "  }";
+            if ($reset) {
+                $tmp_reset .= "    for (var i = 0; i < frm.elements['$elementName'].length; i++) {\n" .
+                              "      frm.elements['$elementName'][i].checked = frm.elements['$elementName'][i].defaultChecked;\n" .
+                              "    }";
+            }
+        } else {
+            $value = "  value{$jsIndex} = frm.elements['$elementName'].value;";
+            $tmp_reset .= ($reset) ? "    field.value = field.defaultValue;\n" : '';
+        }
+        return array($value, $tmp_reset);
+    }
 } // end class HTML_QuickForm_RuleRegistry
 ?>
