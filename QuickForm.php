@@ -608,11 +608,8 @@ class HTML_QuickForm extends HTML_Common {
     *
     * Warning: it is not possible to check whether the $element is already
     * added to the form, therefore if you want to move the existing form
-    * element, you'll have to remove it from the form using removeElement()
-    * first:
-    * $foo =& $form->getElement('foo');
-    * $form->removeElement('foo');
-    * $form->insertElementBefore($foo, 'bar');
+    * element to a new position, you'll have to use removeElement():
+    * $form->insertElementBefore($form->removeElement('foo', false), 'bar');
     *
     * @access   public
     * @since    3.2.4
@@ -924,25 +921,33 @@ class HTML_QuickForm extends HTML_Common {
     /**
      * Removes an element
      *
+     * The method "unlinks" an element from the form, returning the reference
+     * to the element object. If several elements named $elementName exist, 
+     * it removes the first one, leaving the others intact.
+     * 
      * @param string    $elementName The element name
      * @param boolean   $removeRules True if rules for this element are to be removed too                     
-     *
      * @access public
      * @since 2.0
-     * @return void
+     * @return object HTML_QuickForm_element    a reference to the removed element
      * @throws HTML_QuickForm_Error
      */
-   function removeElement($elementName, $removeRules = true)
+    function &removeElement($elementName, $removeRules = true)
     {
-        if (isset($this->_elementIndex[$elementName])) {
-            unset($this->_elements[$this->_elementIndex[$elementName]]);
-            unset($this->_elementIndex[$elementName]);
-            if ($removeRules) {
-                unset($this->_rules[$elementName]);
-            }
-        } else {
+        if (!isset($this->_elementIndex[$elementName])) {
             return PEAR::raiseError(null, QUICKFORM_NONEXIST_ELEMENT, null, E_USER_WARNING, "Element '$elementName' does not exist in HTML_QuickForm::removeElement()", 'HTML_QuickForm_Error', true);
         }
+        $el =& $this->_elements[$this->_elementIndex[$elementName]];
+            unset($this->_elements[$this->_elementIndex[$elementName]]);
+        if (empty($this->_duplicateIndex[$elementName])) {
+            unset($this->_elementIndex[$elementName]);
+        } else {
+            $this->_elementIndex[$elementName] = array_shift($this->_duplicateIndex[$elementName]);
+        }
+        if ($removeRules) {
+            unset($this->_rules[$elementName]);
+        }
+        return $el;
     } // end func removeElement
 
     // }}}
