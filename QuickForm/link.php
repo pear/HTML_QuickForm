@@ -18,7 +18,7 @@
 // +----------------------------------------------------------------------+
 //
 
-require_once("HTML/QuickForm/element.php");
+require_once 'HTML/QuickForm/static.php';
 
 /**
  * HTML class for a link type field
@@ -29,8 +29,8 @@ require_once("HTML/QuickForm/element.php");
  * @since        PHP4.04pl1
  * @access       public
  */
-class HTML_QuickForm_link extends HTML_QuickForm_element {
-    
+class HTML_QuickForm_link extends HTML_QuickForm_static
+{
     // {{{ properties
 
     /**
