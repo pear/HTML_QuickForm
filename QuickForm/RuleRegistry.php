@@ -59,14 +59,14 @@ class HTML_QuickForm_RuleRegistry
      * @static
      * @return    object    Reference to the HTML_QuickForm_RuleRegistry singleton
      */
-    function &singleton()
+    function &getInstance()
     {
         static $obj;
         if (!isset($obj)) {
             $obj = new HTML_QuickForm_Validate();
         }
         return $obj;
-    } // end func singleton
+    } // end func getInstance
 
     /**
      * Registers a new validation rule
