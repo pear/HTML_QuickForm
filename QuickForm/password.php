@@ -31,25 +31,14 @@ require_once("HTML/QuickForm/input.php");
  * @access       public
  */
 class HTML_QuickForm_password extends HTML_QuickForm_input {
-    
-    // {{{ properties
 
-    /**
-     * Password value
-     * @var       
-     * @since     1.1
-     * @access    private
-     */
-    var $_value = null;
-
-    // }}}
     // {{{ constructor
 
     /**
      * Class constructor
      * 
      * @param     string    $elementName    (optional)Input field name attribute
-     * @param     string    $value          (optional)Input field value
+     * @param     string    $elementLabel   (optional)Input field label
      * @param     mixed     $attributes     (optional)Either a typical HTML attribute string 
      *                                      or an associative array
      * @since     1.0
@@ -63,39 +52,6 @@ class HTML_QuickForm_password extends HTML_QuickForm_input {
         $this->setType('password');
     } //end constructor
     
-    // }}}
-    // {{{ setValue()
-
-    /**
-     * Sets value for password element
-     * 
-     * @param     string    $value  Value for password element
-     * @since     1.0
-     * @access    public
-     * @return    void
-     * @throws    
-     */
-    function setValue($value)
-    {
-        $this->_value = $value;
-    } //end func setValue
-
-    // }}}
-    // {{{ getValue()
-
-    /**
-     * Returns the value of the form element
-     *
-     * @since     1.0
-     * @access    public
-     * @return    void
-     * @throws    
-     */
-    function getValue()
-    {
-        return $this->_value;
-    } // end func getValue
-
     // }}}
     // {{{ setSize()
 
@@ -143,7 +99,16 @@ class HTML_QuickForm_password extends HTML_QuickForm_input {
      */
     function getFrozenHtml()
     {
-        $html = '**********';
+        $value = $this->getValue();
+        if (!empty($value)) {
+            $html = '**********';
+        } else {
+            $html = '&nbsp;';
+        }
+        if ($this->_persistantFreeze) {
+            $html .= '<input type="hidden" name="' . 
+                $this->getName() . '" value="' . $value . '" />';
+        }
         return $html;
     } //end func getFrozenHtml
 
