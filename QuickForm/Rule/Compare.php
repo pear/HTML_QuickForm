@@ -70,7 +70,13 @@ class HTML_QuickForm_Rule_Compare extends HTML_QuickForm_Rule
 
     function validate($values, $operator = null)
     {
-        $compareFn = create_function('$a, $b', 'return $a ' . $this->_findOperator($operator) . ' $b;');
+        $operator = $this->_findOperator($operator);
+        if ('==' != $operator && '!=' != $operator) {
+            $compareFn = create_function('$a, $b', 'return floatval($a) ' . $operator . ' floatval($b);');
+        } else {
+            $compareFn = create_function('$a, $b', 'return $a ' . $operator . ' $b;');
+        }
+        
         return $compareFn($values[0], $values[1]);
     }
 
@@ -78,8 +84,13 @@ class HTML_QuickForm_Rule_Compare extends HTML_QuickForm_Rule
     function getValidationScript($jsValue, $jsField, $jsMessage, $jsReset = '', $operator = null)
     {
         $operator = $this->_findOperator($operator);
+        if ('==' != $operator && '!=' != $operator) {
+            $check = "!(Number(value[0]) {$operator} Number(value[1]))";
+        } else {
+            $check = "!(value[0] {$operator} value[1])";
+        }
         return $jsValue .
-               "\n  if (!(value[0] {$operator} value[1]) && !errFlag['{$jsField}']) {\n" .
+               "\n  if ('' != value[0] && {$check} && !errFlag['{$jsField}']) {\n" .
                "    errFlag['{$jsField}'] = true;\n" .
                "    _qfMsg = _qfMsg + '\\n - {$jsMessage}';\n" .
                $jsReset .
