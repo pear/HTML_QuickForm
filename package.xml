@@ -40,24 +40,18 @@ Features:
     </maintainer>
   </maintainers>
   <release>
-    <version>2.4</version>
-    <date>2002-10-21</date>
+    <version>2.5</version>
+    <date>2002-11-20</date>
     <state>stable</state>
     <notes>
-* Use $_POST, $_GET and $_FILES instead of $HTTP_.
-* Better error checking in renderElement().
-* Fixed freeze() for removed elements.
-* Added new element 'hiddenselect'.
-* Added optional $in_data parameter to method toHtml so that data can be added to the form right before it is rendered.  Useful when using with a template system.
-* Changed the way the key is obtained for _elementIndex in addElement() to accomodate with removeElement().
-* Some changes to _buildRules(): Made some of the javascript variables private which did not need have a global scope (such as frm).
-* Added new rule: emailorblank.
-* Fixes in HTML_QuickForm_Element.
-* Fixes in QuickForm_example2.php.
-* Added getElements() in HTML_QuickForm_Group which returns an array of all elements in group by reference.
-* Added getGroupType() in HTML_QuickForm_Group which returns the type of group as string or 'mixed' if group is composed of different element types.
-* Fixes in file upload validation rules.
-* Added a few new examples for filters, rules, file uploads usage.
+* Refine the use of setDefaults and setContants.
+setDefaults is used to fill the form with defaults values that will be overriden by submitted values once the form is submitted.
+setConstants is used to overide default and submitted values for example if form is not valid when submitted. In this case, constant values will be shown again in the field.
+In all cases, values won't be overriden by the other method anymore.
+* Added grouped elements validation on the server-side.
+* Added grouped elements customization through templates.
+* Fixes in rules for file uploads on maxsize, mime... when element is not required.
+* Added a new example for groups customization and validation.
     </notes>
     <filelist>
       <dir name="/" baseinstalldir="HTML">
@@ -89,6 +83,7 @@ Features:
           <file>QuickForm_example4.php</file>
           <file>QuickForm_example5.php</file>
           <file>QuickForm_example6.php</file>
+          <file>QuickForm_example7.php</file>
         </dir>
       </dir>
       <deps>
@@ -97,6 +92,27 @@ Features:
     </filelist>
   </release>
   <changelog>
+  <release>
+    <version>2.4</version>
+    <date>2002-10-21</date>
+    <state>stable</state>
+    <notes>
+* Use $_POST, $_GET and $_FILES instead of $HTTP_.
+* Better error checking in renderElement().
+* Fixed freeze() for removed elements.
+* Added new element 'hiddenselect'.
+* Added optional $in_data parameter to method toHtml so that data can be added to the form right before it is rendered.  Useful when using with a template system.
+* Changed the way the key is obtained for _elementIndex in addElement() to accomodate with removeElement().
+* Some changes to _buildRules(): Made some of the javascript variables private which did not need have a global scope (such as frm).
+* Added new rule: emailorblank.
+* Fixes in HTML_QuickForm_Element.
+* Fixes in QuickForm_example2.php.
+* Added getElements() in HTML_QuickForm_Group which returns an array of all elements in group by reference.
+* Added getGroupType() in HTML_QuickForm_Group which returns the type of group as string or 'mixed' if group is composed of different element types.
+* Fixes in file upload validation rules.
+* Added a few new examples for filters, rules, file uploads usage.
+    </notes>
+  </release>
   <release>
     <version>2.3</version>
     <date>2002-06-19</date>
