@@ -733,8 +733,8 @@ class HTML_QuickForm extends HTML_Common {
     function getSubmitValue($elementName)
     {
         $value = null;
-        if (isset($this->_submitValues[$elementName])) {
-            $value = $this->_submitValues[$elementName];
+        if (isset($this->_submitValues[$elementName]) || isset($this->_submitFiles[$elementName])) {
+            $value = isset($this->_submitValues[$elementName])? $this->_submitValues[$elementName]: array();
             if (is_array($value) && isset($this->_submitFiles[$elementName])) {
                 foreach ($this->_submitFiles[$elementName] as $k => $v) {
                     $value = @array_merge_recursive($value, $this->_reindexFiles($this->_submitFiles[$elementName][$k], $k));
@@ -1023,6 +1023,7 @@ class HTML_QuickForm extends HTML_Common {
         if (is_array($arg1)) {
             $required = 0;
             foreach ($arg1 as $elementIndex => $rules) {
+                $elementName = $groupObj->getElementName($elementIndex);
                 foreach ($rules as $rule) {
                     $format = (isset($rule[2])) ? $rule[2] : null;
                     $type = $rule[1];
@@ -1032,7 +1033,6 @@ class HTML_QuickForm extends HTML_Common {
                         $type = $newName;
                     }
 
-                    $elementName = $groupObj->getElementName($elementIndex);
                     $this->_rules[$elementName][] = array(
                                                         'type'        => $type,
                                                         'format'      => $format, 
@@ -1497,7 +1497,7 @@ class HTML_QuickForm extends HTML_Common {
                     $result = $registry->validate($rule['type'], $submitValue, $rule['format'], false);
                 }
 
-                if ($result === false || (!empty($rule['howmany']) && $rule['howmany'] > (int)$result)) {
+                if (!$result || (!empty($rule['howmany']) && $rule['howmany'] > (int)$result)) {
                     if (isset($rule['group'])) {
                         $this->_errors[$rule['group']] = $rule['message'];
                     } else {
