@@ -198,7 +198,9 @@ class HTML_QuickForm_Renderer_ArraySmarty extends HTML_QuickForm_Renderer_Array
                     return false;
                 }
                 // reduce string of keys by remove leading group keys
-                $sKeys = substr_replace($sKeys, '', 0, strlen($this->_currentGroup['keys']));
+                if (0 === strpos($sKeys, $this->_currentGroup['keys'])) {
+                    $sKeys = substr_replace($sKeys, '', 0, strlen($this->_currentGroup['keys']));
+                }
             }
         // element without a name
         } elseif ($ret['name'] == '') {
