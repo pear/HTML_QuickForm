@@ -198,7 +198,7 @@ class HTML_QuickForm_file extends HTML_QuickForm_input
         if ($dest != ''  && substr($dest, -1) != '/') {
             $dest .= '/';
         }
-        $fileName = ($fileName != '') ? $fileName : $this->_value['name'];
+        $fileName = ($fileName != '') ? $fileName : basename($this->_value['name']);
         if (move_uploaded_file($this->_value['tmp_name'], $dest . $fileName)) {
             return true;
         } else {
