@@ -1529,13 +1529,16 @@ class HTML_QuickForm extends HTML_Common {
                     }
                     break;
                 case 'function':
-                    if (method_exists($this, $ruleData[1])) {
-                        if (isset($submitValue)) {
-                            $element = $submitValue;
-                        } elseif (isset($this->_submitFiles[$elementName])) {
-                            $element = $this->_submitFiles[$elementName];
+                    if (empty($submitValue) && isset($this->_submitFiles[$elementName])) {
+                        $submitValue = $this->_submitFiles[$elementName];
+                    }
+                    if (isset($ruleData[2])) {
+                        if (!call_user_func(array($ruleData[2], $ruleData[1]), $submitValue, $format)) {
+                            $this->_errors[$elementName] = $message;
+                            continue 2;
                         }
-                        if (!$this->$ruleData[1]($elementName, $element, $format)) {
+                    } elseif (method_exists($this, $ruleData[1])) {
+                        if (!$this->$ruleData[1]($elementName, $submitValue, $format)) {
                             $this->_errors[$elementName] = $message;
                             continue 2;
                         }
