@@ -72,7 +72,7 @@ class HTML_QuickForm_date extends HTML_QuickForm_element
                             "weekdays_short"=> array ("Ned", "Pon", "Tor", "Sre", "Cet", "Pet", "Sob"),
                             "weekdays_long" => array ("Nedelja", "Ponedeljek", "Torek", "Sreda", "Cetrtek", "Petek", "Sobota"),
                             "months_short"  => array ("Jan", "Feb", "Mar", "Apr", "Maj", "Jun", "Jul", "Avg", "Sep", "Okt", "Nov", "Dec"),
-                            "months_long"   => array ("Januar", "Februar", "Maj", "April", "Maj", "Juni", "Julij", "Avgust", "September", "Oktober", "November", "December")
+                            "months_long"   => array ("Januar", "Februar", "Marec", "April", "Maj", "Junij", "Julij", "Avgust", "September", "Oktober", "November", "December")
                         ),
                         'ru'    => array (
                             'weekdays_short'=> array ('Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'),
