@@ -24,13 +24,14 @@ require_once("HTML/QuickForm/select.php");
 
 // Still some features to be implemented and commented.
 // Use with care. This is only EXPERIMENTAL.
+// API might change.
 
 /**
  * Class to dynamically create an dates in HTML SELECT fields
  *
  * @author       Adam Daniel <adaniel1@eesus.jnj.com>
  * @author       Bertrand Mansion <bmansion@mamasam.com>
- * @version      1.1
+ * @version      2.3
  * @since        PHP4.04pl1
  * @access       public
  */
@@ -54,15 +55,6 @@ class HTML_QuickForm_date extends HTML_QuickForm_element
     var $dateSelect = array();
     
     /**
-     * Contains the select options
-     *
-     * @var       array
-     * @since     1.0
-     * @access    private
-     */
-    var $_options = array();
-    
-    /**
      * Default values of the SELECT
      * 
      * @var       string
@@ -70,15 +62,6 @@ class HTML_QuickForm_date extends HTML_QuickForm_element
      * @access    private
      */
     var $_values = array();
-    
-    /**
-     * Default date format
-     * 
-     * @var       string
-     * @since     1.0
-     * @access    public
-     */
-    var $format = "Ymd";
     
     /**
      * Options in different languages
@@ -97,8 +80,8 @@ class HTML_QuickForm_date extends HTML_QuickForm_element
                         "de"    => array (
                             "weekdays_short"=> array ("Mon", "Di", "Mi", "Do", "Fr", "Sa", "So"),
                             "weekdays_long" => array ("Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"),
-                            "months_short"  => array ("Jan", "Feb", "März", "April", "Mai", "Juni", "Juli", "Aug", "Sept", "Okt", "Nov", "Dez"),
-                            "months_long"   => array ("Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember")
+                            "months_short"  => array ("Jan", "Feb", "M0/00rz", "April", "Mai", "Juni", "Juli", "Aug", "Sept", "Okt", "Nov", "Dez"),
+                            "months_long"   => array ("Januar", "Februar", "M0/00rz", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember")
                         ),
                         "fr"    => array (
                             "weekdays_short"=> array ("Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"),
@@ -132,14 +115,14 @@ class HTML_QuickForm_date extends HTML_QuickForm_element
      * @param     string    $value          (optional)Input field value
      * @param     mixed     $attributes     (optional)Either a typical HTML attribute string 
      *                                      or an associative array. Date format is passed along the attributes.
-     * @since     1.0
+     * @since     2.3
      * @access    public
      * @return    void
      * @throws    
      */
-    function HTML_QuickForm_date ($elementName, $value=null, $attributes)
+    function HTML_QuickForm_date ($elementName, $value=null, $attributes = array('format'=>'dMY','minyear'=>'1990','maxyear'=>'2020'))
     {
-        HTML_QuickForm_element::HTML_QuickForm_element($attributes);
+        HTML_QuickForm_element::HTML_QuickForm_element($elementName, $value, $attributes);
         $elementData = array("type"=>$this->_type, "name"=>$elementName);
         $this->updateAttributes($elementData);
         if (is_string($value)) {
@@ -147,16 +130,11 @@ class HTML_QuickForm_date extends HTML_QuickForm_element
         } else {
             $this->_values = $value;
         }
-        $this->_parseFormat();
     } //end constructor
     
     /**
-     * Class constructor
-     * 
-     * @param     string    $elementName    (optional)Input field name attribute
-     * @param     string    $value          (optional)Input field value
-     * @param     mixed     $attributes     (optional)Either a typical HTML attribute string 
-     *                                      or an associative array. Date format is passed along the attributes.
+     * Date format parser
+     *
      * @since     1.0
      * @access    public
      * @return    void
@@ -173,42 +151,51 @@ class HTML_QuickForm_date extends HTML_QuickForm_element
             unset($options);
             unset($j);
             $sign = substr($format,$i,1);
-            $selectName = $elementName."[]";
+            $selectName = $elementName."[$sign]";
             $selectedValue = $this->_values[$i];
             switch ($sign) {
                 case "D" :
-                    $this->dateSelect[$i] = &HTML_Form::createElement("select",$selectName);
-                    $this->dateSelect[$i]->load($this->options[$this->language]["weekdays_short"],$selectedValue);
+                    $options = $this->options[$this->language]["weekdays_short"];
+                    array_unshift($options , '--');
+                    unset($options[0]);
+                    $this->dateSelect[$i] = &new HTML_QuickForm_select($selectName);
+                    $this->dateSelect[$i]->load($options,$selectedValue);
                     break;
                 case "d":
                     for ($j = 1; $j <= 31; $j++) 
-                        $options[] = sprintf("%02d", $j);
-                    $this->dateSelect[$i] = &HTML_Form::createElement("select",$selectName);
+                        $options[$j] = sprintf("%02d", $j);
+                    $this->dateSelect[$i] = &new HTML_QuickForm_select($selectName);
                     $this->dateSelect[$i]->load($options,$selectedValue);
                     break;
                 case "M" :
-                    $this->dateSelect[$i] = &HTML_Form::createElement("select",$selectName);
-                    $this->dateSelect[$i]->load($this->options[$this->language]["months_short"],$selectedValue);
+                    $options = $this->options[$this->language]["months_short"];
+                    array_unshift($options , '--');
+                    unset($options[0]);
+                    $this->dateSelect[$i] = &new HTML_QuickForm_select($selectName);
+                    $this->dateSelect[$i]->load($options,$selectedValue);
                     break;
                 case "m" :
                     for ($j = 1; $j <= 12; $j++)
-                        $options[] = sprintf("%02d", $j);
-                    $this->dateSelect[$i] = &HTML_Form::createElement("select",$selectName);
+                        $options[$j] = sprintf("%02d", $j);
+                    $this->dateSelect[$i] =  &new HTML_QuickForm_select($selectName);
                     $this->dateSelect[$i]->load($options,$selectedValue);
                     break;
                 case "F" :
-                    $this->dateSelect[$i] = &HTML_Form::createElement("select",$selectName);
-                    $this->dateSelect[$i]->load($this->options[$this->language]["months_long"],$selectedValue);
+                    $options = $this->options[$this->language]["months_long"];
+                    array_unshift($options ,'--');
+                    unset($options[0]);
+                    $this->dateSelect[$i] = &new HTML_QuickForm_select($selectName);
+                    $this->dateSelect[$i]->load($options,$selectedValue);
                     break;
                 case "Y" :
                     if ($minyear > $maxyear) {
                         for ($j = $maxyear; $j <= $minyear; $j++)
-                            $options[] = $j;
+                            $options[$j] = $j;
                     } else {
                         for ($j = $minyear; $j <= $maxyear; $j++)
-                            $options[] = $j;
+                            $options[$j] = $j;
                     }   
-                    $this->dateSelect[$i] = &HTML_Form::createElement("select",$selectName);
+                    $this->dateSelect[$i] = &new HTML_QuickForm_select($selectName);
                     $this->dateSelect[$i]->load($options,$selectedValue);
                     break;
             }
@@ -231,132 +218,6 @@ class HTML_QuickForm_date extends HTML_QuickForm_element
             $this->language = $language;
         } 
     } //end func setLanguage
-
-    /**
-     * Sets the default values of the select box
-     * 
-     * @param     mixed    $values  Array or comma delimited string of selected values
-     * @since     1.0
-     * @access    public
-     * @return    void
-     * @throws    
-     */
-    function setSelected($values)
-    {
-        if (is_string($values)) {
-            $values = split("[ ]?,[ ]?", $values);
-        }
-        $this->_values = $values;  
-    } //end func setValue
-    
-    /**
-     * Returns an array of the selected values
-     * 
-     * @since     1.0
-     * @access    public
-     * @return    array of selected values
-     * @throws    
-     */
-    function getSelected()
-    {
-        return $this->_values;
-    } // end func getSelectedValues
-
-    /**
-     * Sets the select field size, only applies
-     * 
-     * @param     int    $size  Size of select  field
-     * @since     1.0
-     * @access    public
-     * @return    void
-     * @throws    
-     */
-    function setSize($size)
-    {
-        $this->updateAttributes(array("size"=>$size));
-    } //end func setSize
-    
-    /**
-     * Returns the select field size
-     * 
-     * @since     1.0
-     * @access    public
-     * @return    string
-     * @throws    
-     */
-    function getSize()
-    {
-        return $this->getAttribute("size");
-    } //end func getSize
-
-    /**
-     * Adds a new OPTION to the SELECT
-     *
-     * @param     string    $text       Display text for the OPTION
-     * @param     string    $value      Value for the OPTION
-     * @param     mixed     $attributes Either a typical HTML attribute string 
-     *                                  or an associative array
-     * @since     1.0
-     * @access    public
-     * @return    void
-     * @throws    
-     */
-    function addOption($text, $value, $attributes=null)
-    {
-        $attributes = $this->_parseAttributes($attributes);
-        if ($this->getAttribute("selected") && !in_array($value, $this->_values)) {
-            $this->_values[] = $value;
-            array_unique($this->_values);
-        }
-        $attr = array("value"=>$value);
-        $this->_updateAttrArray($attributes, $attr);
-        $this->_options[] = array("text"=>$text, "attr"=>$attributes);
-    } // end func addOption
-    
-    /**
-     * Loads the options from an associative array
-     * 
-     * @param     array    $arr     Associative array of options
-     * @param     mixed    $values  (optional) Array or comma delimited string of selected values
-     * @since     1.0
-     * @access    public
-     * @return    PEAR_Error on error or true
-     * @throws    PEAR_Error
-     */
-    function loadArray($arr, $values=null)
-    {
-        if (!is_array($arr)) {
-            return new PEAR_ERROR("First argument to HTML_Select::loadArray is not a valid array");
-        }
-        if (isset($values)) {
-            $this->setSelected($values);
-        }
-        foreach ($arr as $key => $val) {
-            if (is_int($key)) {
-                $key = $val;
-            }
-            $this->addOption($key, $val);
-        }
-        return true;
-    } // end func loadArray
-
-    /**
-     * Loads options from different types of data sources
-     *
-     * @param     mixed     $options     Options source currently supports assoc array or DB_result
-     * @param     mixed     $param1     (optional) See function detail
-     * @param     mixed     $param2     (optional) See function detail
-     * @param     mixed     $param3     (optional) See function detail
-     * @param     mixed     $param4     (optional) See function detail
-     * @since     1.1
-     * @access    public
-     * @return    PEAR_Error on error or true
-     * @throws    PEAR_Error
-     */
-    function load(&$options, $values)
-    {
-        return $this->loadArray($options, $values);
-    } // end func load
     
     /**
      * Returns the SELECT in HTML
@@ -368,7 +229,9 @@ class HTML_QuickForm_date extends HTML_QuickForm_element
      */
     function toHtml()
     {
+        $this->_parseFormat();
         $tabs = $this->_getTabs();
+        $strHtml='';
         foreach ($this->dateSelect as $key => $val) {
             if ($this->_flagFrozen) {
                 $strHtml .= $this->dateSelect[$key]->getFrozen();
