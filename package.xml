@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE package SYSTEM "../package.dtd">
 <!-- do not use the "Type" attribute here, that one is only for
      generated package.xml files -->
-<package>
+<package version="1.0">
   <name>HTML_QuickForm</name>
   <summary>The PEAR::HTML_QuickForm package provides methods for creating, validating, processing HTML forms.</summary>
-  <maintainer>
-    <user>mansion</user>
-    <name>Bertrand Mansion</name>
-    <email>bmansion@mamasam.com</email>
-  </maintainer>
+  <maintainers>
+    <maintainer>
+      <user>mansion</user>
+      <name>Bertrand Mansion</name>
+      <email>bmansion@mamasam.com</email>
+    </maintainer>
+  </maintainers>
 
   <release>
     <version>1.0</version>
@@ -25,32 +28,32 @@
       Install paths should be fixed. Installation has to be done in HTML/QuickForm.
       File upload and javascript work ok.
     </notes>
-  </release>
-
-  <filelist>
-    <dir name="/" baseinstalldir="HTML/QuickForm">
+    <filelist>
+      <dir name="/" baseinstalldir="HTML/QuickForm">
         <file role="php">QuickForm.php</file>
         <dir name="Elements">
-            <file role="php">button.php</file>
-            <file role="php">checkbox.php</file>
-            <file role="php">date.php</file>
-            <file role="php">element.php</file>
-            <file role="php">file.php</file>
-            <file role="php">group.php</file>
-            <file role="php">hidden.php</file>
-            <file role="php">image.php</file>
-            <file role="php">input.php</file>
-            <file role="php">password.php</file>
-            <file role="php">radio.php</file>
-            <file role="php">reset.php</file>
-            <file role="php">select.php</file>
-            <file role="php">submit.php</file>
-            <file role="php">text.php</file>
-            <file role="php">textarea.php</file>
+	  <file role="php">button.php</file>
+	  <file role="php">checkbox.php</file>
+	  <file role="php">date.php</file>
+	  <file role="php">element.php</file>
+	  <file role="php">file.php</file>
+	  <file role="php">group.php</file>
+	  <file role="php">hidden.php</file>
+	  <file role="php">image.php</file>
+	  <file role="php">input.php</file>
+	  <file role="php">password.php</file>
+	  <file role="php">radio.php</file>
+	  <file role="php">reset.php</file>
+	  <file role="php">select.php</file>
+	  <file role="php">submit.php</file>
+	  <file role="php">text.php</file>
+	  <file role="php">textarea.php</file>
         </dir>
         <dir name="docs" role="doc">
-            <file>QuickForm_example.php</file>
+	  <file>QuickForm_example.php</file>
         </dir>
-    </dir>
-  </filelist>
+      </dir>
+    </filelist>
+  </release>
+
 </package>
