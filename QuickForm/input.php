@@ -157,6 +157,49 @@ class HTML_QuickForm_input extends HTML_QuickForm_element {
     } //end func toHtml
 
     // }}}
+    // {{{ onQuickFormEvent()
 
+    /**
+     * Called by HTML_QuickForm whenever form event is made on this element
+     *
+     * @param     string    $event  Name of event
+     * @param     mixed     $arg    event arguments
+     * @param     object    $caller calling object
+     * @since     1.0
+     * @access    public
+     * @return    void
+     * @throws    
+     */
+    function onQuickFormEvent($event, $arg, &$caller)
+    {
+        // submit values are not possible for 'reset', 'image', 'button'
+        // not sure ehat to do about 'submit'
+        $type = $this->getType();
+        if ('reset' != $type && 'image' != $type && 'button' != $type) {
+            parent::onQuickFormEvent($event, $arg, $caller);
+        } else {
+            switch ($event) {
+                case 'updateValue':
+                    $value = $this->_findValue($caller->_constantValues);
+                    if (null === $value) {
+                        $value = $this->_findValue($caller->_defaultValues);
+                    }
+                    if (null !== $value) {
+                        $this->setValue($value);
+                    }
+                    break;
+                case 'setGroupValue':
+                    if ($this->getName() != $caller->getName()) {
+                        $this->setValue($arg);
+                    }
+                    break;
+                default:
+                    parent::onQuickFormEvent($event, $arg, $caller);
+            }
+        }
+        return true;
+    } // end func onQuickFormEvent
+
+    // }}}
 } // end class HTML_QuickForm_element
 ?>

@@ -145,6 +145,43 @@ class HTML_QuickForm_static extends HTML_QuickForm_element {
     } //end func getFrozenHtml
 
     // }}}
+    // {{{ onQuickFormEvent()
 
+    /**
+     * Called by HTML_QuickForm whenever form event is made on this element
+     *
+     * @param     string    $event  Name of event
+     * @param     mixed     $arg    event arguments
+     * @param     object    $caller calling object
+     * @since     1.0
+     * @access    public
+     * @return    void
+     * @throws    
+     */
+    function onQuickFormEvent($event, $arg, &$caller)
+    {
+        switch ($event) {
+            case 'updateValue':
+                // do NOT use submitted values for static elements
+                $value = $this->_findValue($caller->_constantValues);
+                if (null === $value) {
+                    $value = $this->_findValue($caller->_defaultValues);
+                }
+                if (null !== $value) {
+                    $this->setValue($value);
+                }
+                break;
+            case 'setGroupValue':
+                if ($this->getName() != $caller->getName()) {
+                    $this->setValue($arg);
+                }
+                break;
+            default:
+                parent::onQuickFormEvent($event, $arg, $caller);
+        }
+        return true;
+    } // end func onQuickFormEvent
+
+    // }}}
 } //end class HTML_QuickForm_static
 ?>

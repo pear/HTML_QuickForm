@@ -245,8 +245,7 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
     {
         $prevType = '';
         foreach (array_keys($this->_elements) as $key) {
-            $element =& $this->_elements[$key];
-            $type = $element->getType();
+            $type = $this->_elements[$key]->getType();
             if ($type != $prevType && $prevType != '') {
                 return 'mixed';
             }
@@ -389,7 +388,22 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
         switch ($event) {
             case 'updateValue':
                 if ($this->_appendName) {
-                    parent::onQuickFormEvent('updateValue', $arg, $caller);
+                    if ('checkbox' != $this->getGroupType()) {
+                        parent::onQuickFormEvent('updateValue', $arg, $caller);
+                    } else {
+                        // apply the same logic we use for a single checkbox
+                        $value = $this->_findValue($caller->_constantValues);
+                        if (null === $value) {
+                            if (isset($caller->_submitValues) && 0 < count($caller->_submitValues)) {
+                                $value = $this->_findValue($caller->_submitValues);
+                            } else {
+                                $value = $this->_findValue($caller->_defaultValues);
+                            }
+                        }
+                        if (null !== $value) {
+                            $this->setValue($value);
+                        }
+                    }
                 } else {
                     foreach (array_keys($this->_elements) as $key) {
                         $this->_elements[$key]->onQuickFormEvent('updateValue', $arg, $caller);
