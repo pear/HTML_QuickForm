@@ -822,11 +822,16 @@ class HTML_QuickForm extends HTML_Common {
         if (is_string($elements)) {
             $elements = split('[ ]?,[ ]?', $elements);
         }
-        foreach ($elements as $element) {
-            if (is_object($element) && is_subclass_of($element, 'HTML_QuickForm_element')) {
-                $element->updateAttributes($attrs);
-            } elseif (isset($this->_elementIndex[$element])) {
-                $this->_elements[$this->_elementIndex[$element]]->updateAttributes($attrs);
+        foreach (array_keys($elements) as $key) {
+            if (is_object($elements[$key]) && is_a($elements[$key], 'HTML_QuickForm_element')) {
+                $elements[$key]->updateAttributes($attrs);
+            } elseif (isset($this->_elementIndex[$elements[$key]])) {
+                $this->_elements[$this->_elementIndex[$elements[$key]]]->updateAttributes($attrs);
+                if (isset($this->_duplicateIndex[$elements[$key]])) {
+                    foreach ($this->_duplicateIndex[$elements[$key]] as $index) {
+                        $this->_elements[$index]->updateAttributes($attrs);
+                    }
+                }
             }
         }
     } // end func updateElementAttr

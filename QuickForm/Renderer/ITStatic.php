@@ -194,6 +194,7 @@ class HTML_QuickForm_Renderer_ITStatic extends HTML_QuickForm_Renderer
                 $this->_elementIndex++;
             }
             if ($varName != $this->_inGroup) {
+                $varName .= '_' == substr($varName, -1)? '': '_';
                 // element name is of type : group[name]
                 $label = $element->getLabel();
                 $html = $element->toHtml();

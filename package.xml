@@ -104,6 +104,10 @@ contact the package maintainers.
   delimiters)
 - Fixed #745 (wrong removal of group name from elements)
 - Fixed #212 (ObjectFlexy renderer broke on elements with brackets in names)
+- Fixed #1032 (ITStatic used wrong placeholders for groups with 
+  $appendName = false)
+- updateElementAttr() works correctly if passed an array of actual element 
+  objects, also handles the case of multiple elements with the same name.
     </notes>
     <filelist>
       <dir name="/" baseinstalldir="HTML">
