@@ -22,10 +22,6 @@
 require_once("HTML/QuickForm/element.php");
 require_once("HTML/QuickForm/select.php");
 
-// Still some features to be implemented and commented.
-// Use with care. This is only EXPERIMENTAL.
-// API has already changed...
-
 /**
  * Class to dynamically create HTML Select elements from a date
  *
@@ -71,7 +67,13 @@ class HTML_QuickForm_date extends HTML_QuickForm_element
                             "weekdays_long" => array ("Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"),
                             "months_short"  => array ("Jan", "Fev", "Mar", "Avr", "Mai", "Jun", "Jul", "Aou", "Sep", "Oct", "Nov", "Dec"),
                             "months_long"   => array ("Janvier", "Fevrier", "Mars", "Avril", "Mai", "Juin", "Juillet", "Aout", "Septembre", "Octobre", "Novembre", "Decembre")
-                        ),              
+                        ),
+                        "sl"    => array (
+                            "weekdays_short"=> array ("Ned", "Pon", "Tor", "Sre", "Cet", "Pet", "Sob"),
+                            "weekdays_long" => array ("Nedelja", "Ponedeljek", "Torek", "Sreda", "Cetrtek", "Petek", "Sobota"),
+                            "months_short"  => array ("Jan", "Feb", "Mar", "Apr", "Maj", "Jun", "Jul", "Avg", "Sep", "Okt", "Nov", "Dec"),
+                            "months_long"   => array ("Januar", "Februar", "Maj", "April", "Maj", "Juni", "Julij", "Avgust", "September", "Oktober", "November", "December")
+                        )
                     );
                     
     /**
