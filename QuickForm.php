@@ -421,12 +421,6 @@ class HTML_QuickForm extends HTML_Common {
             case "hidden" :
                 $this->_hidden[] = $elementObject;
                 break;
-            //case "submit" :
-            //case "reset" :
-            //case "checkbox" :
-            //case "radio" :
-            //  $this->_elements[] = array("object"=>$elementObject);
-            //  break;
             case "file" :
                 $this->_fileFlag = true;
             default :
@@ -523,7 +517,7 @@ class HTML_QuickForm extends HTML_Common {
             $this->_rules[$element] = array();
         }
         if ($validation == 'client') {
-            $this->updateAttributes(array('onsubmit'=>'return validate_' . $this->getAttribute('name') . '()'));
+            $this->updateAttributes(array('onsubmit'=>'return validate_' . $this->_attributes['name'] . '();'));
         }
         $this->_rules[$element][] = array("type"=>$type, 
             "format"=>$format, "message"=>$message, "validation"=>$validation);
@@ -712,10 +706,10 @@ class HTML_QuickForm extends HTML_Common {
         $html .=
             "\n$tabs<SCRIPT language=\"javascript\">\n" .
             "$tabs<!-- \n" .
-            "$tabs\tfunction validate_" . $this->getAttribute('name') . "() {\n" .
-            "$tabs\t\terrFlag = new Array()\n" .
+            "$tabs\tfunction validate_" . $this->_attributes['name'] . "() {\n" .
+            "$tabs\t\terrFlag = new Array();\n" .
             "$tabs\t\tmsg = '';\n" .
-            "$tabs\t\tfrm = document.forms['" . $this->getAttribute('name') . "'];\n";
+            "$tabs\t\tfrm = document.forms['" . $this->_attributes['name'] . "'];\n";
         for (reset($this->_rules); $elementName=key($this->_rules); next($this->_rules)) {
             $rules = pos($this->_rules);
             for ($i=0; $i < count($rules); $i++) {
@@ -756,7 +750,7 @@ class HTML_QuickForm extends HTML_Common {
             "$tabs\t\t\treturn false;\n" .
             "$tabs\t\t}\n" .
             "$tabs\t\treturn true;\n" .
-            "$tabs    }\n" .
+            "$tabs }\n" .
             "$tabs//-->\n" .
             "$tabs</SCRIPT>";
         return $html; 
