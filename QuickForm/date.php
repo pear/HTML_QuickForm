@@ -331,7 +331,7 @@ class HTML_QuickForm_date extends HTML_QuickForm_element
         if (isset($values)) {
             $this->setSelected($values);
         }
-        while (list($key, $val) = each($arr)) {
+        foreach ($arr as $key => $val) {
             if (is_int($key)) {
                 $key = $val;
             }
@@ -369,7 +369,7 @@ class HTML_QuickForm_date extends HTML_QuickForm_element
     function toHtml()
     {
         $tabs = $this->_getTabs();
-        while(list($key,$val)=each($this->dateSelect)) {
+        foreach ($this->dateSelect as $key => $val) {
             if ($this->_flagFrozen) {
                 $strHtml .= $this->dateSelect[$key]->getFrozen();
             } else {
