@@ -91,7 +91,7 @@ The next release will have two BC breaks:
           <file role="php">text.php</file>
           <file role="php">textarea.php</file>
         </dir>
-        <dir name="docs" role="doc">
+        <dir name="docs">
           <file>QuickForm_example.php</file>
           <file>QuickForm_example2.php</file>
           <file>QuickForm_example3.php</file>
@@ -101,10 +101,10 @@ The next release will have two BC breaks:
           <file>QuickForm_example7.php</file>
         </dir>
       </dir>
-      <deps>
-        <dep type="pkg" rel="ge" version="1.0">HTML_Common</dep>
-      </deps>
     </filelist>
+    <deps>
+       <dep type="pkg" rel="ge" version="1.0">HTML_Common</dep>
+    </deps>
   </release>
   <changelog>
   <release>
@@ -256,7 +256,7 @@ Here is a list of what's new in this version:
 * Fixed a bug in the hidden type, where it was setting the value when you created the element, thus not allowing the value to be set by POST or GET variables.
 * Took out the is_int test in select.php.
 * Made the caller a global variable in element.php, so that it can be accessed, if need be, in other element classes.
-* Changed it so that if an element is frozen and has no value it outputs '&nbsp;' instead of nothing which messes up old browsers like NS4.
+* Changed it so that if an element is frozen and has no value it outputs '&amp;nbsp;' instead of nothing which messes up old browsers like NS4.
 * Added renderElement() method which will return the html for one element.
 * Added removeElement() method which removes the element from the elements list. Both methods accept parameters.
       </notes>
