@@ -1,8 +1,8 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<!--  $Id: smarty-dynamic.tpl,v 1.1 2003-04-30 19:23:35 avb Exp $ -->
+<!--  $Id: smarty-dynamic.tpl,v 1.2 2003-05-01 10:10:44 avb Exp $ -->
 <html>
 <head>
-    <title>Smarty template for SmartyDynamic renderer</title>
+    <title>Smarty template for Array renderer</title>
     <style type="text/css">
     {literal}
     body, td, th {
@@ -133,7 +133,7 @@ SmartyDynamic QuickForm Renderer as option:</p>
 <p><strong>The used "Dynamic" Array </strong></p>
 <pre style="font-size: 12px;">
 {$dynamic_array|htmlentities}
-<pre>
+</pre>
 
 </body>
 </html>
