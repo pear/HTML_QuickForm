@@ -16,6 +16,7 @@
 // | Authors: Alexey Borzov <borz_off@cs.msu.su>                          |
 // |          Adam Daniel <adaniel1@eesus.jnj.com>                        |
 // |          Bertrand Mansion <bmansion@mamasam.com>                     |
+// |          Thomas Schulz <ths@4bconsult.de>                            |
 // +----------------------------------------------------------------------+
 //
 // $Id$
@@ -30,9 +31,11 @@ require_once 'HTML/QuickForm/Renderer.php';
  * The form array structure is the following:
  * array(
  *   'frozen'           => 'whether the form is frozen',
- *   'validationScript' => 'javascript for client-side validation',
+ *   'javascript'       => 'javascript for client-side validation',
  *   'attributes'       => 'attributes for <form> tag',
- *   'requiredNote      => 'note about the required elements',
+ *   'requirednote      => 'note about the required elements',
+ *   // if we set the option to collect hidden elements
+ *   'hidden'           => 'collected html of all hidden elements',
  *   // if there were some validation errors:
  *   'errors' => array(
  *     '1st element name' => 'Error for the 1st element',
@@ -76,6 +79,7 @@ require_once 'HTML/QuickForm/Renderer.php';
  *   'label'     => 'label for the element',
  *   'required'  => 'whether element is required',
  *   'error'     => 'error associated with the element',
+ *   'style'     => 'some information about element style (e.g. for Smarty)',
  *   // if element is not a group
  *   'html'      => 'HTML for the element'
  *   // if element is a group
@@ -116,13 +120,27 @@ class HTML_QuickForm_Renderer_Array extends HTML_QuickForm_Renderer
     var $_currentGroup = null;
 
    /**
+    * Additional style information for different elements  
+    * @var array
+    */
+    var $_elementStyles = array();
+
+   /**
+    * true: collect all hidden elements into string; false: process them as usual form elements
+    * @var bool
+    */
+    var $_collectHidden = false;
+
+   /**
     * Constructor
     *
+    * @param  bool    true: collect all hidden elements into string; false: process them as usual form elements
     * @access public
     */
-    function HTML_QuickForm_Renderer_Array()
+    function HTML_QuickForm_Renderer_Array($collectHidden = false)
     {
         $this->HTML_QuickForm_Renderer();
+        $this->_collectHidden = $collectHidden;
     } // end constructor
 
 
@@ -142,10 +160,14 @@ class HTML_QuickForm_Renderer_Array extends HTML_QuickForm_Renderer
     {
         $this->_ary = array(
             'frozen'            => $form->isFrozen(),
-            'validationScript'  => $form->getValidationScript(),
+            'javascript'        => $form->getValidationScript(),
             'attributes'        => $form->getAttributesString(),
-            'requiredNote'      => $form->getRequiredNote()
+            'requirednote'      => $form->getRequiredNote(),
+            'errors'            => array()
         );
+        if ($this->_collectHidden) {
+            $this->_ary['hidden'] = '';
+        }
         $this->_elementIdx     = 1;
         $this->_currentSection = null;
         $this->_sectionCount   = 0;
@@ -171,7 +193,11 @@ class HTML_QuickForm_Renderer_Array extends HTML_QuickForm_Renderer
 
     function renderHidden(&$element)
     {
-        $this->renderElement($element, false, null);
+        if ($this->_collectHidden) {
+            $this->_ary['hidden'] .= $element->toHtml() . "\n";
+        } else {
+            $this->renderElement($element, false, null);
+        }
     } // end func renderHidden
 
 
@@ -211,6 +237,10 @@ class HTML_QuickForm_Renderer_Array extends HTML_QuickForm_Renderer
             'required'  => $required,
             'error'     => $error
         );
+        // set the style for the element
+        if (isset($this->_elementStyles[$ret['name']])) {
+            $ret['style'] = $this->_elementStyles[$ret['name']];
+        }
         if ('group' == $ret['type']) {
             $ret['separator'] = $element->_separator;
             $ret['elements']  = array();
@@ -237,6 +267,24 @@ class HTML_QuickForm_Renderer_Array extends HTML_QuickForm_Renderer
             $this->_ary['sections'][$this->_currentSection]['elements'][] = $elAry;
         } else {
             $this->_ary['elements'][] = $elAry;
+        }
+    }
+
+
+   /**
+    * Sets a style to use for element rendering
+    * 
+    * @param mixed      element name or array ('element name' => 'style name')
+    * @param string     style name if $elementName is not an array
+    * @access public
+    * @return void
+    */
+    function setElementStyle($elementName, $styleName = null)
+    {
+        if (is_array($elementName)) {
+            $this->_elementStyles = array_merge($this->_elementStyles, $elementName);
+        } else {
+            $this->_elementStyles[$elementName] = $styleName;
         }
     }
 }
