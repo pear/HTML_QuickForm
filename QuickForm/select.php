@@ -455,35 +455,40 @@ class HTML_QuickForm_select extends HTML_QuickForm_element {
     {
         if ($this->_flagFrozen) {
             $strHtml = $this->getFrozenHtml();
-        } else {
+        } 
+        else {
             // put this down here since it changes the name
             if ($this->getAttribute('multiple')) {
                 $this->setMultiple(true);
             }
+
             $tabs = $this->_getTabs();
-            $name = isset($this->_attributes["name"]) ? $this->_attributes["name"] : '' ;
-            $strHtml =
-                $tabs . "<!-- BEGIN SELECT $name -->\n";
-            if ($this->_comment) {
-                $strHtml .= $tabs . "<!-- $this->_comment -->\n";
+            $name = isset($this->_attributes['name']) ? $this->_attributes['name'] : '' ;
+
+            $strHtml = '';
+
+            if ($this->getComment() != '') {
+                $strHtml .= $tabs . '<!-- ' . $this->getComment() . " //-->\n";
             }
-            $strHtml .=
-                $tabs . "<select" . $this->_getAttrString($this->_attributes) . ">\n" .
-                $tabs . "\t<!-- BEGIN OPTIONS $name -->\n";
+
+            $strHtml .= $tabs . '<select' . $this->_getAttrString($this->_attributes) . ">\n";
+
             for ($counter=0; $counter < count($this->_options); $counter++) {
                 $value = $this->_options[$counter]["attr"]["value"];
-                $attrString = $this->_getAttrString($this->_options[$counter]["attr"]);
+                $attrString = $this->_getAttrString($this->_options[$counter]['attr']);
+
                 if (is_array($this->_values) && in_array($value, $this->_values)) {
                     $attrString = " selected=\"selected\"" . $attrString;
                 }
+
                 $strHtml .=
-                    $tabs . "\t<option" . $attrString . ">" .
+                    $tabs . "\t<option" . $attrString . '>' .
                     $this->_options[$counter]["text"] . "</option>\n";
             }
-            $strHtml .= 
-                $tabs . "\t<!-- END OPTIONS $name -->\n" .
-                $tabs . "</select><!-- END SELECT $name -->";
+
+            $strHtml .= $tabs . '</select>';
         }
+
         return $strHtml;
     } //end func toHtml
     
@@ -504,8 +509,8 @@ class HTML_QuickForm_select extends HTML_QuickForm_element {
         if (is_array($this->_values)) {
             foreach ($this->_values as $key => $val) {
                 for ($i=0; $i<count($this->_options); $i++) {
-                    $optionTxt = $this->_options[$i]["text"];
-                    $optionVal = $this->_options[$i]["attr"]["value"];
+                    $optionTxt = $this->_options[$i]['text'];
+                    $optionVal = $this->_options[$i]['attr']['value'];
                     if ($val == $optionVal) {
                         $value[] = $optionTxt;
                     }
@@ -513,8 +518,8 @@ class HTML_QuickForm_select extends HTML_QuickForm_element {
             }
         } else {
             for ($i=0;$i<count($this->_options);$i++) {
-                $optionTxt = $this->_options[$i]["text"];
-                $optionVal = $this->_options[$i]["attr"]["value"];
+                $optionTxt = $this->_options[$i]['text'];
+                $optionVal = $this->_options[$i]['attr']['value'];
                 if ($this->_values == $optionVal) {
                     $value = $optionTxt;
                 }
