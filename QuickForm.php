@@ -733,13 +733,16 @@ class HTML_QuickForm extends HTML_Common {
     function renderElement($elementName, $remove = false, $removeRules = false)
     {
         $element = $this->getElement($elementName);
-        if (is_null($element)) {
+        if (is_null($element) || PEAR::isError($element)) {
             return PEAR::raiseError(null, QUICKFORM_NONEXIST_ELEMENT, null, E_USER_WARNING, "Element '$elementName' does not exist in HTML_QuickForm::renderElement()", 'HTML_QuickForm_Error', true);
         }
+
         $html = $this->_buildElement($element);
+
         if ($remove) {
             $this->removeElement($elementName, $removeRules);
         }
+
         return $html;
     } // end func renderElement
 
