@@ -31,6 +31,15 @@ require_once("HTML/QuickForm/input.php");
  */
 class HTML_QuickForm_file extends HTML_QuickForm_input
 {
+    // {{{ properties
+
+   /**
+    * Uploaded file data, from $_FILES
+    * @var array
+    */
+    var $_value = null;
+
+    // }}}
     // {{{ constructor
 
     /**
@@ -100,6 +109,45 @@ class HTML_QuickForm_file extends HTML_QuickForm_input
     } //end func freeze
 
     // }}}
+    // {{{ setValue()
+
+    /**
+     * Sets value for file element.
+     * 
+     * Actually this does nothing. The function is defined here to override
+     * HTML_Quickform_input's behaviour of setting the 'value' attribute. As
+     * no sane user-agent uses <input type="file">'s value for anything 
+     * (because of security implications) we implement file's value as a 
+     * read-only property with a special meaning.
+     * 
+     * @param     mixed    $value  Value for file element
+     * @since     3.0
+     * @access    public
+     * @return    void
+     * @throws    
+     */
+    function setValue($value)
+    {
+        return null;
+    } //end func setValue
+    
+    // }}}
+    // {{{ getValue()
+
+    /**
+     * Returns information about the uploaded file
+     *
+     * @since     3.0
+     * @access    public
+     * @return    array
+     * @throws    
+     */
+    function getValue()
+    {
+        return $this->_value;
+    } // end func getValue
+
+    // }}}
     // {{{ onQuickFormEvent()
 
     /**
@@ -115,9 +163,13 @@ class HTML_QuickForm_file extends HTML_QuickForm_input
      */
     function onQuickFormEvent($event, $arg, &$caller)
     {
-        $className = get_class($this);
         switch ($event) {
+            case 'updateValue':
+                $this->_value = $this->_findValue($caller->_submitFiles);
+                break;
             case 'addElement':
+                $this->onQuickFormEvent('createElement', $arg, $caller);
+                $this->onQuickFormEvent('updateValue', null, $caller);
                 $caller->updateAttributes(array('method' => 'post', 'enctype' => 'multipart/form-data'));
                 if (!$caller->elementExists('MAX_FILE_SIZE')) {
                     $err = $caller->addElement('hidden', 'MAX_FILE_SIZE', $caller->_maxFileSize);
@@ -125,7 +177,9 @@ class HTML_QuickForm_file extends HTML_QuickForm_input
                         return $err;
                     }
                 }
+                break;
             case 'createElement':
+                $className = get_class($this);
                 $this->$className($arg[0], $arg[1], $arg[2]);
                 break;
         }
