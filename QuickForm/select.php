@@ -455,8 +455,7 @@ class HTML_QuickForm_select extends HTML_QuickForm_element {
     {
         if ($this->_flagFrozen) {
             $strHtml = $this->getFrozenHtml();
-        } 
-        else {
+        } else {
             // put this down here since it changes the name
             if ($this->getAttribute('multiple')) {
                 $this->setMultiple(true);
