@@ -230,7 +230,7 @@ EOS;
             for ($i = 0; $i < count($this->_options); $i++) {
                 $js .= $arrayName . '[' . $i . "] = '" . strtr($this->_options[$i], $jsEscape) . "';\n";
             }
-            $js .= "//]]>\n</script>\n";
+            $js .= "//]]>\n</script>";
         }
         return $js . parent::toHtml();
     }// end func toHtml

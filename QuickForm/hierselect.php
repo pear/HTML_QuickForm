@@ -96,7 +96,7 @@ class HTML_QuickForm_hierselect extends HTML_QuickForm_group
      * @var       string
      * @access    private
      */
-    var $_js = "<script type=\"text/javascript\">\n//<![CDATA[\n";
+    var $_js = '';
     
     /**
     * The javascript array name
@@ -289,7 +289,7 @@ class HTML_QuickForm_hierselect extends HTML_QuickForm_group
      */
     function _setJS()
     {
-        $js      = '';
+        $this->_js = $js = '';
         $this->_jsArrayName = 'hs_' . $this->getName();
         for ($i = 1; $i < $this->_nbElements; $i++) {
             $this->_setJSArray($this->_jsArrayName, $this->_options[$i], $js);
@@ -396,13 +396,13 @@ class HTML_QuickForm_hierselect extends HTML_QuickForm_group
                              ."}\n";
                 define('HTML_QUICKFORM_HIERSELECT_EXISTS', true);
             }
-            $this->_js .= "//]]>\n</script>\n";
         }
         include_once('HTML/QuickForm/Renderer/Default.php');
         $renderer =& new HTML_QuickForm_Renderer_Default();
         $renderer->setElementTemplate('{element}');
         parent::accept($renderer);
-        return $this->_js.$renderer->toHtml();
+        return "<script type=\"text/javascript\">\n//<![CDATA[\n" . $this->_js . "//]]>\n</script>" .
+               $renderer->toHtml();
     } // end func toHtml
 
     // }}}
