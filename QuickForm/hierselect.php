@@ -290,7 +290,7 @@ class HTML_QuickForm_hierselect extends HTML_QuickForm_group
     function _setJS()
     {
         $this->_js = $js = '';
-        $this->_jsArrayName = 'hs_' . $this->getName();
+        $this->_jsArrayName = 'hs_' . str_replace(array('[', ']'), '_', $this->getName());
         for ($i = 1; $i < $this->_nbElements; $i++) {
             $this->_setJSArray($this->_jsArrayName, $this->_options[$i], $js);
         }
