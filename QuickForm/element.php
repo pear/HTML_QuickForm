@@ -91,8 +91,11 @@ class HTML_QuickForm_element extends HTML_Common {
         }
         $vars = array_merge($GLOBALS['HTTP_GET_VARS'], $GLOBALS['HTTP_POST_VARS']);
         if (isset($vars[$this->getName()])) {
-            $submitValue = (is_string($vars[$this->getName()])) ? 
-                stripslashes($vars[$this->getName()]) : $vars[$this->getName()];
+            if (is_string($vars[$this->getName()]) && get_magic_quotes_gpc() == 1) {
+                $submitValue = stripslashes($vars[$this->getName()]);
+            } else {
+                $submitValue = $vars[$this->getName()];
+            }
             $this->setValue($submitValue);
         }
     } //end constructor
