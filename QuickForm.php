@@ -24,21 +24,20 @@ require_once("HTML/Common.php");
 
 $GLOBALS['HTML_QUICKFORM_ELEMENT_TYPES'] = 
         array(
-            'group'     =>array('HTML/QuickForm/group.php','HTML_QuickForm_group'),
-            'hidden'    =>array('HTML/QuickForm/hidden.php','HTML_QuickForm_hidden'),
-            'date'      =>array('HTML/QuickForm/date.php','HTML_QuickForm_date'),
-            'reset'     =>array('HTML/QuickForm/reset.php','HTML_QuickForm_reset'),
-            'checkbox'  =>array('HTML/QuickForm/checkbox.php','HTML_QuickForm_checkbox'),
-            'file'      =>array('HTML/QuickForm/file.php','HTML_QuickForm_file'),
-            'image'     =>array('HTML/QuickForm/image.php','HTML_QuickForm_image'),
-            'password'  =>array('HTML/QuickForm/password.php','HTML_QuickForm_password'),
-            'radio'     =>array('HTML/QuickForm/radio.php','HTML_QuickForm_radio'),
-            'button'    =>array('HTML/QuickForm/button.php','HTML_QuickForm_button'),
-            'submit'    =>array('HTML/QuickForm/submit.php','HTML_QuickForm_submit'),
-            'select'    =>array('HTML/QuickForm/select.php','HTML_QuickForm_select'),
-            'text'      =>array('HTML/QuickForm/text.php','HTML_QuickForm_text'),
-            'textarea'  =>array('HTML/QuickForm/textarea.php','HTML_QuickForm_textarea'),
-            'link'      =>array('HTML/QuickForm/link.php','HTML_QuickForm_link')
+            'group'         =>array('HTML/QuickForm/group.php','HTML_QuickForm_group'),
+            'hidden'        =>array('HTML/QuickForm/hidden.php','HTML_QuickForm_hidden'),
+            'reset'         =>array('HTML/QuickForm/reset.php','HTML_QuickForm_reset'),
+            'checkbox'      =>array('HTML/QuickForm/checkbox.php','HTML_QuickForm_checkbox'),
+            'file'          =>array('HTML/QuickForm/file.php','HTML_QuickForm_file'),
+            'image'         =>array('HTML/QuickForm/image.php','HTML_QuickForm_image'),
+            'password'      =>array('HTML/QuickForm/password.php','HTML_QuickForm_password'),
+            'radio'         =>array('HTML/QuickForm/radio.php','HTML_QuickForm_radio'),
+            'button'        =>array('HTML/QuickForm/button.php','HTML_QuickForm_button'),
+            'submit'        =>array('HTML/QuickForm/submit.php','HTML_QuickForm_submit'),
+            'select'        =>array('HTML/QuickForm/select.php','HTML_QuickForm_select'),
+            'text'          =>array('HTML/QuickForm/text.php','HTML_QuickForm_text'),
+            'textarea'      =>array('HTML/QuickForm/textarea.php','HTML_QuickForm_textarea'),
+            'link'          =>array('HTML/QuickForm/link.php','HTML_QuickForm_link')
         );
 
 // {{{ error codes
@@ -274,6 +273,14 @@ class HTML_QuickForm extends HTML_Common {
      */
     var $_requiredNoteTemplate = 
         "\n\t<tr>\n\t\t<td></td>\n\t<td align=\"left\" valign=\"top\">{requiredNote}</td>\n\t</tr>";
+
+    /**
+     * Array containing the templates for customised elements
+     * @since     2.3
+     * @var       array
+     * @access    private
+     */
+    var $_templates = array();
 
     // }}}
     // {{{ constructor
@@ -900,8 +907,12 @@ class HTML_QuickForm extends HTML_Common {
     function _wrapElement(&$element, $label=null, $required=false, $error=null)
     {
         $tabs = $this->_getTabs();
-        $html = "";
-        $html = str_replace('{label}', $label, $this->_elementTemplate);
+        $html = '';
+        if (isset($this->_templates[$element->getName()])) {
+            $html = str_replace('{label}', $label, $this->_templates[$element->getName()]);
+        } else {
+            $html = str_replace('{label}', $label, $this->_elementTemplate);
+        }
         if ($required) {
             $html = str_replace('<!-- BEGIN required -->', '', $html);
             $html = str_replace('<!-- END required -->', '', $html);
@@ -995,7 +1006,7 @@ class HTML_QuickForm extends HTML_Common {
      */
     function _buildElement(&$element)
     {
-        $html        = "";
+        $html        = '';
         $object      = $element;
         $label       = $object->getLabel();
         $elementName = $object->getName();
@@ -1230,14 +1241,22 @@ class HTML_QuickForm extends HTML_Common {
     /**
      * Sets element template 
      *
-     * @param     string   $html    The HTML surrounding an element 
+     * @param     string   $html        The HTML surrounding an element 
+     * @param     string   $element     (optional) Name of the element to apply template for
      * @since     2.0
      * @access    public
      * @return    void
      */
-    function setElementTemplate($html)
+    function setElementTemplate($html, $element = null)
     {
-        $this->_elementTemplate = $html;
+        if (is_null($element)) {
+            $this->_elementTemplate = $html;
+        } else {
+            if (!$this->elementExists($element)) {
+                return PEAR::raiseError(null, QUICKFORM_UNREGISTERED_ELEMENT, null, E_USER_WARNING, "Element '$element' does not exist in HTML_QuickForm::setElementTemplate()", 'HTML_QuickForm_Error', true);
+            }
+            $this->_templates[$element] = $html;
+        }
     } // end func setElementTemplate
 
     // }}}
@@ -1304,6 +1323,7 @@ class HTML_QuickForm extends HTML_Common {
         $this->setElementTemplate('{element}');
         $this->setFormTemplate("\n\t<form{attributes}>{content}\n\t</form>\n");
         $this->setRequiredNoteTemplate('');
+        $this->_templates = array();
     }
 
     // }}}
