@@ -320,6 +320,33 @@ class HTML_QuickForm_element extends HTML_Common {
     } //end func getLabel
 
     // }}}
+    // {{{ _findValue()
+
+    /**
+     * Tries to find the element value from the submitted values array
+     * 
+     * @since     2.7
+     * @access    private
+     * @return    string
+     * @throws    
+     */
+    function _findValue(&$values)
+    {
+        if (empty($values)) return;
+        $elementName = $this->getName();
+        if (isset($values[$elementName])) {
+            $value = $values[$elementName];
+            if (is_string($value) && get_magic_quotes_gpc() == 1) {
+                $value = stripslashes($value);
+            }
+            return $value;
+        }
+        $myVar = str_replace(array(']', '['), array('', "']['"), $elementName);
+        $myVar = "['".$myVar."']";
+        return eval("return (isset(\$values$myVar)) ? \$values$myVar : null;");
+    } //end func _findValue
+
+    // }}}
     // {{{ onQuickFormEvent()
 
     /**
@@ -344,24 +371,15 @@ class HTML_QuickForm_element extends HTML_Common {
             case 'createElement':
                 $this->$className($arg[0], $arg[1], $arg[2], $arg[3], $arg[4]);
                 // need to set the submit value in case setDefault never gets called
-                $elementName = $this->getName();
-                if (isset($caller->_submitValues[$elementName])) {
-                    $value = $caller->_submitValues[$elementName];
-                    if (is_string($value) && get_magic_quotes_gpc() == 1) {
-                        $value = stripslashes($value);
-                    }
+                $value = $this->_findValue($caller->_submitValues);
+                if (!is_null($value)) {
                     $this->setValue($value);
                 }
                 break;
             case 'setDefault':
                 // In form display, default value is always overidden by submitted value
-                $elementName = $this->getName();
-                if (isset($caller->_submitValues[$elementName])) {
-                    $value = $caller->_submitValues[$elementName];
-                    if (is_string($value) && get_magic_quotes_gpc() == 1) {
-                        $value = stripslashes($value);
-                    }
-                } else {
+                $value = $this->_findValue($caller->_submitValues);
+                if (is_null($value)) {
                     $value = $arg;
                 }
                 $this->setValue($value);
@@ -376,7 +394,7 @@ class HTML_QuickForm_element extends HTML_Common {
             break;
         }
         return true;
-    } // end func onQuickFormLoad
+    } // end func onQuickFormEvent
 
     // }}}
 

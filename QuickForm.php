@@ -1429,6 +1429,28 @@ class HTML_QuickForm extends HTML_Common {
     } // end func getRequiredNote
 
     // }}}
+    // {{{ _findValue()
+
+    /**
+     * Tries to find the element value from the submitted values array
+     * 
+     * @since     2.7
+     * @access    private
+     * @return    string
+     * @throws    
+     */
+    function _findElementValue($elementName)
+    {
+        if (isset($this->_submitValues[$elementName])) {
+            $value = $this->_submitValues[$elementName];
+            return $value;
+        }
+        $myVar = str_replace(array(']', '['), array('', "']['"), $elementName);
+        $myVar = "['".$myVar."']";
+        return eval("return (isset(\$this->_submitValues$myVar)) ? \$this->_submitValues$myVar : null;");
+    } //end func _findElementValue
+
+    // }}}
     // {{{ validate()
 
     /**
@@ -1453,6 +1475,7 @@ class HTML_QuickForm extends HTML_Common {
                 $this->_validateGroup($elementName, $rules, $submitValues);
             } else {
                 // Standard elements validation
+                $submitValue = $this->_findElementValue($elementName);
                 foreach ($rules as $rule) {
                     $type = $format = $message = null;
                     $type = $rule['type'];
@@ -1467,8 +1490,8 @@ class HTML_QuickForm extends HTML_Common {
                     switch ($ruleData[0]) {
                         case 'regex':
                             $regex = str_replace('%data%', $format, $ruleData[1]);
-                            if (!preg_match($regex, $this->_submitValues[$elementName])) {
-                                if (empty($this->_submitValues[$elementName]) && !$this->isElementRequired($elementName)) {
+                            if (!preg_match($regex, $submitValue)) {
+                                if (empty($submitValue) && !$this->isElementRequired($elementName)) {
                                     continue 2;
                                 } else {
                                     $this->_errors[$elementName] = $message;
@@ -1478,8 +1501,8 @@ class HTML_QuickForm extends HTML_Common {
                             break;
                         case 'function':
                             if (method_exists($this, $ruleData[1])) {
-                                if (isset($this->_submitValues[$elementName])) {
-                                    $element = $this->_submitValues[$elementName];
+                                if (isset($submitValue)) {
+                                    $element = $submitValue;
                                 } elseif (isset($this->_submitFiles[$elementName])) {
                                     $element = $this->_submitFiles[$elementName];
                                 }
@@ -1488,7 +1511,7 @@ class HTML_QuickForm extends HTML_Common {
                                     continue 2;
                                 }
                             } else {
-                                if (!$ruleData[1]($elementName, $this->_submitValues[$elementName], $format)) {
+                                if (!$ruleData[1]($elementName, $submitValue, $format)) {
                                     $this->_errors[$elementName] = $message;
                                     continue 2;
                                 }
