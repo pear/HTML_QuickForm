@@ -59,6 +59,7 @@ define('QUICKFORM_NONEXIST_ELEMENT',       -3);
 define('QUICKFORM_INVALID_FILTER',         -4);
 define('QUICKFORM_UNREGISTERED_ELEMENT',   -5);
 define('QUICKFORM_INVALID_ELEMENT_NAME',   -6);
+define('QUICKFORM_INVALID_PROCESS',        -7);
 
 // }}}
 
@@ -600,7 +601,7 @@ class HTML_QuickForm extends HTML_Common {
      * @param    string     $label          (optional)group label
      * @param    string     $separator      (optional)string to seperate elements
      * @param    string     $useName        (optional)specify whether the group name should be
-     *										used in the form element name ex: group[element]
+     *                                      used in the form element name ex: group[element]
      * @return   reference to added group of elements
      * @since    2.8
      * @access   public
@@ -773,38 +774,6 @@ class HTML_QuickForm extends HTML_Common {
             }
         }
     } // end func updateElementAttr
-
-    // }}}
-    // {{{ renderElement()
-
-    /**
-     * Renders an element, outputting the html if the element is not
-     * frozen
-     *
-     * @param string $elementName The element name
-     * @param optional boolean $remove Remove the element after rendering?
-     * @param optional boolean $removeRules Remove all rules associated
-     *                                      with this element?
-     *
-     * @access public
-     * @since 2.0
-     * @return string
-     */
-    function renderElement($elementName, $remove = false, $removeRules = false)
-    {
-        $element = $this->getElement($elementName);
-        if (is_null($element) || PEAR::isError($element)) {
-            return PEAR::raiseError(null, QUICKFORM_NONEXIST_ELEMENT, null, E_USER_WARNING, "Element '$elementName' does not exist in HTML_QuickForm::renderElement()", 'HTML_QuickForm_Error', true);
-        }
-
-        $html = $this->_buildElement($element);
-
-        if ($remove) {
-            $this->removeElement($elementName, $removeRules);
-        }
-
-        return $html;
-    } // end func renderElement
 
     // }}}
     // {{{ removeElement()
@@ -1632,18 +1601,18 @@ class HTML_QuickForm extends HTML_Common {
     /**
      * Performs the form data processing
      *
-     * @since     1.0
+     * @param    mixed     $callback        Callback, either function name or array(&$object, 'method')
+     * @param    bool      $mergeFiles      Whether uploaded files should be processed too
+     * @since    1.0
      * @access   public
      */
-    function process()
+    function process($callback, $mergeFiles = true)
     {
-        echo '<pre>';
-        var_dump($this->_submitValues);
-        echo '</pre>';
-        echo '<pre>';
-        var_dump($this->_submitFiles);
-        echo '</pre>';
-        return true;
+        if (!$this->_callbackExists($callback)) {
+            return PEAR::raiseError(null, QUICKFORM_INVALID_PROCESS, null, E_USER_WARNING, "Callback function does not exist in QuickForm::process()", 'HTML_QuickForm_Error', true);
+        }
+        $values = ($mergeFiles === true) ? array_merge($this->_submitValues, $this->_submitFiles) : $this->_submitValues;
+        return call_user_func($callback, $values);
     } // end func process
 
     // }}}
@@ -1716,23 +1685,6 @@ class HTML_QuickForm extends HTML_Common {
         $this->accept($renderer);
         return $renderer->toHtml();
     } // end func toHtml
-
-    // }}}
-    // {{{ display()
-
-    /**
-     * Displays an HTML version of the form
-     *
-     * If the body parameter is used then the default layout is overridden and
-     * the contents of $body is used within the form
-     * @param    mixed    $body      (optional) Body of form
-     * @since     1.0
-     * @access    public
-     */
-    function display()
-    {
-        print $this->toHtml();
-    } //end func display
 
     // }}}
     // {{{ getValidationScript()
@@ -1990,7 +1942,8 @@ class HTML_QuickForm extends HTML_Common {
                 QUICKFORM_NONEXIST_ELEMENT      => 'nonexistent html element',
                 QUICKFORM_INVALID_FILTER        => 'invalid filter',
                 QUICKFORM_UNREGISTERED_ELEMENT  => 'unregistered element',
-                QUICKFORM_INVALID_ELEMENT_NAME  => 'element already exists'
+                QUICKFORM_INVALID_ELEMENT_NAME  => 'element already exists',
+                QUICKFORM_INVALID_PROCESS       => 'process callback does not exist'
             );
         }
 
@@ -2008,7 +1961,7 @@ class HTML_QuickForm extends HTML_Common {
 
 class HTML_QuickForm_Error extends PEAR_Error {
 
-	// {{{ properties
+    // {{{ properties
 
     /**
     * Prefix for all error messages
