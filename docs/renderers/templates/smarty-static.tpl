@@ -1,10 +1,10 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<!--  $Id: smarty-static.tpl,v 1.2 2003-05-15 19:31:54 avb Exp $ -->
+<!--  $Id: smarty-static.tpl,v 1.3 2004-10-15 20:30:56 ths Exp $ -->
 <html>
 <head>
     <title>Smarty template for ArraySmarty renderer: 2 column layout example</title>
     <style type="text/css">
-        {literal}   
+        {literal}
        .errors {
        font-family: sans-serif;
        color : #000;
@@ -81,14 +81,14 @@
                     <td class="label">{$form.email.label}</td>
                     <td class="element">{$form.email.html}</td>
                 </tr>
-                <tr><td colspan="2" class="note">Please, choose a 8-10 characters password.</td></tr>
+                <tr><td colspan="2" class="note">{$form.pass.label_note}</td></tr>
                 <tr>
                     <td class="label">{$form.pass.label}</td>
                     <td class="element">{$form.pass.html}</td>
                 </tr>
             </table>
         </td>
-        
+
         <td width="50%" valign="top"><!-- Company info -->
             <table width="100%" cellpadding="4">
                 <tr><th colspan="2">{$form.header.company_info}</th></tr>

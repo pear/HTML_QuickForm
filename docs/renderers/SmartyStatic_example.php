@@ -5,7 +5,7 @@
  * @author Bertrand Mansion <bmansion@mamasam.com>
  * @author Thomas Schulz <ths@4bconsult.de>
  *
- * $Id$ 
+ * $Id$
  */
 
 require_once 'HTML/QuickForm.php';
@@ -35,7 +35,7 @@ $form->addElement('header', 'personal', 'Personal Information');
 
 $form->addElement('hidden', 'ihidTest', 'hiddenField');
 $form->addElement('text', 'email', 'Your email:');
-$form->addElement('password', 'pass', 'Your password:', 'size=10');
+$form->addElement('password', 'pass', array('Your password:', 'note'=>'Please, choose a 8-10 characters password.'), 'size=10');
 $name['last'] = &HTML_QuickForm::createElement('text', 'first', 'First', 'size=10');
 $name['first'] = &HTML_QuickForm::createElement('text', 'last', 'Last', 'size=10');
 $form->addGroup($name, 'name', 'Name:', ',&nbsp;');
@@ -101,7 +101,7 @@ $tpl =& new Smarty;
 $tpl->template_dir = './templates';
 $tpl->compile_dir  = './templates';
 
-$renderer =& new HTML_QuickForm_Renderer_ArraySmarty($tpl);
+$renderer =& new HTML_QuickForm_Renderer_ArraySmarty($tpl, true);
 
 $renderer->setRequiredTemplate(
    '{if $error}

@@ -76,7 +76,7 @@ if ($form->validate()) {
     $form->freeze();
 }
 
-$renderer =& new HTML_QuickForm_Renderer_Array(true);
+$renderer =& new HTML_QuickForm_Renderer_Array(true, true);
 
 // give some elements aditional style informations
 $renderer->setElementStyle(array(
