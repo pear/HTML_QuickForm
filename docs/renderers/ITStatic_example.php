@@ -96,8 +96,8 @@ if ($form->validate()) {
     $form->freeze();
 }
 
-// Could be HTML_Template_Sigma('.')
-$tpl =& new HTML_Template_ITX('.');
+// Could be HTML_Template_Sigma('./templates')
+$tpl =& new HTML_Template_ITX('./templates');
 $tpl->loadTemplateFile('it-static.html');
 
 $renderer =& new HTML_QuickForm_Renderer_ITStatic($tpl);

@@ -102,8 +102,8 @@ if ($form->validate()) {
 
 
 // can use either HTML_Template_Sigma or HTML_Template_ITX
-$tpl =& new HTML_Template_ITX('.');
-// $tpl =& new HTML_Template_Sigma('.');
+$tpl =& new HTML_Template_ITX('./templates');
+// $tpl =& new HTML_Template_Sigma('./templates');
 
 $tpl->loadTemplateFile('it-dynamic-2.html');
 

@@ -73,8 +73,8 @@ if ($form->validate()) {
 
 // create a template object and load the template file
 // can use either HTML_Template_Sigma or HTML_Template_ITX
-$tpl =& new HTML_Template_ITX('.');
-// $tpl =& new HTML_Template_Sigma('.');
+$tpl =& new HTML_Template_ITX('./templates');
+// $tpl =& new HTML_Template_Sigma('./templates');
 
 $tpl->loadTemplateFile('it-dynamic.html', true, true);
 
