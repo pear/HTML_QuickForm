@@ -598,6 +598,69 @@ class HTML_QuickForm extends HTML_Common {
     } // end func addElement
     
     // }}}
+    // {{{ insertElementBefore()
+
+   /**
+    * Inserts a new element right before the other element
+    *
+    * Warning: it is not possible to check whether the $element is already
+    * added to the form, therefore if you want to move the existing form
+    * element, you'll have to remove it from the form using removeElement()
+    * first:
+    * $foo =& $form->getElement('foo');
+    * $form->removeElement('foo');
+    * $form->insertElementBefore($foo, 'bar');
+    *
+    * @access   public
+    * @since    3.2.4
+    * @param    object  HTML_QuickForm_element  Element to insert
+    * @param    string  Name of the element before which the new one is inserted
+    * @throws   HTML_QuickForm_Error
+    */
+    function insertElementBefore(&$element, $nameAfter)
+    {
+        if (!empty($this->_duplicateIndex[$nameAfter])) {
+            return PEAR::raiseError(null, QUICKFORM_INVALID_ELEMENT_NAME, null, E_USER_WARNING, 'Several elements named "' . $nameAfter . '" exist in HTML_QuickForm::insertElementBefore().', 'HTML_QuickForm_Error', true);
+        } elseif (!$this->elementExists($nameAfter)) {
+            return PEAR::raiseError(null, QUICKFORM_NONEXIST_ELEMENT, null, E_USER_WARNING, "Element '$nameAfter' does not exist in HTML_QuickForm::insertElementBefore()", 'HTML_QuickForm_Error', true);
+        }
+        $elementName = $element->getName();
+        $targetIdx   = $this->_elementIndex[$nameAfter];
+        $duplicate   = false;
+        // Like in addElement(), check that it's not an incompatible duplicate
+        if (!empty($elementName) && isset($this->_elementIndex[$elementName])) {
+            if ($this->_elements[$this->_elementIndex[$elementName]]->getType() != $element->getType()) {
+                return PEAR::raiseError(null, QUICKFORM_INVALID_ELEMENT_NAME, null, E_USER_WARNING, "Element '$elementName' already exists in HTML_QuickForm::insertElementBefore()", 'HTML_QuickForm_Error', true);
+            }
+            $duplicate = true;
+        }
+        // Move all the elements after added back one place, reindex _elementIndex and/or _duplicateIndex
+        for ($i = end(array_keys($this->_elements)); $i >= $targetIdx; $i--) {
+            if (isset($this->_elements[$i])) {
+                $currentName = $this->_elements[$i]->getName();
+                $this->_elements[$i + 1] =& $this->_elements[$i];
+                if ($this->_elementIndex[$currentName] == $i) {
+                    $this->_elementIndex[$currentName] = $i + 1;
+                } else {
+                    $dupIdx = array_search($i, $this->_duplicateIndex[$currentName]);
+                    $this->_duplicateIndex[$currentName][$dupIdx] = $i + 1;
+                }
+                unset($this->_elements[$i]);
+            }
+        }
+        // Put the element in place finally
+        $this->_elements[$targetIdx] =& $element;
+        if (!$duplicate) {
+            $this->_elementIndex[$elementName] = $targetIdx;
+        } else {
+            $this->_duplicateIndex[$elementName][] = $targetIdx;
+        }
+        $element->onQuickFormEvent('updateValue', null, $this);
+        // If not done, the elements will appear in reverse order
+        ksort($this->_elements);
+    }
+
+    // }}}
     // {{{ addGroup()
 
     /**
