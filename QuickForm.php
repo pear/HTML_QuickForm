@@ -844,7 +844,7 @@ class HTML_QuickForm extends HTML_Common {
                       'validation'  => $validation,
                       'reset'       => $reset);
         if ($type != 'function' && $this->getElementType($element) == 'group') {
-            $rule['howmany'] = 0;
+            $rule['howmany'] = ('required' == $type)? 1: 0;
         }
         $this->_rules[$element][] = $rule;
     } // end func addRule
@@ -865,7 +865,7 @@ class HTML_QuickForm extends HTML_Common {
      * @param    mixed      $arg1          Array for multiple elements or error message string for one element
      * @param    string     $type          (optional)Rule type use getRegisteredType to get types
      * @param    string     $format        (optional)Required for extra rule data
-     * @param    int        $howmany       (optional)How many elements to validate in the group (0 for all)
+     * @param    int        $howmany       (optional)How many valid elements should be in the group
      * @param    string     $validation    (optional)Where to perform validation: "server", "client"
      * @since    2.5
      * @access   public
@@ -904,14 +904,14 @@ class HTML_QuickForm extends HTML_Common {
                 }
             }
         } elseif (is_string($arg1)) {
-            if (!$this->isRuleRegistered($arg1)) {
+            if (!$this->isRuleRegistered($type)) {
                 return PEAR::raiseError(null, QUICKFORM_INVALID_RULE, null, E_USER_WARNING, "Rule '$type' is not registered in HTML_QuickForm::addGroupRule()", 'HTML_QuickForm_Error', true);
             }
             $this->_rules[$group][] = array('type'       => $type,
                                             'format'     => $format, 
                                             'message'    => $arg1,
                                             'validation' => $validation,
-                                            'howmany'    => $howmany);
+                                            'howmany'    => ('required' == $type && 0 == $howmany)? 1: $howmany);
             if ($type == 'required') {
                 $this->_required[] = $group;
             }
@@ -1431,7 +1431,7 @@ class HTML_QuickForm extends HTML_Common {
      * @param     string   $format      Optional rule parameter
      * @param     array    $ruleData    Rule data found in _registeredRules
      * @param     string   $elementName Name of the element to validate in group
-     * @param     int      $howmany     How many elements to validate in group (0 is all)
+     * @param     int      $howmany     How many valid elements should be in the group
      * @access    private
      * @since     2.7
      * @return    bool     True on success, false if error found
@@ -1451,13 +1451,13 @@ class HTML_QuickForm extends HTML_Common {
                 $values = array($values);
             }
             foreach ($values as $value) {
-                if ($this->_validateElement($groupName, $value, $format, $ruleData)) {
-                    $total++;
+                if (isset($value) && '' != $value) {
+                    if ($this->_validateElement($groupName, $value, $format, $ruleData)) {
+                        $total++;
+                    } else {
+                        return false;
+                    }
                 }
-            }
-            if ($howmany == 0) {
-                $group   =& $this->getElement($groupName);
-                $howmany = count($group->getElements());
             }
             if ($total < $howmany) {
                 return false;
@@ -1844,13 +1844,13 @@ class HTML_QuickForm extends HTML_Common {
      * Returns the values submitted by the form
      *
      * @since     2.0
-     * @access    private
-     * @return    void
-     * @throws
+     * @access    public
+     * @param     bool      Whether uploaded files should be returned too
+     * @return    array
      */
-    function getSubmitValues()
+    function getSubmitValues($mergeFiles = false)
     {
-        return $this->_submitValues;
+        return $mergeFiles? array_merge($this->_submitValues, $this->_submitFiles): $this->_submitValues;
     } // end func getSubmitValues
 
     // }}}
