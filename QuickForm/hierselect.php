@@ -290,7 +290,7 @@ class HTML_QuickForm_hierselect extends HTML_QuickForm_group
     function _setJS()
     {
         $js      = '';
-        $this->_jsArrayName = $this->getName();
+        $this->_jsArrayName = 'hs_' . $this->getName();
         for ($i = 1; $i < $this->_nbElements; $i++) {
             $this->_setJSArray($this->_jsArrayName, $this->_options[$i], $js);
         }
@@ -370,6 +370,9 @@ class HTML_QuickForm_hierselect extends HTML_QuickForm_group
                              ."    var ctl;\n\n"
                              ."    for (var i = 0; i < nbElements; i++) {\n"
                              ."        ctl = frm.form[grpName+'['+i+']'];\n"
+                             ."        if (!ctl) {\n"
+                             ."            ctl = frm.form[grpName+'['+i+'][]'];\n"
+                             ."        }\n"
                              ."        if (i <= eleIndex) {\n"
                              ."            n += \"_\"+ctl.value;\n"
                              ."        } else {\n"
@@ -382,6 +385,9 @@ class HTML_QuickForm_hierselect extends HTML_QuickForm_group
                              ."        var j = 0;\n"
                              ."        n = eleIndex + 1;\n"
                              ."        ctl = frm.form[grpName+'['+ n +']'];\n"
+                             ."        if (!ctl) {\n"
+                             ."            ctl = frm.form[grpName+'['+ n +'][]'];\n"
+                             ."        }\n"
                              ."        for (var i in the_array) {\n"
                              ."            opt = new Option(the_array[i], i, false, false);\n"
                              ."            ctl.options[j++] = opt;\n"
