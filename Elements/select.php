@@ -271,11 +271,17 @@ class HTML_QuickForm_select extends HTML_QuickForm_element {
             $this->setValue($values);
         }
         $fetchMode = ($textCol && $valueCol) ? DB_FETCHMODE_ASSOC : DB_FETCHMODE_DEFAULT;
-        while (is_array($row = $result->fetchRow($fetchMode)) ) {
-            if ($fetchMode == DB_FETCHMODE_ASSOC) {
-                $this->addOption($row[$textCol], $row[$valueCol]);
+        while ($row = $result->fetchRow($fetchMode)) {
+            if (PEAR::isError($row)) {
+                return $row;
+            } elseif (is_array($row)) {
+                if ($fetchMode == DB_FETCHMODE_ASSOC) {
+                    $this->addOption($row[$textCol], $row[$valueCol]);
+                } else {
+                    $this->addOption($row[0], $row[1]);
+                }
             } else {
-                $this->addOption($row[0], $row[1]);
+                return new PEAR_ERROR('Invalid return value from DB_result->fetchRow');
             }
         }
         return true;
