@@ -1559,6 +1559,10 @@ class HTML_QuickForm extends HTML_Common {
 
                     if (isset($rule['group'])) {
                         $group    =& $this->getElement($rule['group']);
+                        // No JavaScript validation for frozen elements
+                        if ($group->isFrozen()) {
+                            continue 2;
+                        }
                         $elements =& $group->getElements();
                         foreach (array_keys($elements) as $key) {
                             if ($elementName == $group->getElementName($key)) {
@@ -1574,6 +1578,16 @@ class HTML_QuickForm extends HTML_Common {
                         }
                     } else {
                         $element =& $this->getElement($elementName);
+                    }
+                    // No JavaScript validation for frozen elements
+                    if (is_object($element) && $element->isFrozen()) {
+                        continue 2;
+                    } elseif (is_array($element)) {
+                        foreach (array_keys($element) as $key) {
+                            if ($element[$key]->isFrozen()) {
+                                continue 3;
+                            }
+                        }
                     }
 
                     $test[] = $registry->getValidationScript($element, $elementName, $rule);
