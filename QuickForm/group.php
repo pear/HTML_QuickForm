@@ -200,25 +200,28 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
      */
     function toHtml()
     {
-        $html = "";
+        $html = '';
         $name = $this->getName();
         $value = $this->getValue();
-        foreach ($this->_elements as $key=>$element) {
+        foreach ($this->_elements as $key => $element) {
             if (PEAR::isError($element)) {
                 return $element;
             }
             $elementName = $element->getName();
-            $index = !empty($elementName) ? $elementName : $key;
+            $index = (!empty($elementName)) ? $elementName : $key;
+            
             $elementType = $element->getType();
             if (!empty($name) && isset($elementName)) {
                 $element->setName($name . "[$elementName]");
             } elseif (!empty($name)) {
                 $element->setName($name);
             }
-            if (isset($value) && is_array($value)) {
-                $element->onQuickFormEvent('setGroupValue', $value[$index], &$this);
+            if (is_array($value)) {
+                if (isset($value[$index])) {
+                    $element->onQuickFormEvent('setGroupValue', $value[$index], $this);
+                }
             } elseif (isset($value)) {
-                $element->onQuickFormEvent('setGroupValue', $value, &$this);
+                $element->onQuickFormEvent('setGroupValue', $value, $this);
             }
             if ($this->_flagFrozen) {
                 $element->freeze();
