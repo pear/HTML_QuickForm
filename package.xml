@@ -40,17 +40,21 @@ Features:
     </maintainer>
   </maintainers>
   <release>
-    <version>2.6</version>
-    <date>2003-01-29</date>
+    <version>2.7</version>
+    <date>2003-02-12</date>
     <state>stable</state>
     <notes>
-* IMPORTANT: addElement now returns a reference to the added element.
-* Added new date element to create formatted date selects.
-* Added example for the new date element in QuickForm_Example.php
-* Fixed a warning in checkbox element
-* Default values are always overidden by submitted values.
-* Email validation rules accept 4 chars extensions (.info, .name, ...)
-* Fixed bug in applyFilter()
+* Use moveUploadedFile() (PHP 4.1) for file uploads instead of copy() and unlink(). (Matthias Englert)
+* Added support for element names with brackets ie. element[name][firstname].
+* Added static element to add static text in form. (Wojciech Gdela)
+* Removed extra tabs created when wrapping form elements (Tim Glen)
+* Added validation for whole group with addRule('group') in complement to validation for group elements with addGroupRule('group').
+* Added ability to use a method from a class or from an object for validation using registerRule().
+* Fixed bug with radio button validation. (Jack Kline)
+* Fixed bug when validating checkboxes named with backets ie. checkbox[A]
+* Fixed a problem with stripslashes() in element.php
+* Fixed a bug in hidden.php preventing its value to be set under some conditions. (Arne Gellhaus)
+* In progress : fix bug with toArray() for the date element, use a layout object (templates), implement function validation for elements in group.
     </notes>
     <filelist>
       <dir name="/" baseinstalldir="HTML">
@@ -72,6 +76,7 @@ Features:
           <file role="php">radio.php</file>
           <file role="php">reset.php</file>
           <file role="php">select.php</file>
+          <file role="php">static.php</file>
           <file role="php">submit.php</file>
           <file role="php">text.php</file>
           <file role="php">textarea.php</file>
@@ -92,6 +97,20 @@ Features:
     </filelist>
   </release>
   <changelog>
+  <release>
+    <version>2.6</version>
+    <date>2003-01-29</date>
+    <state>stable</state>
+    <notes>
+* IMPORTANT: addElement now returns a reference to the added element.
+* Added new date element to create formatted date selects.
+* Added example for the new date element in QuickForm_Example.php
+* Fixed a warning in checkbox element
+* Default values are always overidden by submitted values.
+* Email validation rules accept 4 chars extensions (.info, .name, ...)
+* Fixed bug in applyFilter()
+    </notes>
+  </release>
   <release>
     <version>2.5</version>
     <date>2002-11-20</date>
