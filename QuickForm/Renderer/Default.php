@@ -349,22 +349,21 @@ class HTML_QuickForm_Renderer_Default extends HTML_QuickForm_Renderer
     */
     function finishGroup(&$group)
     {
-        if (!empty($this->_groupWrap)) {
-            $html = str_replace('{content}', implode('', $this->_groupElements), $this->_groupWrap);
-        } else {
-            $separator = $group->_separator;
-            if (is_array($separator)) {
-                $count = count($separator);
-                $html  = '';
-                for ($i = 0; $i < count($this->_groupElements); $i++) {
-                    $html .= (0 == $i? '': $separator[($i - 1) % $count]) . $this->_groupElements[$i];
-                }
-            } else {
-                if (is_null($separator)) {
-                    $separator = '&nbsp;';
-                }
-                $html = implode((string)$separator, $this->_groupElements);
+        $separator = $group->_separator;
+        if (is_array($separator)) {
+            $count = count($separator);
+            $html  = '';
+            for ($i = 0; $i < count($this->_groupElements); $i++) {
+                $html .= (0 == $i? '': $separator[($i - 1) % $count]) . $this->_groupElements[$i];
             }
+        } else {
+            if (is_null($separator)) {
+                $separator = '&nbsp;';
+            }
+            $html = implode((string)$separator, $this->_groupElements);
+        }
+        if (!empty($this->_groupWrap)) {
+            $html = str_replace('{content}', $html, $this->_groupWrap);
         }
         $this->_html   .= str_replace('{element}', $html, $this->_groupTemplate);
         $this->_inGroup = false;
