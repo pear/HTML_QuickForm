@@ -100,10 +100,11 @@ class HTML_QuickForm_Rule_Callback extends HTML_QuickForm_Rule
     {
         if (isset($this->_data[$this->name])) {
             $callback = $this->_data[$this->name][0];
-            $params   = $this->_BCMode[$this->name]? "'', {jsVar}": $jsVar;
+            $params   = ($this->_BCMode[$this->name]? "'', {jsVar}": '{jsVar}') .
+                        (isset($options)? ", '{$options}'": '');
         } else {
             $callback = is_array($options)? $options[1]: $options;
-            $params   = $jsVar;
+            $params   = '{jsVar}';
         }
         return array('', "{jsVar} != '' && !{$callback}({$params})");
     } // end func getValidationScript
