@@ -167,7 +167,7 @@ class HTML_QuickForm_file extends HTML_QuickForm_input
                 if ($caller->getAttribute('method') == 'get') {
                     return PEAR::raiseError('Cannot add a file upload field to a GET method form');
                 }
-                $this->_value = $this->_findValue($caller->_submitFiles);
+                $this->_value = $this->_findValue();
                 $caller->updateAttributes(array('enctype' => 'multipart/form-data'));
                 $caller->setMaxFileSize();
                 break;
@@ -301,6 +301,44 @@ class HTML_QuickForm_file extends HTML_QuickForm_input
     } // end func _ruleCheckFileName
     
     // }}}
+    // {{{ _findValue()
 
+   /**
+    * Tries to find the element value from the values array
+    * 
+    * Needs to be redefined here as $_FILES is populated differently from 
+    * other arrays when element name is of the form foo[bar]
+    * 
+    * @access    private
+    * @return    mixed
+    */
+    function _findValue()
+    {
+        if (empty($_FILES)) {
+            return null;
+        }
+        $elementName = $this->getName();
+        if (isset($_FILES[$elementName])) {
+            return $_FILES[$elementName];
+        } elseif (false !== ($pos = strpos($elementName, '['))) {
+            $base  = substr($elementName, 0, $pos);
+            $idx   = "['" . str_replace(array(']', '['), array('', "']['"), substr($elementName, $pos + 1, -1)) . "']";
+            $props = array('name', 'type', 'size', 'tmp_name', 'error');
+            $code  = "if (!isset(\$_FILES['{$base}']['name']{$idx})) {\n" .
+                     "    return null;\n" .
+                     "} else {\n" .
+                     "    \$value = array();\n";
+            foreach ($props as $prop) {
+                $code .= "    \$value['{$prop}'] = \$_FILES['{$base}']['{$prop}']{$idx};\n";
+            }
+            $code .= "    return \$value;\n}\n";
+            echo $code;
+            return eval($code);
+        } else {
+            return null;
+        }
+    }
+
+    // }}}
 } // end class HTML_QuickForm_file
 ?>
