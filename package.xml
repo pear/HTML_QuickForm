@@ -65,9 +65,6 @@
         </dir>
       </dir>
     </filelist>
-    <deps>
-      <dep type="pkg" rel="ge" version="1.11">HTML_Common</dep>
-    </deps>
   </release>
   <changelog>
     <release>
