@@ -1,0 +1,35 @@
+<tr> 
+    <td valign="top" align="right"> 
+        <b>
+        {if:error}
+            <span style="color: Red;">
+        {end:}
+        {if:required}<font color="red">*</font>{end:}
+        {label:h}:
+        {if:error}
+            </span>
+        {end:}
+        </b> 
+    </td> 
+    <td> 
+    <table cellspacing="2" border="0"> 
+        {foreach:elements,gitem} 
+        <tr> 
+            {if:gitem.isType(#radio#)} 
+            <td colspan="2" class="green"> 
+                {gitem.html:h}
+            </td> 
+            {else:} 
+            <td class="green" align="right"> 
+                {if:gitem.required}<font color="red">*</font>{end:} 
+                {gitem.label:h} 
+            </td> 
+            <td class="green"> 
+                {gitem.html:h}                          
+            </td>             
+            {end:} 
+        </tr> 
+        {end:} 
+    </table> 
+    </td> 
+</tr>
