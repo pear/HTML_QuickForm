@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<!--  $Id: smarty-dynamic.tpl,v 1.2 2003-05-01 10:10:44 avb Exp $ -->
+<!--  $Id: smarty-dynamic.tpl,v 1.3 2003-05-21 13:27:59 avb Exp $ -->
 <html>
 <head>
     <title>Smarty template for Array renderer</title>
@@ -64,8 +64,8 @@
                 {eval var=$element.style}
             *}   
             
-            <!-- submit button (don't display on frozen forms) -->
-            {elseif $element.type eq "submit"}
+            <!-- submit or reset button (don't display on frozen forms) -->
+            {elseif $element.type eq "submit" or $element.type eq "reset"}
                 {if not $form.frozen}
                 <tr>   
                     <td>&nbsp;</td>
