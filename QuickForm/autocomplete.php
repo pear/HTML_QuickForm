@@ -116,7 +116,7 @@ class HTML_QuickForm_autocomplete extends HTML_QuickForm_text
             if (!defined('HTML_QUICKFORM_AUTOCOMPLETE_EXISTS')) {
                 $js .= <<<EOS
 
-/* --- begin javascript for autocomplete --- */
+/* begin javascript for autocomplete */
 function setSelectionRange(input, selectionStart, selectionEnd) {
     if (input.setSelectionRange) {
         input.setSelectionRange(selectionStart, selectionEnd);
@@ -212,7 +212,7 @@ function autocomplete(textbox, event, values) {
         return true;
     }
 }
-/* --- end javascript for autocomplete --- */
+/* end javascript for autocomplete */
 
 EOS;
                 define('HTML_QUICKFORM_AUTOCOMPLETE_EXISTS', true);
