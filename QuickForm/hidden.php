@@ -50,7 +50,8 @@ class HTML_QuickForm_hidden extends HTML_QuickForm_input {
         HTML_QuickForm_input::HTML_QuickForm_input($elementName, null, $attributes);
         $this->setType('hidden');
         // don't override GET/POST settings if value is not set
-        if (isset($value)) {
+        $tmp_val = $this->getValue();            
+        if (is_null($tmp_val)) {                  
             $this->setValue($value);
         }
     } //end constructor
