@@ -205,7 +205,7 @@ class HTML_QuickForm_radio extends HTML_QuickForm_input {
         switch ($event) {
             case 'addElement':
             case 'createElement':
-                $this->$className($arg[0], $arg[1], $arg[2], $arg[3], $ags[4]);
+                $this->$className($arg[0], $arg[1], $arg[2], $arg[3], $arg[4]);
                 break;
             case 'setDefault':
                 $vars = array_merge($GLOBALS['HTTP_GET_VARS'], $GLOBALS['HTTP_POST_VARS']);
