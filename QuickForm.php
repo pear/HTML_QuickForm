@@ -304,7 +304,7 @@ class HTML_QuickForm extends HTML_Common {
         $action = ($action == '') ? $_SERVER['PHP_SELF'] : $action;
         $this->updateAttributes(array('action'=>$action, 'method'=>$method, 'name'=>$formName, 'target'=>$target));
         $this->_registeredTypes = &$GLOBALS['HTML_QUICKFORM_ELEMENT_TYPES'];
-        $this->_submitValues = $_${$method};
+        $this->_submitValues = $GLOBALS['_' . $method];
         $this->_submitFiles = $_FILES;
     } // end constructor
 
