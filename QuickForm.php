@@ -476,7 +476,7 @@ class HTML_QuickForm extends HTML_Common {
         if ($dest != ''  && substr($dest, -1) != '/')
             $dest .= '/';
         $fileName = ($fileName != '') ? $fileName : $file['name'];
-        if (move_uploaded_file($file['tmp_name'], $dest . $fileName) {
+        if (move_uploaded_file($file['tmp_name'], $dest . $fileName)) {
             return true;
         } else {
             return false;
