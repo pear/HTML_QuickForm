@@ -234,11 +234,8 @@ class HTML_QuickForm_checkbox extends HTML_QuickForm_input {
                     $this->setChecked($arg);
                 }
                 break;
-            case 'setDefault':
-                $vars = $caller->getSubmitValues();
-                if (count($vars) == 0) {
-                    $this->setChecked($arg);
-                }
+            case 'setConstant':
+                $this->setChecked($arg);
                 break;
             case 'setGroupValue':
                 $this->setChecked($arg);
