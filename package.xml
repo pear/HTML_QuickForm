@@ -61,20 +61,24 @@ Features:
     <date>2003-11-??</date>
     <state>stable</state>
     <notes>
-Additions and changes:
-- Added 'autocomplete' element (Matteo Di Giovinazzo)
-- Added possibility to check whether form was actually submitted (see also bug #185)
-- QuickForm now correctly handles 'file' elements with [] in name,
-  'file' elements inside groups
-- 'date' element will display year select in reverse order if 'minYear' &gt; 'maxYear'
-- Added possibility to set increment value for some 'date' element selects
-- Added 'y' format to 'date' element
+* Additions and changes
+- Refactored form validation using Strategy/Factory/Singleton patterns. (Bertrand Mansion)
+  + Added HTML_QuickForm_Rule and HTML_QuickForm_RuleRegistry classes.
+  + New 'compare', 'callback' rules and an improved 'email' rule.
+  + Added 2 new examples for built-in and custom rules. (Alexey Borzov)
+  + Fixed javascript validation on groups, radios, selects (Alexey Borzov)
+- Added 'autocomplete' element. (Matteo Di Giovinazzo)
+- Added possibility to check whether form was actually submitted (see also bug #185). (Alexey Borzov)
+- QuickForm now correctly handles 'file' elements with [] in name, 'file' elements inside groups. (Alexey Borzov)
+- 'date' element will display year select in reverse order if 'minYear' &gt; 'maxYear'. (Alexey Borzov)
+- Added possibility to set increment value for some 'date' element selects. (Alexey Borzov)
+- Added 'y' format to 'date' element. (Bertrand Mansion)
 
-Migration to 3.2:
+* Migration to 3.2
 - Features that were marked deprecated in previous releases are REMOVED
 - 'emailorblank' rule was REMOVED, use 'email' rule (see also PEAR bug #34)
 
-Bugfixes:
+* Bugfixes
 - Fixed PEAR bug #140 (empty label tags for checkboxes and radios)
 - Fixed PEAR bug #175 (error in 'date' element's German translation)
 - Fixed PEAR bug #70 (Flexy renderer didn't handle multiple labels for element)
