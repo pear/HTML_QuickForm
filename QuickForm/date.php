@@ -369,38 +369,28 @@ class HTML_QuickForm_date extends HTML_QuickForm_element
      * @return    void
      * @throws    
      */
-    function onQuickFormEvent($event, $arg, &$callerLocal)
+    function onQuickFormEvent($event, $arg, &$caller)
     {
-        global $caller;
-        // make it global so we can access it in any of the other methods if needed
-        $caller =& $callerLocal;
-        $className = get_class($this);
         switch ($event) {
-            case 'addElement':
-            case 'createElement':
-                $this->$className($arg[0], $arg[1], $arg[2], $arg[3], $arg[4]);
-                // need to set the submit value in case setDefault never gets called
-                $elementName = $this->getName();
-                if (isset($caller->_submitValues[$elementName])) {
-                    $date = $caller->_submitValues[$elementName];
-                    $this->setSelectedDate($date);
+            case 'updateValue':
+                // constant values override both default and submitted ones
+                // default values are overriden by submitted
+                $value = $this->_findValue($caller->_constantValues);
+                if (null === $value) {
+                    $value = $this->_findValue($caller->_submitValues);
+                    if (null === $value) {
+                        $value = $this->_findValue($caller->_defaultValues);
+                    }
+                }
+                if (null !== $value) {
+                    $this->setSelectedDate($value);
                 }
                 break;
-            case 'setDefault':
-                // In form display, default value is always overidden by submitted value
-                $elementName = $this->getName();
-                if (isset($caller->_submitValues[$elementName])) {
-                    $date = $caller->_submitValues[$elementName];
-                } else {
-                    $date = $arg;
-                }
-                $this->setSelectedDate($date);
-                break;
-            case 'setConstant':
-                // In form display, constant value overides submitted value
-                // but submitted value is kept in _submitValues array
+            case 'setGroupValue':
                 $this->setSelectedDate($arg);
                 break;
+            default:
+                parent::onQuickFormEvent($event, $arg, $caller);
         }
         return true;
     } // end func onQuickFormEvent

@@ -364,18 +364,9 @@ class HTML_QuickForm extends HTML_Common {
                     $defaultValues = $this->_recursiveFilter($filter, $defaultValues);
                 }
             }
-            foreach ($defaultValues as $key => $value) {
-                $this->_defaultValues[$key] = $value;
-                if (isset($this->_elementIndex[$key])) {
-                    $element =& $this->getElement($key);
-                    $element->onQuickFormEvent('setDefault', $value, $this);
-                    if (isset($this->_duplicateIndex[$key])) {
-                        foreach ($this->_duplicateIndex[$key] as $index) {
-                            $element =& $this->_elements[$index];
-                            $element->onQuickFormEvent('setDefault', $value, $this);
-                        }
-                    }
-                }
+            $this->_defaultValues = array_merge($this->_defaultValues, $defaultValues);
+            foreach (array_keys($this->_elements) as $key) {
+                $this->_elements[$key]->onQuickFormEvent('updateValue', null, $this);
             }
         }
     } // end func setDefaults
@@ -412,18 +403,9 @@ class HTML_QuickForm extends HTML_Common {
                     $constantValues = $this->_recursiveFilter($filter, $constantValues);
                 }
             }
-            foreach ($constantValues as $key => $value) {
-                $this->_constantValues[$key] = $value;
-                if (isset($this->_elementIndex[$key])) {
-                    $element =& $this->getElement($key);
-                    $element->onQuickFormEvent('setConstant', $value, $this);
-                    if (isset($this->_duplicateIndex[$key])) {
-                        foreach ($this->_duplicateIndex[$key] as $index) {
-                            $element =& $this->_elements[$index];
-                            $element->onQuickFormEvent('setConstant', $value, $this);
-                        }
-                    }
-                }
+            $this->_constantValues = array_merge($this->_constantValues, $constantValues);
+            foreach (array_keys($this->_elements) as $key) {
+                $this->_elements[$key]->onQuickFormEvent('updateValue', null, $this);
             }
         }
     } // end func setConstants
@@ -557,6 +539,7 @@ class HTML_QuickForm extends HTML_Common {
     {
         if (is_object($element) && is_subclass_of($element, 'html_quickform_element')) {
            $elementObject = &$element;
+           $elementObject->onQuickFormEvent('updateValue', null, $this);
         } else {
             $args = func_get_args();
             $elementObject =& $this->_loadElement('addElement', $element, array_slice($args, 1));
@@ -578,16 +561,6 @@ class HTML_QuickForm extends HTML_Common {
         } else {
             $this->_elements[] =& $elementObject;
             $this->_elementIndex[$elementName] = count($this->_elements) - 1;
-        }
-
-        // Set element values
-        if (isset($this->_submitValues[$elementName])) {
-            $elementObject->onQuickFormEvent('setDefault', $this->_submitValues[$elementName], $this);
-        } elseif (isset($this->_defaultValues[$elementName])) {
-            $elementObject->onQuickFormEvent('setDefault', $this->_defaultValues[$elementName], $this);
-        }
-        if (isset($this->_constantValues[$elementName])) {
-            $elementObject->onQuickFormEvent('setConstant', $this->_constantValues[$elementName], $this);
         }
 
         return $elementObject;
@@ -814,11 +787,8 @@ class HTML_QuickForm extends HTML_Common {
     // {{{ addHeader()
 
     /**
-     * Adds a header element to the form
+     * Adds a header element to the form (DEPRECATED)
      *
-     * This method is kept for compatibility reason. Use addElement('header', 'myheader', 'Form Header') instead.
-     *
-     * @param     string    $name       element name, should be defined if you don't use addElement
      * @param     string    $label      label of header
      * @since     1.0   
      * @access    public
@@ -826,13 +796,9 @@ class HTML_QuickForm extends HTML_Common {
      * @return    object A reference to a header element
      * @throws    PEAR_Error
      */
-    function &addHeader($name, $label = null)
+    function &addHeader($label)
     {
-        if (empty($label)) {
-            $label = $name;
-            $name = null;
-        }
-        return $this->addElement('header', $name, $label);
+        return $this->addElement('header', null, $label);
     } // end func addHeader
 
     // }}}

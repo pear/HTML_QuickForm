@@ -310,7 +310,9 @@ class HTML_QuickForm_element extends HTML_Common {
      */
     function _findValue(&$values)
     {
-        if (empty($values)) return;
+        if (empty($values)) {
+            return null;
+        }
         $elementName = $this->getName();
         if (isset($values[$elementName])) {
             $value = $values[$elementName];
@@ -342,38 +344,33 @@ class HTML_QuickForm_element extends HTML_Common {
      * @return    void
      * @throws    
      */
-    function onQuickFormEvent($event, $arg, &$callerLocal)
+    function onQuickFormEvent($event, $arg, &$caller)
     {
-        global $caller;
-        // make it global so we can access it in any of the other methods if needed
-        $caller =& $callerLocal;
-        $className = get_class($this);
         switch ($event) {
-            case 'addElement':
             case 'createElement':
+                $className = get_class($this);
                 $this->$className($arg[0], $arg[1], $arg[2], $arg[3], $arg[4]);
-                // need to set the submit value in case setDefault never gets called
-                $value = $this->_findValue($caller->_submitValues);
-                if (!is_null($value)) {
+                break;
+            case 'addElement':
+                $this->onQuickFormEvent('createElement', $arg, $caller);
+                $this->onQuickFormEvent('updateValue', null, $caller);
+                break;
+            case 'updateValue':
+                // constant values override both default and submitted ones
+                // default values are overriden by submitted
+                $value = $this->_findValue($caller->_constantValues);
+                if (null === $value) {
+                    $value = $this->_findValue($caller->_submitValues);
+                    if (null === $value) {
+                        $value = $this->_findValue($caller->_defaultValues);
+                    }
+                }
+                if (null !== $value) {
                     $this->setValue($value);
                 }
                 break;
-            case 'setDefault':
-                // In form display, default value is always overidden by submitted value
-                $value = $this->_findValue($caller->_submitValues);
-                if (is_null($value)) {
-                    $value = $arg;
-                }
-                $this->setValue($value);
-                break;
-            case 'setConstant':
-                // In form display, constant value overides submitted value
-                // but submitted value is kept in _submitValues array
-                $this->setValue($arg);
-                break;
             case 'setGroupValue':
                 $this->setValue($arg);
-            break;
         }
         return true;
     } // end func onQuickFormEvent

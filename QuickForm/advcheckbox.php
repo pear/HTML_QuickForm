@@ -43,14 +43,6 @@ class HTML_QuickForm_advcheckbox extends HTML_QuickForm_checkbox {
     // {{{ properties
 
     /**
-     * The caller object
-     *
-     * @var object
-     * @access private
-     */
-    var $_caller = null;
-
-    /**
      * The values passed by the hidden elment
      *
      * @var array
@@ -232,25 +224,28 @@ class HTML_QuickForm_advcheckbox extends HTML_QuickForm_checkbox {
      */
     function onQuickFormEvent($event, $arg, &$caller)
     {
-        $className = get_class($this);
         switch ($event) {
-            case 'addElement':
-            case 'createElement':
-                $this->_caller =& $caller;
-                $this->$className($arg[0], $arg[1], $arg[2], $arg[3], $arg[4]);
-                break;
-            case 'setDefault':
-                $vars = $caller->getSubmitValues();
-                if (count($vars) == 0) {
-                    $this->_defaultValue = $arg;
+            case 'updateValue':
+                // constant values override both default and submitted ones
+                // default values are overriden by submitted
+                $value = $this->_findValue($caller->_constantValues);
+                if (null === $value) {
+                    $value = $this->_findValue($caller->_submitValues);
+                    if (null === $value) {
+                        $value = $this->_findValue($caller->_defaultValues);
+                        if (null !== $value && empty($caller->_submitValues)) {
+                            $this->_defaultValue = $value;
+                        }
+                    }
+                } else {
+                    $this->_constantValue = $value;
+                }
+                if (null !== $value) {
+                    $this->setChecked($value);
                 }
                 break;
-            case 'setConstant':
-                $this->_constantValue = $arg;
-                break;
-            case 'setGroupValue':
-                $this->setChecked($arg);
-            break;
+            default:
+                parent::onQuickFormEvent($event, $arg, $caller);
         }
         return true;
     } // end func onQuickFormLoad

@@ -334,53 +334,20 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
      * @return    void
      * @throws    
      */
-    function onQuickFormEvent($event, $arg, &$callerLocal)
+    function onQuickFormEvent($event, $arg, &$caller)
     {
-        global $caller;
-        // make it global so we can access it in any of the other methods if needed
-        $caller =& $callerLocal;
-
-        $className = get_class($this);
         switch ($event) {
-            case 'addElement':
-            case 'createElement':
-                $this->$className($arg[0], $arg[1], $arg[2], $arg[3], $arg[4]);
-                // need to set the submit value in case setDefault never gets called
-                $elementName = $this->getName();
-                if (isset($caller->_submitValues[$elementName])) {
-                    $value = $caller->_submitValues[$elementName];
-                    if (is_string($value) && get_magic_quotes_gpc() == 1) {
-                        $value = stripslashes($value);
-                    }
-                    $this->setValue($value);
-                }
-                break;
-            case 'setDefault':
-                // In form display, default value is always overidden by submitted value
-                $elementName = $this->getName();
-                if (isset($caller->_submitValues[$elementName])) {
-                    $value = $caller->_submitValues[$elementName];
-                    if (is_string($value) && get_magic_quotes_gpc() == 1) {
-                        $value = stripslashes($value);
-                    }
+            case 'updateValue':
+                if ($this->_appendName) {
+                    parent::onQuickFormEvent('updateValue', $arg, $caller);
                 } else {
-                    if (count($caller->_submitValues) > 0) {
-                        // Form has been submitted and value was not set
-                        $value = null;
-                    } else {
-                        $value = $arg;
+                    foreach (array_keys($this->_elements) as $key) {
+                        $this->_elements[$key]->onQuickFormEvent('updateValue', $arg, $caller);
                     }
                 }
-                $this->setValue($value);
                 break;
-            case 'setConstant':
-                // In form display, constant value overides submitted value
-                // but submitted value is kept in _submitValues array
-                $this->setValue($arg);
-                break;
-            case 'setGroupValue':
-                $this->setValue($arg);
-            break;
+            default:
+                parent::onQuickFormEvent($event, $arg, $caller);
         }
         return true;
     } // end func onQuickFormEvent
@@ -407,22 +374,24 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
             if (PEAR::isError($element)) {
                 return $element;
             }
-            $elementName = $element->getName();
-            $index = (!empty($elementName)) ? $elementName : $key;
             
-            $elementType = $element->getType();
-            if (isset($elementName) && $this->_appendName) {
-                $element->setName($name . '['.$elementName.']');
-            } elseif (!isset($elementName) && $this->_appendName) {
-                $element->setName($name);
-            }
-            if (is_array($value)) {
-                if (isset($value[$index])) {
-                    $element->onQuickFormEvent('setGroupValue', $value[$index], $this);
+            if ($this->_appendName) {
+                $elementName = $element->getName();
+                $index       = (!empty($elementName)) ? $elementName : $key;
+                if (isset($elementName)) {
+                    $element->setName($name . '['.$elementName.']');
+                } else {
+                    $element->setName($name);
                 }
-            } elseif (isset($value)) {
-                $element->onQuickFormEvent('setGroupValue', $value, $this);
+                if (is_array($value)) {
+                    if (isset($value[$index])) {
+                        $element->onQuickFormEvent('setGroupValue', $value[$index], $this);
+                    }
+                } elseif (isset($value)) {
+                    $element->onQuickFormEvent('setGroupValue', $value, $this);
+                }
             }
+
             if ($this->_flagFrozen) {
                 $element->freeze();
             }

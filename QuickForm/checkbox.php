@@ -250,34 +250,26 @@ class HTML_QuickForm_checkbox extends HTML_QuickForm_input {
      */
     function onQuickFormEvent($event, $arg, &$caller)
     {
-        $className = get_class($this);
         switch ($event) {
-            case 'addElement':
-            case 'createElement':
-                $this->$className($arg[0], $arg[1], $arg[2], $arg[3]);
-                // need to set the submit value in case setDefault never gets called
-                $value = $this->_findValue($caller->_submitValues);
-                if (!is_null($value)) {
+            case 'updateValue':
+                // constant values override both default and submitted ones
+                // default values are overriden by submitted
+                $value = $this->_findValue($caller->_constantValues);
+                if (null === $value) {
+                    $value = $this->_findValue($caller->_submitValues);
+                    if (null === $value) {
+                        $value = $this->_findValue($caller->_defaultValues);
+                    }
+                }
+                if (null !== $value) {
                     $this->setChecked($value);
                 }
                 break;
-            case 'setDefault':
-                // In form display, default value is always overidden by submitted value
-                if (count($caller->_submitValues) > 0) {
-                    $value = $this->_findValue($caller->_submitValues);
-                    if (!is_null($value)) {
-                        $this->setChecked($value);
-                    }
-                } else {
-                    $this->setChecked($arg);
-                }
-                break;
-            case 'setConstant':
-                $this->setChecked($arg);
-                break;
             case 'setGroupValue':
                 $this->setChecked($arg);
-            break;
+                break;
+            default:
+                parent::onQuickFormEvent($event, $arg, $caller);
         }
         return true;
     } // end func onQuickFormEvent

@@ -201,32 +201,18 @@ class HTML_QuickForm_radio extends HTML_QuickForm_input {
      */
     function onQuickFormEvent($event, $arg, &$caller)
     {
-        $className = get_class($this);
         switch ($event) {
-            case 'addElement':
-            case 'createElement':
-                $this->$className($arg[0], $arg[1], $arg[2], $arg[3], $arg[4]);
-                // need to set the submit value in case setDefault never gets called
-                $elementName = $this->getName();
-                if (isset($caller->_submitValues[$elementName]) && $caller->_submitValues[$elementName] == $this->getValue()) {
-                    $this->setChecked(true);
-                }
-                break;
-            case 'setDefault':
-                // In form display, default value is always overidden by submitted value
-                $elementName = $this->getName();
-                if (!isset($caller->_submitValues[$elementName])) {
-                    if ($arg == $this->getValue()) {
-                        $this->setChecked(true);
-                    } else {
-                        $this->setChecked(false);
+            case 'updateValue':
+                // constant values override both default and submitted ones
+                // default values are overriden by submitted
+                $value = $this->_findValue($caller->_constantValues);
+                if (null === $value) {
+                    $value = $this->_findValue($caller->_submitValues);
+                    if (null === $value) {
+                        $value = $this->_findValue($caller->_defaultValues);
                     }
                 }
-                break;
-            case 'setConstant':
-                // In form display, constant value overides submitted value
-                // but submitted value is kept in _submitValues array
-                if ($arg == $this->getValue()) {
+                if ($value == $this->getValue()) {
                     $this->setChecked(true);
                 } else {
                     $this->setChecked(false);
@@ -238,7 +224,9 @@ class HTML_QuickForm_radio extends HTML_QuickForm_input {
                 } else {
                     $this->setChecked(false);
                 }
-            break;
+                break;
+            default:
+                parent::onQuickFormEvent($event, $arg, $caller);
         }
         return true;
     } // end func onQuickFormLoad
