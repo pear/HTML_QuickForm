@@ -435,6 +435,45 @@ class HTML_QuickForm extends HTML_Common {
     } // end func moveUploadedFile
     
     // }}}
+    // {{{ setMaxFileSize()
+
+    /**
+     * Sets the value of MAX_FILE_SIZE hidden element
+     *
+     * @param     int    $bytes    Size in bytes
+     * @since     3.0
+     * @access    public
+     * @return    void
+     */
+    function setMaxFileSize($bytes = 0)
+    {
+        if ($bytes > 0) {
+            $this->_maxFileSize = $bytes;
+        }
+        $el =& $this->getElement('MAX_FILE_SIZE');
+        if (PEAR::isError($el)) {
+            $this->addElement('hidden', 'MAX_FILE_SIZE', $this->_maxFileSize);
+        } else {
+            $el->updateAttributes(array('value' => $this->_maxFileSize));
+        }
+    } // end func setMaxFileSize
+
+    // }}}
+    // {{{ getMaxFileSize()
+
+    /**
+     * Returns the value of MAX_FILE_SIZE hidden element
+     *
+     * @since     3.0
+     * @access    public
+     * @return    int   max file size in bytes
+     */
+    function getMaxFileSize()
+    {
+        return $this->_maxFileSize;
+    } // end func getMaxFileSize
+
+    // }}}
     // {{{ isUploadedFile()
 
     /**
@@ -1485,7 +1524,7 @@ class HTML_QuickForm extends HTML_Common {
     function _ruleIsUploadedFile($element)
     {
         $file =& $this->_submitFiles[$element];
-        if ((isset($file['error']) && $file['error'] == UPLOAD_ERR_OK) ||
+        if ((isset($file['error']) && $file['error'] == 0) ||
             (!empty($file['tmp_name']) && $file['tmp_name'] != 'none')) {
             return is_uploaded_file($file['tmp_name']);
         } else {

@@ -91,7 +91,7 @@ class HTML_QuickForm_file extends HTML_QuickForm_input
     function getSize()
     {
         return $this->getAttribute("size");
-    } //end func setSize
+    } //end func getSize
 
     // }}}
     // {{{ freeze()
@@ -170,13 +170,11 @@ class HTML_QuickForm_file extends HTML_QuickForm_input
             case 'addElement':
                 $this->onQuickFormEvent('createElement', $arg, $caller);
                 $this->onQuickFormEvent('updateValue', null, $caller);
-                $caller->updateAttributes(array('method' => 'post', 'enctype' => 'multipart/form-data'));
-                if (!$caller->elementExists('MAX_FILE_SIZE')) {
-                    $err = $caller->addElement('hidden', 'MAX_FILE_SIZE', $caller->_maxFileSize);
-                    if (PEAR::isError($err)) {
-                        return $err;
-                    }
+                if ($caller->getAttribute('method') == 'get') {
+                    $caller->_submitValues = $GLOBALS['_POST'];
                 }
+                $caller->updateAttributes(array('method' => 'post', 'enctype' => 'multipart/form-data'));
+                $caller->setMaxFileSize();
                 break;
             case 'createElement':
                 $className = get_class($this);
@@ -184,7 +182,7 @@ class HTML_QuickForm_file extends HTML_QuickForm_input
                 break;
         }
         return true;
-    } // end func onQuickFormLoad
+    } // end func onQuickFormEvent
 
     // }}}
 
