@@ -74,7 +74,10 @@ $form->addRule('tstUpload', 'File size should be less than 10kb', 'maxfilesize',
 $form->addRule('tstUpload', 'File type should be text/xml', 'mimetype', 'text/xml');
 $form->addRule('tstUpload', 'File name should be *.xml', 'filename', '/\\.xml$/');
 
-$form->addElement('submit', null, 'Send');
+$form->addElement('header', null, 'Submit the form');
+$submit[] =& $form->createElement('submit', null, 'Send');
+$submit[] =& $form->createElement('checkbox', 'clientSide', null, 'use client-side validation', array('checked' => 'checked', 'onclick' => "if (this.checked) {this.form.onsubmit = validate_" . $form->getAttribute('id') . ";} else {this.form.onsubmit = null;}"));
+$form->addGroup($submit, null, null, '&nbsp;', false);
 
 $form->applyFilter('__ALL__', 'trim');
 
