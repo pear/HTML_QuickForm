@@ -70,7 +70,10 @@ Features:
   on the element's name (see #1506)
 - Default template of Default Renderer now allows XHTML-compliant output
   of hidden elements (see #1124)
-- Added Esperanto translation and French accents for date element (Sebastien Montagne)
+- Added Esperanto translation and French accents for date element 
+  (Sebastien Montagne)
+- Implemented #553: ITStatic renderer can use special blocks for required
+  elements and errors, if present in the template
 
 * Bugfixes
 - Fixed #1235 (setChecked() and setValue() did not work on advcheckbox)
