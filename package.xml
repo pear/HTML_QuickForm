@@ -65,6 +65,7 @@ Features:
 - Use strtr() instead of rawurlencode() for javascript messages (Bertrand Mansion)
 - Changed the nonzero rule to every numbers (negative or positive) except zero (David Sklar)
 - Date element has been entirely reworked and optimised (Alexey Borzov)
+- Updated the examples to use the latest changes (Alexey Borzov, Bertrand Mansion)
 
 * Bugfixes
 - Fixed a bug in HTML_QuickForm_group::getFrozenHtml() (Alexey Borzov, Wolfram Kriesing)
