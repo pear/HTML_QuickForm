@@ -19,10 +19,10 @@ $form->clearAllTemplates();
 
 // select list array
 $selectListArray = array(
-    'Windows'   => 'windows',
-    'Linux'     => 'linux',
-    'Irix'      => 'irix',
-    'Mac'       => 'mac',
+    'windows'   => 'Windows',
+    'linux'     => 'Linux',
+    'irix'      => 'Irix',
+    'mac'       => 'Mac',
 );
 
 // Fills with some defaults values
