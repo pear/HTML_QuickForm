@@ -7,7 +7,7 @@
 * @version     1.2
 */
 
-require_once ("HTML_QuickForm/QuickForm.php");
+require_once ("HTML/QuickForm/QuickForm.php");
 
 $form = new HTML_QuickForm('frmTest');
 

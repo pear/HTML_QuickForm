@@ -18,8 +18,10 @@
 // +----------------------------------------------------------------------+
 //
 // $Id$
+
 require_once("PEAR.php");
 require_once("HTML/Common.php");
+
 /**
 * Create, validate and process HTML forms
 *
@@ -29,6 +31,7 @@ require_once("HTML/Common.php");
 * @since       PHP 4.0.3pl1
 */
 class HTML_QuickForm extends HTML_Common {
+
     /**
      * Array containing the form fields
      * @since     1.0
@@ -36,6 +39,7 @@ class HTML_QuickForm extends HTML_Common {
      * @access   private
      */
     var $_elements = array();
+
     /**
      * Array containing required field IDs
      * @since     1.0
@@ -67,6 +71,7 @@ class HTML_QuickForm extends HTML_Common {
      * @access   public
      */ 
     var $_jsPostfix = "Please correct these fields.";   
+
     /**
      * Array of form values
      * @since     1.0
@@ -90,6 +95,7 @@ class HTML_QuickForm extends HTML_Common {
      * @access   public
      */     
     var $_submitFiles = array();
+
     /**
      * Value for maxfilesize hidden element if form contains file input
      * @since     1.0
@@ -104,6 +110,7 @@ class HTML_QuickForm extends HTML_Common {
      * @access   private
      */
     var $_hidden = array();
+
     /**
      * Array containing the frozen fields
      * @since     1.0
@@ -119,6 +126,7 @@ class HTML_QuickForm extends HTML_Common {
      * @access   private
      */
     var $_freezeAll = false;
+
     /**
      * Array containing the form rules
      * @since     1.0
@@ -126,6 +134,7 @@ class HTML_QuickForm extends HTML_Common {
      * @access   private
      */
     var $_rules = array();
+
     /**
      * Array containing the validation errors
      * @since     1.0
@@ -133,6 +142,7 @@ class HTML_QuickForm extends HTML_Common {
      * @access   private
      */
     var $_errors = array();
+
     /**
      * Note for required fields in the form
      * @var       string
@@ -149,20 +159,21 @@ class HTML_QuickForm extends HTML_Common {
      */
     var $_registeredTypes = 
         array(
-            'group'     =>array('HTML_QuickForm/Elements/group.php','HTML_QuickForm_group'),
-            'hidden'    =>array('HTML_QuickForm/Elements/hidden.php','HTML_QuickForm_hidden'),
-            'reset'     =>array('HTML_QuickForm/Elements/reset.php','HTML_QuickForm_reset'),
-            'checkbox'  =>array('HTML_QuickForm/Elements/checkbox.php','HTML_QuickForm_checkbox'),
-            'file'      =>array('HTML_QuickForm/Elements/file.php','HTML_QuickForm_file'),
-            'image'     =>array('HTML_QuickForm/Elements/image.php','HTML_QuickForm_image'),
-            'password'  =>array('HTML_QuickForm/Elements/password.php','HTML_QuickForm_password'),
-            'radio'     =>array('HTML_QuickForm/Elements/radio.php','HTML_QuickForm_radio'),
-            'button'    =>array('HTML_QuickForm/Elements/button.php','HTML_QuickForm_button'),
-            'submit'    =>array('HTML_QuickForm/Elements/submit.php','HTML_QuickForm_submit'),
-            'select'    =>array('HTML_QuickForm/Elements/select.php','HTML_QuickForm_select'),
-            'text'      =>array('HTML_QuickForm/Elements/text.php','HTML_QuickForm_text'),
-            'textarea'  =>array('HTML_QuickForm/Elements/textarea.php','HTML_QuickForm_textarea')
+            'group'     =>array('HTML/QuickForm/Elements/group.php','HTML_QuickForm_group'),
+            'hidden'    =>array('HTML/QuickForm/Elements/hidden.php','HTML_QuickForm_hidden'),
+            'reset'     =>array('HTML/QuickForm/Elements/reset.php','HTML_QuickForm_reset'),
+            'checkbox'  =>array('HTML/QuickForm/Elements/checkbox.php','HTML_QuickForm_checkbox'),
+            'file'      =>array('HTML/QuickForm/Elements/file.php','HTML_QuickForm_file'),
+            'image'     =>array('HTML/QuickForm/Elements/image.php','HTML_QuickForm_image'),
+            'password'  =>array('HTML/QuickForm/Elements/password.php','HTML_QuickForm_password'),
+            'radio'     =>array('HTML/QuickForm/Elements/radio.php','HTML_QuickForm_radio'),
+            'button'    =>array('HTML/QuickForm/Elements/button.php','HTML_QuickForm_button'),
+            'submit'    =>array('HTML/QuickForm/Elements/submit.php','HTML_QuickForm_submit'),
+            'select'    =>array('HTML/QuickForm/Elements/select.php','HTML_QuickForm_select'),
+            'text'      =>array('HTML/QuickForm/Elements/text.php','HTML_QuickForm_text'),
+            'textarea'  =>array('HTML/QuickForm/Elements/textarea.php','HTML_QuickForm_textarea')
         );
+
     /**
      * Array of registered element types
      * @var       array
@@ -180,6 +191,7 @@ class HTML_QuickForm extends HTML_Common {
             'lettersonly'   =>array('regex', '^[a-zA-Z]*$'),
             'alphanumeric'  =>array('regex', '^[a-zA-Z0-9]*$')
         );
+
     /**
      * Class constructor
      * @param    string      $formName          Form's name.
@@ -208,6 +220,7 @@ class HTML_QuickForm extends HTML_Common {
     {
         return 1.0;
     } // end func apiVersion
+
     /**
      * Registers a new element type
      *
@@ -223,6 +236,7 @@ class HTML_QuickForm extends HTML_Common {
     {
         $this->_registeredTypes[$typeName] = array($include, $className);
     } // end func registerElementType
+
     /**
      * Registers a new validation rule
      *
@@ -239,6 +253,7 @@ class HTML_QuickForm extends HTML_Common {
     {
         $this->_registeredRules[$ruleName] = array($type, $data1, $data2);
     } // end func registerRule
+
     /**
      * Returns true if element is in the form
      *
@@ -283,6 +298,7 @@ class HTML_QuickForm extends HTML_Common {
             }
         }
     } // end func loadDefaults
+
     /**
      * Load form elements with submitted values
      *
@@ -372,6 +388,7 @@ class HTML_QuickForm extends HTML_Common {
         }
         return $elementObject;
     } // end func createElement
+
     /**
      * Adds an element into the form
      *
@@ -461,6 +478,7 @@ class HTML_QuickForm extends HTML_Common {
     {
         $this->_errors[$element] = $message;
     } // end func setElementError
+
     /**
      * Adds a header in the form
      *
@@ -474,6 +492,7 @@ class HTML_QuickForm extends HTML_Common {
     {
         $this->_elements[] = array("header"=>$label);
     } // end func addHeader
+
     /**
      * Adds a validation rule for the given field
      *
@@ -502,6 +521,7 @@ class HTML_QuickForm extends HTML_Common {
         $this->_rules[$element][] = array("type"=>$type, 
             "format"=>$format, "message"=>$message, "validation"=>$validation);
     } // end func addRule
+
     /**
      * Html Wrapper method for form elements (inputs...)
      *
@@ -575,6 +595,7 @@ class HTML_QuickForm extends HTML_Common {
             "$tabs</TABLE>";
         return $html;
     } // end func _wrapForm
+
     /**
      * Wrap footnote for required fields
      *
@@ -595,6 +616,7 @@ class HTML_QuickForm extends HTML_Common {
             "$tabs\t</TR>";
         return $html;
     } // end func setCaption
+
     /**
      * Builds the element as part of the form
      *
@@ -648,6 +670,7 @@ class HTML_QuickForm extends HTML_Common {
         $header = $element["header"];
         return $this->_wrapHeader($header);
     } // end func _buildHeader
+
     /**
      * Returns an HTML string of the hidden form elements
      *
@@ -731,6 +754,7 @@ class HTML_QuickForm extends HTML_Common {
             "$tabs</SCRIPT>";
         return $html; 
     } // end func _buildRules
+
     /**
      * Returns whether or not the form element type is supported
      *
@@ -744,6 +768,7 @@ class HTML_QuickForm extends HTML_Common {
     {
         return in_array($type, array_keys($this->_registeredTypes));
     } // end func isTypeRegistered
+
     /**
      * Returns an array of registered element types
      *
@@ -756,6 +781,7 @@ class HTML_QuickForm extends HTML_Common {
     {
         return array_keys($this->_registeredTypes);
     } // end func getRegisteredTypes
+
     /**
      * Returns whether or not the given rule is supported
      *
@@ -769,6 +795,7 @@ class HTML_QuickForm extends HTML_Common {
     {
         return in_array($name, array_keys($this->_registeredRules));
     } // end func isRuleRegistered
+
     /**
      * Returns an array of registered validation rules
      *
@@ -781,6 +808,7 @@ class HTML_QuickForm extends HTML_Common {
     {
         return array_keys($this->_registeredRules);
     } // end func getRegisteredRules
+
     /**
      * Returns whether or not the form element is required
      *
@@ -794,6 +822,7 @@ class HTML_QuickForm extends HTML_Common {
     {
         return in_array($element, $this->_required);
     } // end func isElementRequired
+
     /**
      * Returns whether or not the form element is frozen
      *
@@ -807,6 +836,7 @@ class HTML_QuickForm extends HTML_Common {
     {
         return in_array($element, $this->_frozen);
     } // end func isElementFrozen
+
     /**
      * Performs the server side validation
      * @access    public

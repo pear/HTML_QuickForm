@@ -19,8 +19,8 @@
 //
 // $Id$
 
-require_once("HTML_QuickForm/Elements/element.php");
-require_once("HTML_QuickForm/Elements/select.php");
+require_once("HTML/QuickForm/Elements/element.php");
+require_once("HTML/QuickForm/Elements/select.php");
 
 // Still some features to be implemented and commented.
 // Use with care. This is only EXPERIMENTAL.

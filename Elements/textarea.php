@@ -19,7 +19,7 @@
 //
 // $Id$
 
-require_once("HTML_QuickForm/Elements/element.php");
+require_once("HTML/QuickForm/Elements/element.php");
 
 /**
  * HTML class for a textarea type field
