@@ -89,7 +89,7 @@ class HTML_QuickForm_element extends HTML_Common {
         if (isset($elementLabel)) {
             $this->setLabel($elementLabel);
         }
-        $vars = array_merge($_GET, $_POST]);
+        $vars = array_merge($_GET, $_POST);
         if (isset($vars[$this->getName()])) {
             if (is_string($vars[$this->getName()]) && get_magic_quotes_gpc() == 1) {
                 $submitValue = stripslashes($vars[$this->getName()]);
