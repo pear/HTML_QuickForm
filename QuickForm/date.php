@@ -171,7 +171,7 @@ class HTML_QuickForm_date extends HTML_QuickForm_element
      */
     function setName($name)
     {
-        $this->updateAttributes(array('name'=>$name));
+        $this->name = $name;
     } //end func setName
 
     /**
@@ -181,7 +181,7 @@ class HTML_QuickForm_date extends HTML_QuickForm_element
      */
     function getName()
     {
-        return $this->getAttribute('name');
+        return $this->name;
     } //end func getName
 
     /**
@@ -237,11 +237,11 @@ class HTML_QuickForm_date extends HTML_QuickForm_element
      */
     function _createSelects()
     {
+        $this->dateSelect = array();
         $length = strlen($this->format);
-        $elementName = $this->_attributes['name'];
+        $elementName = $this->name;
         $minYear = $this->minYear;
         $maxYear = $this->maxYear;
-        
         for ($i = 0; $i < $length; $i++) {
             unset($options);
             unset($j);
@@ -255,38 +255,38 @@ class HTML_QuickForm_date extends HTML_QuickForm_element
                 case "D" :
                     // Sunday is 0 like with 'w' in date()
                     $options = $this->_options[$this->language]["weekdays_short"];
-                    $this->dateSelect[$sign] = &new HTML_QuickForm_select($selectName);
+                    $this->dateSelect[$sign] = &new HTML_QuickForm_select($selectName, null, null, $this->getAttributes());
                     $this->dateSelect[$sign]->load($options, $selectedValue);
                     break;
                 case "l" :
                     $options = $this->_options[$this->language]["weekdays_long"];
-                    $this->dateSelect[$sign] = &new HTML_QuickForm_select($selectName);
+                    $this->dateSelect[$sign] = &new HTML_QuickForm_select($selectName, null, null, $this->getAttributes());
                     $this->dateSelect[$sign]->load($options, $selectedValue);
                     break;
                 case "d":
                     for ($j = 1; $j <= 31; $j++) 
                         $options[$j] = sprintf("%02d", $j);
-                    $this->dateSelect[$sign] = &new HTML_QuickForm_select($selectName);
+                    $this->dateSelect[$sign] = &new HTML_QuickForm_select($selectName, null, null, $this->getAttributes());
                     $this->dateSelect[$sign]->load($options, $selectedValue);
                     break;
                 case "M" :
                     $options = $this->_options[$this->language]["months_short"];
                     array_unshift($options , '');
                     unset($options[0]);
-                    $this->dateSelect[$sign] = &new HTML_QuickForm_select($selectName);
+                    $this->dateSelect[$sign] = &new HTML_QuickForm_select($selectName, null, null, $this->getAttributes());
                     $this->dateSelect[$sign]->load($options,$selectedValue);
                     break;
                 case "m" :
                     for ($j = 1; $j <= 12; $j++)
                         $options[$j] = sprintf("%02d", $j);
-                    $this->dateSelect[$sign] =  &new HTML_QuickForm_select($selectName);
+                    $this->dateSelect[$sign] =  &new HTML_QuickForm_select($selectName, null, null, $this->getAttributes());
                     $this->dateSelect[$sign]->load($options,$selectedValue);
                     break;
                 case "F" :
                     $options = $this->_options[$this->language]["months_long"];
                     array_unshift($options , '');
                     unset($options[0]);
-                    $this->dateSelect[$sign] = &new HTML_QuickForm_select($selectName);
+                    $this->dateSelect[$sign] = &new HTML_QuickForm_select($selectName, null, null, $this->getAttributes());
                     $this->dateSelect[$sign]->load($options, $selectedValue);
                     break;
                 case "Y" :
@@ -297,7 +297,7 @@ class HTML_QuickForm_date extends HTML_QuickForm_element
                         for ($j = $minYear; $j <= $maxYear; $j++)
                             $options[$j] = $j;
                     }   
-                    $this->dateSelect[$sign] = &new HTML_QuickForm_select($selectName);
+                    $this->dateSelect[$sign] = &new HTML_QuickForm_select($selectName, null, null, $this->getAttributes());
                     $this->dateSelect[$sign]->load($options, $selectedValue);
                     break;
                 default:
@@ -343,17 +343,13 @@ class HTML_QuickForm_date extends HTML_QuickForm_element
         foreach ($this->dateSelect as $key => $element) {
             if ($this->_flagFrozen) {
                 if (is_string($element)) {
-                    if ($element == ' ')
-                        $element = '&nbsp;';
-                    $strHtml .= $element;
+                    $strHtml .= str_replace(' ', '&nbsp;', $element);
                 } else {
                     $strHtml .= $element->getFrozenHtml();
                 }
             } else {
                 if (is_string($element)) {
-                    if ($element == ' ')
-                        $element = '&nbsp;';
-                    $strHtml .= $element;
+                    $strHtml .= str_replace(' ', '&nbsp;', $element);
                 } else {
                     $strHtml .= $element->toHtml();
                 }
