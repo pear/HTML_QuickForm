@@ -19,7 +19,6 @@
 //
 // $Id$
 
-require_once('DB.php');
 require_once('HTML/QuickForm/select.php');
 
 /**
