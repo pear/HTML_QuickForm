@@ -98,9 +98,6 @@ class HTML_QuickForm_hierselect extends HTML_QuickForm_group
         }
         $this->_type = 'hierselect';
         $this->_appendName = true;
-        if (empty($this->_elements)) {
-            $this->_createSelects();
-        }
     } //end constructor
 
     // }}}
@@ -116,6 +113,9 @@ class HTML_QuickForm_hierselect extends HTML_QuickForm_group
      */
     function setMainOptions($options)
     {
+        if (empty($this->_elements)) {
+            $this->_createElements();
+        }
         $select1 =& $this->_elements[0];
         $select1->loadArray($options);
     } // end func setMainOptions
@@ -132,6 +132,9 @@ class HTML_QuickForm_hierselect extends HTML_QuickForm_group
      */
     function setSecOptions($options)
     {
+        if (empty($this->_elements)) {
+            $this->_createElements();
+        }
         $this->_secOptions = $options;
         $elValue = $this->getValue();
 
@@ -168,6 +171,7 @@ class HTML_QuickForm_hierselect extends HTML_QuickForm_group
      */
     function setValue($value)
     {
+        parent::setValue($value);
         // Reload the options in the second selects
         if (sizeof($this->_secOptions) > 0) {
             if (is_array($value)) {
@@ -179,11 +183,10 @@ class HTML_QuickForm_hierselect extends HTML_QuickForm_group
             $select2->_options = array(); // Bad, private...
             $select2->loadArray($this->_secOptions[$curKey]);
         }
-        parent::setValue($value);
     } // end func setValue
 
     // }}}
-    // {{{ _createSelects()
+    // {{{ _createElements()
 
     /**
      * Creates the two select objects
@@ -191,7 +194,7 @@ class HTML_QuickForm_hierselect extends HTML_QuickForm_group
      * @access    public
      * @return    void
      */
-    function _createSelects()
+    function _createElements()
     {
         if (!defined('HTML_QUICKFORM_HIERSELECT_EXISTS')) {
             $this->_js .= "function swapOptions(selIndex, ctl, arName) {\n"
@@ -206,7 +209,7 @@ class HTML_QuickForm_hierselect extends HTML_QuickForm_group
         }
         $this->_elements[] =& new HTML_QuickForm_select('0', null, array(), $this->getAttributes());
         $this->_elements[] =& new HTML_QuickForm_select('1', null, array(), $this->getAttributes());
-    } // end func _createSelects
+    } // end func _createElements
 
     // }}}
     // {{{ toHtml()
