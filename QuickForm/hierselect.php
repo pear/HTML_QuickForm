@@ -58,15 +58,25 @@ class HTML_QuickForm_hierselect extends HTML_QuickForm_group
      * $select2[2][0] = 'Pantheist';
      * $select2[2][1] = 'Skepticism';
      *
-     * // third select
+     * // If only need two selects 
+     * //     - and using the depracated functions
+     * $sel =& $form->addElement('hierselect', 'cds', 'Choose CD:');
+     * $sel->setMainOptions($select1);
+     * $sel->setSecOptions($select2);
+     *
+     * //     - and using the new setOptions function
+     * $sel =& $form->addElement('hierselect', 'cds', 'Choose CD:');
+     * $sel->setOptions(array($select1, $select2));
+     *
+     * // If you have a third select with prices for the cds
      * $select3[0][0][0] = '15.00$';
+     * $select3[0][0][1] = '17.00$';
      * etc
      *
-     * // and then
-     * $opts[0] = $select1;
-     * $opts[1] = $select2;
-     * $opts[2] = $select3;
-     *
+     * // You can now use
+     * $sel =& $form->addElement('hierselect', 'cds', 'Choose CD:');
+     * $sel->setOptions(array($select1, $select2, $select3));
+     * 
      * @var       array
      * @access    private
      */
@@ -131,9 +141,9 @@ class HTML_QuickForm_hierselect extends HTML_QuickForm_group
      * @access    public
      * @return    void
      */
-    function setOptions(&$options)
+    function setOptions($options)
     {
-        $this->_options = &$options;
+        $this->_options = $options;
 
         if (empty($this->_elements)) {
             $this->_nbElements = count($this->_options);
@@ -163,9 +173,9 @@ class HTML_QuickForm_hierselect extends HTML_QuickForm_group
      * @access    public
      * @return    void
      */
-    function setMainOptions(&$array)
+    function setMainOptions($array)
     {
-        $this->_options[0] = &$array;
+        $this->_options[0] = $array;
 
         if (empty($this->_elements)) {
             $this->_nbElements = 2;
@@ -185,10 +195,10 @@ class HTML_QuickForm_hierselect extends HTML_QuickForm_group
      * @access    public
      * @return    void
      */
-    function setSecOptions(&$array)
+    function setSecOptions($array)
     {
-        $this->_options[1] = &$array;
-        
+        $this->_options[1] = $array;
+
         if (empty($this->_elements)) {
             $this->_nbElements = 2;
             $this->_createElements();
@@ -221,13 +231,13 @@ class HTML_QuickForm_hierselect extends HTML_QuickForm_group
         foreach (array_keys($this->_elements) AS $key) {
             if (eval("return isset(\$this->_options[{$key}]{$toLoad});") ) {
                 $array = eval("return \$this->_options[{$key}]{$toLoad};");
-                if (is_array($array)) {                
+                if (is_array($array)) {
                     $select =& $this->_elements[$key];
                     $select->_options = array();
                     $select->loadArray($array);
-                    
-                    $value  = is_array($v = $select->getValue()) ? $v[0] : key($array);                    
-                    $toLoad .= '['.$value.']';
+
+                    $value  = is_array($v = $select->getValue()) ? $v[0] : key($array);
+                    $toLoad .= '[\''.$value.'\']';
                 }
             }
         }
