@@ -3,7 +3,7 @@
 // +----------------------------------------------------------------------+
 // | PHP version 4.0                                                      |
 // +----------------------------------------------------------------------+
-// | Copyright (c) 1997, 1998, 1999, 2000, 2001 The PHP Group             |
+// | Copyright (c) 1997-2003 The PHP Group                                |
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the PHP license,       |
 // | that is bundled with this package in the file LICENSE, and is        |
@@ -1518,8 +1518,15 @@ class HTML_QuickForm extends HTML_Common {
             $message = $rule['message'];
             $validation = $rule['validation'];
             $ruleData = $this->_registeredRules[$type];
-            if (is_array($submitValue) && count($submitValue) == 0) {
-                $submitValue = '';
+            if (is_array($submitValue)) {
+                if (count($submitValue) == 0) {
+                    $submitValue = '';
+                } elseif ($ruleData[0] != 'function') {
+                    // used when values are in array, ex. select multiple
+                    $rule = $rule + array('howmany' => 0);
+                    $this->_validateGroup($elementName, $rule, $submitValue);
+                    continue;
+                }
             }
             switch ($ruleData[0]) {
                 case 'regex':
@@ -1581,10 +1588,6 @@ class HTML_QuickForm extends HTML_Common {
                 $this->_validateElement($groupName, array($rule), $values);
                 
             } else {
-                $count = count($values);
-                $group =& $this->getElement($groupName);
-                $elements =& $group->getElements();
-
                 $type = $rule['type'];
                 // error out if the rule is not registered
                 if (!$this->isRuleRegistered($type)) {
@@ -1598,6 +1601,9 @@ class HTML_QuickForm extends HTML_Common {
                     $elementIndex = $rule['elementIndex'];
                     // each grouped element is validated one by one
                     // using a mix of different rules
+                    $group =& $this->getElement($groupName);
+                    $elements =& $group->getElements();
+
                     if (isset($elements[$elementIndex])) {
                         $value = (isset($values[$elementIndex])) ? $values[$elementIndex] : '';
                     } else {
@@ -1619,7 +1625,7 @@ class HTML_QuickForm extends HTML_Common {
                 } else {
                     // the same rule is applied to every elements in the group
                     $howmany = $rule['howmany']; // how many elements should be valid at least
-                    $total = 0;                  // counter of valid elements
+                    $total = 0;                  // count of valid elements
                     if (!is_array($values)) {
                         $values = array($values);
                     }
