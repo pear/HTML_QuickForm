@@ -404,33 +404,6 @@ class HTML_QuickForm extends HTML_Common {
     } // end func setConstants
 
     // }}}
-    // {{{ moveUploadedFile()
-
-    /**
-     * Moves an uploaded file into the destination (DEPRECATED)
-     * @param    string  $element       Element name
-     * @param    string  $dest          Destination directory path
-     * @param    string  $fileName      (optional) New file name
-     * @since    1.0
-     * @access   public
-     * @deprecated  Use HTML_QuickForm_file::moveUploadedFile() method
-     */
-    function moveUploadedFile($element, $dest, $fileName='')
-    {
-        PEAR::raiseError(null, QUICKFORM_DEPRECATED, null, E_USER_WARNING, "Method HTML_QuickForm::moveUploadedFile() is now deprecated in file ".$_SERVER['PHP_SELF'], 'HTML_QuickForm_Error', true);
-
-        $file =& $this->_submitFiles[$element];
-        if ($dest != ''  && substr($dest, -1) != '/')
-            $dest .= '/';
-        $fileName = ($fileName != '') ? $fileName : $file['name'];
-        if (move_uploaded_file($file['tmp_name'], $dest . $fileName)) {
-            return true;
-        } else {
-            return false;
-        }
-    } // end func moveUploadedFile
-    
-    // }}}
     // {{{ setMaxFileSize()
 
     /**
@@ -468,47 +441,6 @@ class HTML_QuickForm extends HTML_Common {
     {
         return $this->_maxFileSize;
     } // end func getMaxFileSize
-
-    // }}}
-    // {{{ isUploadedFile()
-
-    /**
-     * Checks if the given element contains an uploaded file (DEPRECATED)
-     *
-     * @param     string    $element    Element name
-     * @since     2.10
-     * @access    public
-     * @return    bool      true if file has been uploaded, false otherwise
-     * @deprecated  Use HTML_QuickForm_file::isUploadedFile() method
-     */
-    function isUploadedFile($element)
-    {
-        PEAR::raiseError(null, QUICKFORM_DEPRECATED, null, E_USER_WARNING, "Method HTML_QuickForm::isUploadedFile() is now deprecated in file ".$_SERVER['PHP_SELF'], 'HTML_QuickForm_Error', true);
-
-        if (!$this->elementExists($element) || 'file' != $this->getElementType($element)) {
-            return false;
-        } else {
-            $elementObject =& $this->getElement($element);
-            return $elementObject->isUploadedFile();
-        }
-    } // end func isUploadedFile
-
-    // }}}
-    // {{{ getUploadedFile()
-
-    /**
-     * Returns temporary filename of uploaded file (DEPRECATED)
-     * @param    string  $element  
-     * @since    2.10
-     * @access   public
-     * @deprecated  Use either of HTML_QuickForm_file::getValue(), HTML_QuickForm::getElementValue(), HTML_QuickForm::getSubmitValue() methods to access this information
-     */
-    function getUploadedFile($element)
-    {
-        PEAR::raiseError(null, QUICKFORM_DEPRECATED, null, E_USER_WARNING, "Method HTML_QuickForm::getUploadedFile() is now deprecated in file ".$_SERVER['PHP_SELF'], 'HTML_QuickForm_Error', true);
-
-        return isset($this->_submitFiles[$element])? $this->_submitFiles[$element]['tmp_name']: null;
-    } // end func getUploadedFile
 
     // }}}
     // {{{ &createElement()
@@ -640,28 +572,6 @@ class HTML_QuickForm extends HTML_Common {
         }
         return $this->addElement('group', $name, $groupLabel, $elements, $separator, $appendName);
     } // end func addGroup
-    
-    // }}}
-    // {{{ addElementGroup()
-
-    /**
-     * Adds an element group (DEPRECATED, use addGroup instead)
-     * @param    array      $elements       array of elements composing the group
-     * @param    string     $groupLabel     (optional)group label
-     * @param    string     $name           (optional)group name
-     * @param    string     $separator      (optional)string to seperate elements
-     * @return   object     reference to added group of elements
-     * @deprecated deprecated since 2.10, use addGroup() instead
-     * @since    1.0
-     * @access   public
-     * @throws   PEAR_Error
-     */
-    function &addElementGroup($elements, $groupLabel='', $name=null, $separator=null)
-    {
-        PEAR::raiseError(null, QUICKFORM_DEPRECATED, null, E_USER_WARNING, "Method HTML_QuickForm::addElementGroup() is now deprecated in file ".$_SERVER['PHP_SELF'], 'HTML_QuickForm_Error', true);
-
-        return $this->addGroup($elements, $name, $groupLabel, $separator);
-    } // end func addElementGroup
     
     // }}}
     // {{{ &getElement()
@@ -908,26 +818,6 @@ class HTML_QuickForm extends HTML_Common {
     } // end func removeElement
 
     // }}}
-    // {{{ addHeader()
-
-    /**
-     * Adds a header element to the form (DEPRECATED)
-     *
-     * @param     string    $label      label of header
-     * @since     1.0   
-     * @access    public
-     * @deprecated deprecated since 3.0, use addElement('header', ...) instead
-     * @return    object A reference to a header element
-     * @throws    PEAR_Error
-     */
-    function &addHeader($label)
-    {
-        PEAR::raiseError(null, QUICKFORM_DEPRECATED, null, E_USER_WARNING, "Method HTML_QuickForm::addHeader() is now deprecated in file ".$_SERVER['PHP_SELF'], 'HTML_QuickForm_Error', true);
-
-        return $this->addElement('header', null, $label);
-    } // end func addHeader
-
-    // }}}
     // {{{ addRule()
 
     /**
@@ -1102,25 +992,6 @@ class HTML_QuickForm extends HTML_Common {
         $this->_formRules[] = $rule;
     }
     
-    // }}}
-    // {{{ addData()
-
-    /**
-     * Adds raw HTML (or text) data element to the form (DEPRECATED)
-     *
-     * @param string $data The data to add to the form object
-     * @access public
-     * @deprecated deprecated since 3.0, use addElement('html', ...) instead
-     * @return object reference to a new element
-     * @throws PEAR_Error
-     */
-    function &addData($data)
-    {
-        PEAR::raiseError(null, QUICKFORM_DEPRECATED, null, E_USER_WARNING, "Method HTML_QuickForm::addData() is now deprecated in file ".$_SERVER['PHP_SELF'], 'HTML_QuickForm_Error', true);
-
-        return $this->addElement('html', $data);
-    }
-
     // }}}
     // {{{ applyFilter()
 
@@ -1319,107 +1190,6 @@ class HTML_QuickForm extends HTML_Common {
         $this->_jsPostfix = $post;
     } // end func setJsWarnings
     
-    // }}}
-    // {{{ setElementTemplate()
-
-    /**
-     * Sets element template 
-     *
-     * @param     string   $html        The HTML surrounding an element 
-     * @param     string   $element     (optional) Name of the element to apply template for
-     * @since     2.0
-     * @deprecated deprecated since 3.0, use renderers for controlling the presentation
-     * @access    public
-     * @return    void
-     */
-    function setElementTemplate($html, $element = null)
-    {
-        PEAR::raiseError(null, QUICKFORM_DEPRECATED, null, E_USER_WARNING, "Method HTML_QuickForm::setElementTemplate() is now deprecated in file ".$_SERVER['PHP_SELF'], 'HTML_QuickForm_Error', true);
-
-        $renderer =& $this->defaultRenderer();
-        return $renderer->setElementTemplate($html, $element);
-    } // end func setElementTemplate
-
-    // }}}
-    // {{{ setHeaderTemplate()
-
-    /**
-     * Sets header template 
-     *
-     * @param     string   $html    The HTML surrounding the header 
-     * @since     2.0
-     * @deprecated deprecated since 3.0, use renderers for controlling the presentation
-     * @access    public
-     * @return    void
-     */
-    function setHeaderTemplate($html)
-    {
-        PEAR::raiseError(null, QUICKFORM_DEPRECATED, null, E_USER_WARNING, "Method HTML_QuickForm::setHeaderTemplate() is now deprecated in file ".$_SERVER['PHP_SELF'], 'HTML_QuickForm_Error', true);
-
-        $renderer =& $this->defaultRenderer();
-        return $renderer->setHeaderTemplate($html);
-    } // end func setHeaderTemplate
-
-    // }}}
-    // {{{ setFormTemplate()
-
-    /**
-     * Sets form template 
-     *
-     * @param     string   $html    The HTML surrounding the form tags 
-     * @since     2.0
-     * @deprecated deprecated since 3.0, use renderers for controlling the presentation
-     * @access    public
-     * @return    void
-     */
-    function setFormTemplate($html)
-    {
-        PEAR::raiseError(null, QUICKFORM_DEPRECATED, null, E_USER_WARNING, "Method HTML_QuickForm::setFormTemplate() is now deprecated in file ".$_SERVER['PHP_SELF'], 'HTML_QuickForm_Error', true);
-
-        $renderer =& $this->defaultRenderer();
-        return $renderer->setFormTemplate($html);
-    } // end func setFormTemplate
-
-    // }}}
-    // {{{ setRequiredNoteTemplate()
-
-    /**
-     * Sets element template 
-     *
-     * @param     string   $html    The HTML surrounding the required note 
-     * @since     2.0
-     * @deprecated deprecated since 3.0, use renderers for controlling the presentation
-     * @access    public
-     * @return    void
-     */
-    function setRequiredNoteTemplate($html)
-    {
-        PEAR::raiseError(null, QUICKFORM_DEPRECATED, null, E_USER_WARNING, "Method HTML_QuickForm::setRequiredNoteTemplate() is now deprecated in file ".$_SERVER['PHP_SELF'], 'HTML_QuickForm_Error', true);
-
-        $renderer =& $this->defaultRenderer();
-        return $renderer->setRequiredNoteTemplate($html);
-    } // end func setElementTemplate
-
-    // }}}
-    // {{{ clearAllTemplates()
-
-    /**
-     * Clears all the HTML out of the templates that surround notes, elements, etc.
-     * Useful when you want to use addData() to create a completely custom form look
-     *
-     * @since   2.0
-     * @deprecated deprecated since 3.0, use renderers for controlling the presentation
-     * @access  public
-     * @return void
-     */
-    function clearAllTemplates()
-    {
-        PEAR::raiseError(null, QUICKFORM_DEPRECATED, null, E_USER_WARNING, "Method HTML_QuickForm::clearAllTemplates() is now deprecated in file ".$_SERVER['PHP_SELF'], 'HTML_QuickForm_Error', true);
-
-        $renderer =& $this->defaultRenderer();
-        return $renderer->clearAllTemplates();
-    }
-
     // }}}
     // {{{ setRequiredNote()
 
@@ -1805,24 +1575,6 @@ class HTML_QuickForm extends HTML_Common {
         }
         return '';
     } // end func getValidationScript
-
-    // }}}
-    // {{{ getAttributesString()
-
-    /**
-     * Returns the HTML attributes of the form (DEPRECATED)
-     *
-     * @since     2.0
-     * @access    public
-     * @return    string
-     * @deprecated  Use HTML_Common::getAttributes(true)
-     */
-    function getAttributesString()
-    {
-        PEAR::raiseError(null, QUICKFORM_DEPRECATED, null, E_USER_WARNING, "Method HTML_QuickForm::getAttributesString() is now deprecated in file ".$_SERVER['PHP_SELF'], 'HTML_QuickForm_Error', true);
-        
-        return $this->getAttributes(true);
-    } // end func getAttributesString
 
     // }}}
     // {{{ getSubmitValues()

@@ -297,42 +297,6 @@ class HTML_QuickForm_group extends HTML_QuickForm_element
     } //end func toHtml
     
     // }}}
-    // {{{ setElementTemplate()
-
-    /**
-     * Sets the template for the group elements (DEPRECATED)
-     * 
-     * @param     string     $template   Template string
-     * @since     2.5
-     * @deprecated deprecated since 3.0, use renderers for controlling the presentation
-     * @access    public
-     * @return    void
-     */
-    function setElementTemplate($template)
-    {
-        $renderer =& HTML_QuickForm::defaultRenderer();
-        $renderer->setGroupElementTemplate($template, $this->_name);
-    } //end func setElementTemplate
-
-    // }}}
-    // {{{ setGroupTemplate()
-
-    /**
-     * Sets the template for the group (DEPRECATED)
-     * 
-     * @param     string     $template   Template string
-     * @since     2.5
-     * @deprecated deprecated since 3.0, use renderers for controlling the presentation
-     * @access    public
-     * @return    void
-     */
-    function setGroupTemplate($template)
-    {
-        $renderer =& HTML_QuickForm::defaultRenderer();
-        $renderer->setGroupTemplate($template, $this->_name);
-    } //end func setGroupTemplate
-
-    // }}}
     // {{{ getElementName()
 
     /**
