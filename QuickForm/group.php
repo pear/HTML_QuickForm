@@ -401,7 +401,8 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
         $renderer->startGroup($this, $required, $error);
         $name  = $this->getName();
         $value = $this->getValue();
-        foreach ($this->_elements as $key => $element) {
+        foreach (array_keys($this->_elements) as $key) {
+            $element =& $this->_elements[$key];
             if (PEAR::isError($element)) {
                 return $element;
             }
