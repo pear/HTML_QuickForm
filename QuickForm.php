@@ -820,9 +820,6 @@ class HTML_QuickForm extends HTML_Common {
                 return PEAR::raiseError(null, QUICKFORM_UNREGISTERED_ELEMENT, null, E_USER_WARNING, "Element '$element' does not exist in HTML_QuickForm::addRule()", 'HTML_QuickForm_Error', true);
             }
         }
-        if ($this->getElementType($element) == 'group') {
-            return PEAR::raiseError(null, QUICKFORM_UNREGISTERED_ELEMENT, null, E_USER_WARNING, "Element '$element' is a group. Use HTML_QuickForm::addGroupRule() instead.", 'HTML_QuickForm_Error', true);
-        }
         if ($type == 'required' || $type == 'uploadedfile') {
             $this->_required[] = $element;
         }
@@ -1457,7 +1454,6 @@ class HTML_QuickForm extends HTML_Common {
      * @access    public
      * @since     1.0
      * @return    boolean   true if no error found
-     * @throws    
      */
     function validate()
     {
@@ -1475,49 +1471,7 @@ class HTML_QuickForm extends HTML_Common {
             } else {
                 // Standard elements validation
                 $submitValue = $this->_findElementValue($elementName);
-                foreach ($rules as $rule) {
-                    $type = $format = $message = null;
-                    $type = $rule['type'];
-                    // error out if the rule is not registered
-                    if (!$this->isRuleRegistered($type)) {
-                        return PEAR::raiseError(null, QUICKFORM_INVALID_RULE, null, E_USER_WARNING, "Rule '$type' is not registered in HTML_QuickForm::validate()", 'HTML_QuickForm_Error', true);
-                    }
-                    $format = $rule['format'];
-                    $message = $rule['message'];
-                    $validation = $rule['validation'];
-                    $ruleData = $this->_registeredRules[$type];
-                    switch ($ruleData[0]) {
-                        case 'regex':
-                            $regex = str_replace('%data%', $format, $ruleData[1]);
-                            if (!preg_match($regex, $submitValue)) {
-                                if (empty($submitValue) && !$this->isElementRequired($elementName)) {
-                                    continue 2;
-                                } else {
-                                    $this->_errors[$elementName] = $message;
-                                    continue 2;
-                                }
-                            }
-                            break;
-                        case 'function':
-                            if (method_exists($this, $ruleData[1])) {
-                                if (isset($submitValue)) {
-                                    $element = $submitValue;
-                                } elseif (isset($this->_submitFiles[$elementName])) {
-                                    $element = $this->_submitFiles[$elementName];
-                                }
-                                if (!$this->$ruleData[1]($elementName, $element, $format)) {
-                                    $this->_errors[$elementName] = $message;
-                                    continue 2;
-                                }
-                            } else {
-                                if (!$ruleData[1]($elementName, $submitValue, $format)) {
-                                    $this->_errors[$elementName] = $message;
-                                    continue 2;
-                                }
-                            }
-                            break;
-                    }
-                }
+                $this->_validateElement($elementName, $rules, $submitValue);
             }
         }
         if (count($this->_errors) > 0) {
@@ -1532,6 +1486,69 @@ class HTML_QuickForm extends HTML_Common {
         }
         return true;
     } // end func validate
+
+    // }}}
+    // {{{ _validateElement()
+
+    /**
+     * Performs the server side validation for an element
+     * If the element is in fact a group, it will be considered as a whole.
+     * To validate grouped elements as separated entities, 
+     * use addGroupRule instead of addRule.
+     *
+     * @param     string   $elementName     Element name
+     * @param     array    $rules           Array of validation rules for this element
+     * @param     mixed    $value           Submitted value to be checked
+     * @access    private
+     * @since     2.7
+     * @return    void
+     */
+    function _validateElement($elementName, $rules, $submitValue)
+    {
+        foreach ($rules as $rule) {
+            $type = $format = $message = null;
+            $type = $rule['type'];
+            // error out if the rule is not registered
+            if (!$this->isRuleRegistered($type)) {
+                PEAR::raiseError(null, QUICKFORM_INVALID_RULE, null, E_USER_WARNING, "Rule '$type' is not registered in HTML_QuickForm::validate()", 'HTML_QuickForm_Error', true);
+            }
+            $format = $rule['format'];
+            $message = $rule['message'];
+            $validation = $rule['validation'];
+            $ruleData = $this->_registeredRules[$type];
+            switch ($ruleData[0]) {
+                case 'regex':
+                    $regex = str_replace('%data%', $format, $ruleData[1]);
+                    if (!preg_match($regex, $submitValue)) {
+                        if (empty($submitValue) && !$this->isElementRequired($elementName)) {
+                            continue 2;
+                        } else {
+                            $this->_errors[$elementName] = $message;
+                            continue 2;
+                        }
+                    }
+                    break;
+                case 'function':
+                    if (method_exists($this, $ruleData[1])) {
+                        if (isset($submitValue)) {
+                            $element = $submitValue;
+                        } elseif (isset($this->_submitFiles[$elementName])) {
+                            $element = $this->_submitFiles[$elementName];
+                        }
+                        if (!$this->$ruleData[1]($elementName, $element, $format)) {
+                            $this->_errors[$elementName] = $message;
+                            continue 2;
+                        }
+                    } else {
+                        if (!$ruleData[1]($elementName, $submitValue, $format)) {
+                            $this->_errors[$elementName] = $message;
+                            continue 2;
+                        }
+                    }
+                    break;
+            }
+        }
+    } // end func _validateElement
 
     // }}}
     // {{{ _validateGroup()
@@ -1549,66 +1566,76 @@ class HTML_QuickForm extends HTML_Common {
      */
     function _validateGroup($groupName, $rules, $values)
     {
-        $count = count($values);
-        $group =& $this->getElement($groupName);
-        $elements =& $group->getElements(); 
         foreach ($rules as $rule) {
-            $type = $format = $message = null;
-            $type = $rule['type'];
-            // error out if the rule is not registered
-            if (!$this->isRuleRegistered($type)) {
-                return PEAR::raiseError(null, QUICKFORM_INVALID_RULE, null, E_USER_WARNING, "Rule '$type' is not registered in HTML_QuickForm::validate()", 'HTML_QuickForm_Error', true);
-            }
-            $format = $rule['format'];
-            $message = $rule['message'];
-            $ruleData = $this->_registeredRules[$type];
-            if (isset($rule['elementIndex'])) {
-                $elementIndex = $rule['elementIndex'];
-                // per grouped element validation
-                if (isset($elements[$elementIndex])) {
-                    $value = (isset($values[$elementIndex])) ? $values[$elementIndex] : '';
-                } else {
-                    return PEAR::raiseError(null, QUICKFORM_UNREGISTERED_ELEMENT, null, E_USER_WARNING, "Element '".$elementIndex."' is not registered in HTML_QuickForm::_validateGroup()", 'HTML_QuickForm_Error', true);
-                }
-                switch ($ruleData[0]) {
-                    case 'regex':
-                        $regex = str_replace('%data%', $format, $ruleData[1]);
-                        if (!preg_match($regex, $value)) {
-                            if ($value == '' && !$this->isElementRequired($groupName.'['.$elementIndex.']')) {
-                                continue 2;
-                            } else {
-                                $this->_errors[$groupName] = $message;
-                                return;
-                            }
-                        }
-                        break;
-                }
+            if (!isset($rule['howmany'])) {
+                // validate the group as a whole,
+                // rule was set using addRule instead of addGroupRule
+                $this->_validateElement($groupName, array($rule), $values);
+                
             } else {
-                // per group validation
-                $howmany = $rule['howmany'];
-                $total = 0;
-                foreach ($values as $value) {
+                $count = count($values);
+                $group =& $this->getElement($groupName);
+                $elements =& $group->getElements();
+
+                $type = $format = $message = null;
+                $type = $rule['type'];
+                // error out if the rule is not registered
+                if (!$this->isRuleRegistered($type)) {
+                    return PEAR::raiseError(null, QUICKFORM_INVALID_RULE, null, E_USER_WARNING, "Rule '$type' is not registered in HTML_QuickForm::validate()", 'HTML_QuickForm_Error', true);
+                }
+                $format = $rule['format'];
+                $message = $rule['message'];
+                $ruleData = $this->_registeredRules[$type];
+
+                if (isset($rule['elementIndex'])) {
+                    $elementIndex = $rule['elementIndex'];
+                    // each grouped element is validated one by one
+                    // using a mix of different rules
+                    if (isset($elements[$elementIndex])) {
+                        $value = (isset($values[$elementIndex])) ? $values[$elementIndex] : '';
+                    } else {
+                        return PEAR::raiseError(null, QUICKFORM_UNREGISTERED_ELEMENT, null, E_USER_WARNING, "Element '".$elementIndex."' is not registered in HTML_QuickForm::_validateGroup()", 'HTML_QuickForm_Error', true);
+                    }
                     switch ($ruleData[0]) {
                         case 'regex':
                             $regex = str_replace('%data%', $format, $ruleData[1]);
                             if (!preg_match($regex, $value)) {
-                                if (empty($value) && !$this->isElementRequired($groupName)) {
+                                if ($value == '' && !$this->isElementRequired($groupName.'['.$elementIndex.']')) {
                                     continue 2;
                                 } else {
-                                    if ($howmany == 0) {
-                                        $this->_errors[$groupName] = $message;
-                                        return;
-                                    }
+                                    $this->_errors[$groupName] = $message;
+                                    return;
                                 }
-                            } else {
-                                $total++;
                             }
                             break;
                     }
-                }
-                if ($total < $howmany) {
-                    $this->_errors[$groupName] = $message;
-                    return;
+                } else {
+                    // the same rule is applied to every elements in the group
+                    $howmany = $rule['howmany']; // how many elements should be valid at least
+                    $total = 0;                  // counter of valid elements
+                    foreach ($values as $value) {
+                        switch ($ruleData[0]) {
+                            case 'regex':
+                                $regex = str_replace('%data%', $format, $ruleData[1]);
+                                if (!preg_match($regex, $value)) {
+                                    if (empty($value) && !$this->isElementRequired($groupName)) {
+                                        continue 2;
+                                    } else {
+                                        if ($howmany == 0) {
+                                            $this->_errors[$groupName] = $message;
+                                            return;
+                                        }
+                                    }
+                                } else {
+                                    $total++;
+                                }
+                                break;
+                        }
+                    }
+                    if ($total < $howmany) {
+                        $this->_errors[$groupName] = $message;
+                        return;
+                    }
                 }
             }
         }
@@ -2154,8 +2181,7 @@ class HTML_QuickForm_Error extends PEAR_Error {
     {
         if (is_int($code)) {
             $this->PEAR_Error(HTML_QuickForm::errorMessage($code), $code, $mode, $level, $debuginfo);
-        }
-        else {
+        } else {
             $this->PEAR_Error("Invalid error code: $code", QUICKFORM_ERROR, $mode, $level, $debuginfo);
         }
     }
