@@ -324,7 +324,7 @@ class HTML_QuickForm extends HTML_Common {
      */
     function registerElementType($typeName, $include, $className)
     {
-        $GLOBALS['HTML_QUICKFORM_ELEMENT_TYPES'][$typeName] = array($include, $className);
+        $GLOBALS['HTML_QUICKFORM_ELEMENT_TYPES'][strtolower($typeName)] = array($include, $className);
     } // end func registerElementType
 
     // }}}
