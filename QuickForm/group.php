@@ -483,7 +483,7 @@ class HTML_QuickForm_group extends HTML_QuickForm_element
                 }
                 if ($assoc) {
                     // just like HTML_QuickForm::exportValues()
-                    $value = @array_merge_recursive($value, $v);
+                    $value = HTML_QuickForm::arrayMerge($value, $v);
                 } else {
                     // just like getValue(), but should work OK every time here
                     if (is_null($elementName)) {
