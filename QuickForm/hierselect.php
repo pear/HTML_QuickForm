@@ -1,9 +1,9 @@
 <?php
 /* vim: set expandtab tabstop=4 shiftwidth=4: */
 // +----------------------------------------------------------------------+
-// | PHP Version 4                                                        |
+// | PHP version 4.0                                                      |
 // +----------------------------------------------------------------------+
-// | Copyright (c) 1997-2003 The PHP Group                                |
+// | Copyright (c) 1997-2004 The PHP Group                                |
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the PHP license,       |
 // | that is bundled with this package in the file LICENSE, and is        |
@@ -13,7 +13,8 @@
 // | obtain it through the world-wide-web, please send a note to          |
 // | license@php.net so we can mail you a copy immediately.               |
 // +----------------------------------------------------------------------+
-// | Author:  Bertrand Mansion <bmansion@mamasam.com>                     |
+// | Authors: Herim Vasquez <vasquezh@iro.umontreal.ca>                   |
+// |          Bertrand Mansion <bmansion@mamasam.com>                     |
 // +----------------------------------------------------------------------+
 //
 // $Id$
@@ -22,59 +23,75 @@ require_once('HTML/QuickForm/group.php');
 require_once('HTML/QuickForm/select.php');
 
 /**
- * Class to dynamically create two HTML Select elements
- * The first select changes the content of the second select.
+ * Class to dynamically create two or more HTML Select elements
+ * The first select changes the content of the second select and so on.
  * This element is considered as a group. Selects will be named
- * groupName[0], groupName[1].
+ * groupName[0], groupName[1], groupName[2]...
  *
- * Ex:
- * $form->setDefaults(array('test' => array('4','15')));
- * $sel =& $form->addElement('hierselect', 'test', 'Test:', null, '/');
- * $mainOptions = $db->getAssoc('select pkparent, par_desc from parent');
- * $sel->setMainOptions($mainOptions);
- *
- * $result = $db->query("select fk_parent, pkchild, chi_desc from child");
- * while ($result->fetchInto($row)) {
- *     $secOptions[$row[0]][$row[1]] = $row[2];
- * }
- * $sel->setSecOptions($secOptions);
- *
+ * @author       Herim Vasquez <vasquezh@iro.umontreal.ca>
  * @author       Bertrand Mansion <bmansion@mamasam.com>
+ * @version      1.0
+ * @since        PHP4.04pl1
+ * @access       public
  */
 class HTML_QuickForm_hierselect extends HTML_QuickForm_group
 {   
     // {{{ properties
 
     /**
-     * Options for the second select element
+     * Options for all the select elements
      *
      * Format is a bit more complex as we need to know which options
-     * are related to the ones in the first select:
+     * are related to the ones in the previous select:
      *
-     * array[mainOption value][secOption value] = secOption text.
      * Ex:
-     * $main[0] = 'Pop';
-     * $main[1] = 'Classical';
-     * $main[2] = 'Funeral doom';
+     * // first select
+     * $select1[0] = 'Pop';
+     * $select1[1] = 'Classical';
+     * $select1[2] = 'Funeral doom';
      *
-     * $sec[0][1] = 'Red Hot Chili Peppers';
-     * $sec[0][2] = 'The Pixies';
-     * $sec[1][3] = 'Wagner';
-     * $sec[1][4] = 'Strauss';
-     * $sec[2][5] = 'Pantheist';
-     * $sec[2][6] = 'Skepticism';
+     * // second select
+     * $select2[0][0] = 'Red Hot Chil Peppers';
+     * $select2[0][1] = 'The Pixies';
+     * $select2[1][0] = 'Wagner';
+     * $select2[1][1] = 'Strauss';
+     * $select2[2][0] = 'Pantheist';
+     * $select2[2][1] = 'Skepticism';
+     *
+     * // third select
+     * $select3[0][0][0] = '15.00$';
+     * etc
+     *
+     * // and then
+     * $opts[0] = $select1;
+     * $opts[1] = $select2;
+     * $opts[2] = $select3;
      *
      * @var       array
      * @access    private
      */
-    var $_secOptions = array();
+    var $_options = array();
+    
+    /**
+     * Number of select elements on this group
+     *
+     * @var       int
+     * @access    private
+     */
+    var $_nbElements = 0;
 
     /**
      * The javascript used to set and change the options
+     *
      * @var       string
      * @access    private
      */
     var $_js = "<script type=\"text/javascript\">\n";
+    
+    /**
+    * The javascript array name
+    */
+    var $_jsArrayName = '';
 
     // }}}
     // {{{ constructor
@@ -86,6 +103,8 @@ class HTML_QuickForm_hierselect extends HTML_QuickForm_group
      * @param     string    $elementLabel   (optional)Input field label in form
      * @param     mixed     $attributes     (optional)Either a typical HTML attribute string 
      *                                      or an associative array. Date format is passed along the attributes.
+     * @param     mixed     $separator      (optional)Use a string for one separator,
+     *                                      use an array to alternate the separators.
      * @access    public
      * @return    void
      */
@@ -101,116 +120,212 @@ class HTML_QuickForm_hierselect extends HTML_QuickForm_group
     } //end constructor
 
     // }}}
-    // {{{ setMainOptions()
+    // {{{ setOptions()
 
     /**
-     * Sets the options for the first select
-     * Format is standard key/value pairs for select elements.
+     * Initialize the array structure containing the options for each select element.
+     * Call the functions that actually do the magic.
      *
-     * @param     array    $options    Array of options for the first select
+     * @param     array    $options    Array of options defining each element
+     *
      * @access    public
      * @return    void
      */
-    function setMainOptions($options)
+    function setOptions(&$options)
     {
+        $this->_options = &$options;
+
         if (empty($this->_elements)) {
+            $this->_nbElements = count($this->_options);
             $this->_createElements();
+        } else {
+            // setDefaults has probably been called before this function
+            // check if all elements have been created
+            $totalNbElements = count($this->_options);
+            for ($i = $this->_nbElements; $i < $totalNbElements; $i ++) {
+                $this->_elements[] =& new HTML_QuickForm_select($i, null, array(), $this->getAttributes());
+                $this->_nbElements++;
+            }
         }
-        $select1 =& $this->_elements[0];
-        $select1->loadArray($options);
+        
+        $this->_setOptions();
+        $this->_setJS();
     } // end func setMainOptions
 
     // }}}
-    // {{{ setSecOptions()
-
+    // {{{ setMainOptions()
+    
     /**
-     * Sets the options for the second select
-     * 
-     * @param     array    $options    Array of options for the second select
+     * Sets the options for the first select element. Deprecated. setOptions() should be used.
+     *
+     * @param     array     $array    Options for the first select element
+     *
      * @access    public
      * @return    void
      */
-    function setSecOptions($options)
+    function setMainOptions(&$array)
     {
-        $js_escape = array(
-            "\r"    => '\r',
-            "\n"    => '\n',
-            "\t"    => '\t',
-            "'"     => "\\'",
-            '"'     => '\"',
-            '\\'    => '\\\\'
-        );
+        $this->_options[0] = &$array;
+
         if (empty($this->_elements)) {
+            $this->_nbElements = 2;
             $this->_createElements();
         }
-        $this->_secOptions = $options;
-        $elValue = $this->getValue();
-
-        if (is_array($elValue)) {
-            $curKey = isset($options[$elValue[0][0]]) ? $elValue[0][0] : key($options);
+    } // end func setMainOptions
+    
+    // }}}
+    // {{{ setSecOptions()
+    
+    /**
+     * Sets the options for the second select element. Deprecated. setOptions() should be used.
+     * The main _options array is initialized and the _setOptions function is called.
+     *
+     * @param     array     $array    Options for the second select element
+     *
+     * @access    public
+     * @return    void
+     */
+    function setSecOptions(&$array)
+    {
+        $this->_options[1] = &$array;
+        
+        if (empty($this->_elements)) {
+            $this->_nbElements = 2;
+            $this->_createElements();
         } else {
-            $curKey = key($options);
-        }
-        foreach ($options as $key => $array) {
-            if ($key == $curKey) {
-                $select2 =& $this->_elements[1];
-                $select2->loadArray($array);    
-            }
-            $varName = $this->getName()."_".$key;
-            $this->_js .= "var ".$varName." = new Array();\n";
-            $i = 0;
-            foreach ($array as $value => $text) {
-                $this->_js .= $varName."[".$i."] = new Array('".strtr($value, $js_escape)."', '".strtr($text, $js_escape)."');\n";
-                $i++;
+            // setDefaults has probably been called before this function
+            // check if all elements have been created
+            $totalNbElements = 2;
+            for ($i = $this->_nbElements; $i < $totalNbElements; $i ++) {
+                $this->_elements[] =& new HTML_QuickForm_select($i, null, array(), $this->getAttributes());
+                $this->_nbElements++;
             }
         }
+        
+        $this->_setOptions();
+        $this->_setJS();
     } // end func setSecOptions
-
+    
+    // }}}
+    // {{{ _setOptions()
+    
+    /**
+     * Sets the options for each select element
+     *
+     * @access    private
+     * @return    void
+     */
+    function _setOptions()
+    {
+        $toLoad = '';
+        foreach (array_keys($this->_elements) AS $key) {
+            if (eval("return isset(\$this->_options[{$key}]{$toLoad});") ) {
+                $array = eval("return \$this->_options[{$key}]{$toLoad};");
+                if (is_array($array)) {                
+                    $select =& $this->_elements[$key];
+                    $select->_options = array();
+                    $select->loadArray($array);
+                    
+                    $value  = is_array($v = $select->getValue()) ? $v[0] : key($array);                    
+                    $toLoad .= '['.$value.']';
+                }
+            }
+        }
+    } // end func _setOptions
+    
     // }}}
     // {{{ setValue()
 
     /**
-     * Sets the element value
+     * Sets values for group's elements
      * 
-     * @param     array     An array of 2 values, for the first and the second selects
+     * @param     array     $value    An array of 2 or more values, for the first,
+     *                                the second, the third etc. select
+     *
      * @access    public
      * @return    void
      */
     function setValue($value)
     {
+        $this->_nbElements = count($value);
         parent::setValue($value);
-
-        // Reload the options in the second selects
-        if (sizeof($this->_secOptions) > 0) {
-            if (is_array($value)) {
-                if (isset($this->_secOptions[$value[0]][$value[1]])) {
-                    $curKey = $value[0];
-                } else {
-                    $curKey =  key($this->_secOptions);
-                }
-            } else {
-                $curKey = key($this->_secOptions);
-            }
-            $select2 =& $this->_elements[1];
-            $select2->_options = array(); // Bad, private...
-            $select2->loadArray($this->_secOptions[$curKey]);
-        }
+        $this->_setOptions();
     } // end func setValue
-
+    
     // }}}
     // {{{ _createElements()
 
     /**
-     * Creates the two select objects
+     * Creates all the elements for the group
      * 
-     * @access    public
+     * @access    private
      * @return    void
      */
     function _createElements()
     {
-        $this->_elements[] =& new HTML_QuickForm_select('0', null, array(), $this->getAttributes());
-        $this->_elements[] =& new HTML_QuickForm_select('1', null, array(), $this->getAttributes());
+        for ($i = 0; $i < $this->_nbElements; $i++) {
+            $this->_elements[] =& new HTML_QuickForm_select($i, null, array(), $this->getAttributes());
+        }
     } // end func _createElements
+
+    // }}}
+    // {{{ _setJS()
+    
+    /**
+     * Set the JavaScript for each select element (excluding de main one).
+     *
+     * @access    private
+     * @return    void
+     */
+    function _setJS()
+    {
+        $js      = '';
+        $this->_jsArrayName = $this->getName();
+        for ($i = 1; $i < $this->_nbElements; $i++) {
+            $this->_setJSArray($this->_jsArrayName, $this->_options[$i], $js);
+        }
+    } // end func _setJS
+    
+    // }}}
+    // {{{ _setJSArray()
+    
+    /**
+     * Recursively builds the JavaScript array defining the options that a select
+     * element can have.
+     *
+     * @param       string      $grpName    Group Name attribute
+     * @param       array       $options    Select element options
+     * @param       string      $js         JavaScript definition is build using this variable
+     * @param       string      $optValue   The value for the current JavaScript option
+     *
+     * @access      private
+     * @return      void
+     */
+    function _setJSArray($grpName, $options, &$js, $optValue = '')
+    {
+        if (is_array($options)) {
+            $js = '';
+            // For a hierselect containing 3 elements:
+            //      if option 1 has been selected for the 1st element
+            //      and option 3 has been selected for the 2nd element,
+            //      then the javascript array containing the values to load 
+            //      on the 3rd element will have the following name:   grpName_1_3
+            $name  = ($optValue === '') ? $grpName : $grpName.'_'.$optValue;
+            foreach($options AS $k => $v) {
+                $this->_setJSArray($name, $v, $js, $k);
+            }
+            
+            // if $js !== '' add it to the JavaScript
+            $this->_js .= ($js !== '') ? $name." = {\n".$js."\n}\n" : '';
+            $js = '';
+        } else {
+            // $js empty means that we are adding the first element to the JavaScript.
+            if ($js != '') {
+                $js .= ",\n";
+            }
+            $js .= '"'.$optValue.'":"'.$options.'"';
+        }
+    }
 
     // }}}
     // {{{ toHtml()
@@ -223,19 +338,46 @@ class HTML_QuickForm_hierselect extends HTML_QuickForm_group
      */
     function toHtml()
     {
-        $this->_elements[0]->updateAttributes(array('onChange' => 'swapOptions(this.options[this.selectedIndex].value, this.form[\''.$this->getElementName(1)."'], '".$this->getName()."');"));
         if ($this->_flagFrozen) {
             $this->_js = '';
         } else {
+            // set the onchange attribute for each element
+            $keys               = array_keys($this->_elements);
+            $nbElements         = count($keys);
+            $nbElementsUsingFnc = $nbElements - 1; // last element doesn't need it
+            for ($i = 0; $i < $nbElementsUsingFnc; $i++) {
+                $select =& $this->_elements[$keys[$i]];
+                $select->updateAttributes(
+                    array('onChange' => 'swapOptions(this, \''.$this->getName().'\', '.$keys[$i].', '.$nbElements.', \''.$this->_jsArrayName.'\');')
+                );
+            }
+            
+            // create the js function to call
             if (!defined('HTML_QUICKFORM_HIERSELECT_EXISTS')) {
-                $this->_js .= "function swapOptions(selIndex, ctl, arName) {\n"
-                         ."  ctl.options.length = 0;\n"
-                         ."  var the_array = eval(arName + '_' + selIndex);\n"
-                         ."  for (i = 0; i < the_array.length; i++) {\n"
-                         ."    opt = new Option(the_array[i][1], the_array[i][0], false, false);\n"
-                         ."    ctl.options[i] = opt;\n"
-                         ."  }\n"
-                         ."}\n";
+                $this->_js .= "function swapOptions(frm, grpName, eleIndex, nbElements, arName)\n"
+                             ."{\n"
+                             ."    var n = \"\";\n"
+                             ."    var ctl;\n\n"
+                             ."    for (var i = 0; i < nbElements; i++) {\n"
+                             ."        ctl = frm.form[grpName+'['+i+']'];\n"
+                             ."        if (i <= eleIndex) {\n"
+                             ."            n += \"_\"+ctl.value;\n"
+                             ."        } else {\n"
+                             ."            ctl.length = 0;\n"
+                             ."        }\n"
+                             ."    }\n\n"
+                             ."    var t = eval(\"typeof(\"+arName + n +\")\");\n"
+                             ."    if (t != 'undefined') {\n"
+                             ."        var the_array = eval(arName+n);\n"
+                             ."        var j = 0;\n"
+                             ."        n = eleIndex + 1;\n"
+                             ."        ctl = frm.form[grpName+'['+ n +']'];\n"
+                             ."        for (var i in the_array) {\n"
+                             ."            opt = new Option(the_array[i], i, false, false);\n"
+                             ."            ctl.options[j++] = opt;\n"
+                             ."        }\n"
+                             ."    }\n"
+                             ."}\n";
                 define('HTML_QUICKFORM_HIERSELECT_EXISTS', true);
             }
             $this->_js .= "</script>\n";
@@ -278,6 +420,6 @@ class HTML_QuickForm_hierselect extends HTML_QuickForm_group
         }
     } // end func onQuickFormEvent
 
-    // }}}
+    // }}}    
 } // end class HTML_QuickForm_hierselect
 ?>

@@ -58,7 +58,7 @@ Features:
   </maintainers>
   <release>
     <version>3.2.2</version>
-    <date>2004-03-??</date>
+    <date>2004-03-22</date>
     <state>stable</state>
     <notes>
 * On XHTML compliance:
@@ -90,6 +90,9 @@ contact the package maintainers.
   (suggested by Ignatius Reilly)
 - Date element accepts non numeric default values compatible with
   function strtotime() (Kellan Elliot-Mccrea)
+- Added possibility to have more than just two selects in
+  the hierselect element (Herim Vasquez)
+
 
 * Bugfixes
 - Fixed #735 (applyFilter() failed for elements with "complex" names and
