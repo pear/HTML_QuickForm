@@ -1497,7 +1497,9 @@ class HTML_QuickForm extends HTML_Common {
             $files = $this->_submitFiles;
             for (reset($files); $element=key($files); next($files)) {
                 $file = pos($files);
-                @unlink($file["tmp_name"]);
+                if (isset($file['tmp_name'])) {
+                    @unlink($file['tmp_name']);
+                }
             }
             return false;
         }
@@ -1618,6 +1620,9 @@ class HTML_QuickForm extends HTML_Common {
      */
     function _ruleCheckMaxFileSize($element, $value, $maxSize)
     {
+        if (empty($this->_submitFiles[$element]['tmp_name'])) {
+            return true;
+        }
         return ($maxSize >= @filesize($this->_submitFiles[$element]['tmp_name']));
     } // end func _ruleCheckMaxFileSize
 
@@ -1637,6 +1642,9 @@ class HTML_QuickForm extends HTML_Common {
      */
     function _ruleCheckMimeType($element, $value, $mimeType)
     {
+        if (empty($this->_submitFiles[$element]['tmp_name'])) {
+            return true;
+        }
         if (is_array($mimeType)) {
             return in_array($this->_submitFiles[$element]['type'], $mimeType);
         }
@@ -1659,6 +1667,9 @@ class HTML_QuickForm extends HTML_Common {
      */
     function _ruleCheckFileName($element, $value, $regex)
     {
+        if (empty($this->_submitFiles[$element]['tmp_name'])) {
+            return true;
+        }
         return preg_match($regex, $this->_submitFiles[$element]['name']);
     } // end func _ruleCheckFileName
     
