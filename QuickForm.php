@@ -1693,6 +1693,14 @@ class HTML_QuickForm extends HTML_Common {
         $html = '';
         $tabs = $this->_getTabs();
         $test = array();
+        $js_escape = array(
+            "\r"    => '\r',
+            "\n"    => '\n',
+            "\t"    => '\t',
+            "'"     => "\\'",
+            '"'     => '\"',
+            '\\'    => '\\\\'
+        );
         for (reset($this->_rules); $elementName = key($this->_rules); next($this->_rules)) {
             $rules = pos($this->_rules);
             foreach ($rules as $rule) {
@@ -1747,7 +1755,7 @@ class HTML_QuickForm extends HTML_Common {
                                 "$tabs\t\tvar regex = $regex;\n"  .
                                 "$tabs\t\tif (!regex.test(value) && !errFlag['$elementName']) {\n" .
                                 "$tabs\t\t\terrFlag['$elementName'] = true;\n" .
-                                "$tabs\t\t\t_qfMsg = unescape(_qfMsg + '\\n - ".rawurlencode($message)."');\n".
+                                "$tabs\t\t\t_qfMsg = _qfMsg + '\\n - ".strtr($message, $js_escape)."';\n".
                                 $tmp_reset.
                                 "$tabs\t\t}";
                             break;
@@ -1757,7 +1765,7 @@ class HTML_QuickForm extends HTML_Common {
                                 "$tabs\t\tvar field = frm.elements['$elementName'];\n"  .
                                 "$tabs\t\tif (!" . $ruleData[1] . "('$elementName', value) && !errFlag['$elementName']) {\n" .
                                 "$tabs\t\t\terrFlag['$elementName'] = true;\n" .
-                                "$tabs\t\t\t_qfMsg = _qfMsg + '\\n - $message';\n" .
+                                "$tabs\t\t\t_qfMsg = _qfMsg + '\\n - ".strtr($message, $js_escape)."';\n" .
                                 "$tabs\t\t}";
                             break;
                     }
