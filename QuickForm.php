@@ -666,6 +666,8 @@ class HTML_QuickForm extends HTML_Common {
      * @param    string     $name           (optional)group name
      * @param    string     $label          (optional)group label
      * @param    string     $separator      (optional)string to seperate elements
+     * @param    string     $useName        (optional)specify whether the group name should be
+     *										used in the form element name ex: group[element]
      * @return   reference to added group of elements
      * @since    2.8
      * @access   public
@@ -692,7 +694,7 @@ class HTML_QuickForm extends HTML_Common {
      */
     function &addElementGroup($elements, $groupLabel='', $name=null, $separator=null)
     {
-        return $this->addElement('group', $name, $groupLabel, $elements, $separator);
+        return $this->addGroup($elements, $name, $groupLabel, $separator);
     } // end func addElementGroup
     
     // }}}
