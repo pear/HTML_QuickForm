@@ -65,6 +65,7 @@ Features:
 - The usage examples were significantly redone to better reflect current
   package functionality.
 - Added Armenian translation for date element (Vahe Khachikyan)
+- Added Dutch translation for date element (Michiel Rook)
 - validate() throws a PEAR error if rule added via addFormRule() returns junk
   (see also bugs #243 and #338)
 

@@ -175,6 +175,12 @@ class HTML_QuickForm_date extends HTML_QuickForm_group
             'weekdays_long' => array ('ÎÇñ³ÏÇ','ºñÏáõß³µÃÇ','ºñ»ùß³µÃÇ','âáñ»ùß³µÃÇ', 'ÐÇÝ·ß³µÃÇ', 'àõñµ³Ã', 'Þ³µ³Ã'),
             'months_short'  => array ('ÐÝí','öïñ','Øñï','²åñ','ØÛë','ÐÝë','ÐÉë','ú·ë','êåï','ÐÏï','ÜÛÙ','¸Ïï'),
             'months_long'   => array ('ÐáõÝí³ñ','ö»ïñí³ñ','Ø³ñï','²åñÇÉ','Ø³ÛÇë','ÐáõÝÇë','ÐáõÉÇë','ú·áëïáë','ê»åï»Ùµ»ñ','ÐáÏï»Ùµ»ñ','ÜáÛ»Ùµ»ñ','¸»Ïï»Ùµ»ñ')
+        ),
+        'nl'    => array (
+            'weekdays_short'=> array ('Zo', 'Ma', 'Di', 'Wo', 'Do', 'Vr', 'Za'),
+            'weekdays_long' => array ('Zondag', 'Maandag', 'Dinsdag', 'Woensdag', 'Donderdag', 'Vrijdag', 'Zaterdag'),
+            'months_short'  => array ('Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dec'),
+            'months_long'   => array ('Januari', 'Februari', 'Maart', 'April', 'Mei', 'Juni', 'Juli', 'Augustus', 'September', 'Oktober', 'November', 'December')
         )
     );
 
