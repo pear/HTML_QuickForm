@@ -299,7 +299,9 @@ class HTML_QuickForm_select extends HTML_QuickForm_element {
             if (isset($attributes['selected'])) {
                 // the 'selected' attribute will be set in toHtml()
                 $this->_removeAttr('selected', $attributes);
-                if (!in_array($value, $this->_values)) {
+                if (is_null($this->_values)) {
+                    $this->_values = array($value);
+                } elseif (!in_array($value, $this->_values)) {
                     $this->_values[] = $value;
                 }
             }
