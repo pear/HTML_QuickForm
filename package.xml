@@ -49,40 +49,57 @@ Features:
       <email>ths@4bconsult.de</email>
       <role>developer</role>
     </maintainer>
-    <maintainer>
+    <!-- maintainer>
       <user>mixtli</user>
       <name>Ron McClain</name>
       <email>ron@humaniq.com</email>
       <role>developer</role>
-    </maintainer>
+    </maintainer -->
   </maintainers>
   <release>
-    <version>3.2.1</version>
-    <date>2004-01-03</date>
+    <version>3.2.2</version>
+    <date>2004-03-??</date>
     <state>stable</state>
     <notes>
+* On XHTML compliance:
+As of 3.2.2 QuickForm does not rely on presence of 'name' attribute
+in form tag (which is invalid in Strict XHTML), although it does
+set this attribute. If you desire Strict XHTML compliance, you can
+remove the attribute via removeAttribute() method.
+
+* On Flexy renderers:
+The Flexy renderers currently lack a maintainer. If one is not
+found, they will be marked as unsupported and may later be removed
+from the package. If you wish to look after these renderers, please
+contact the package maintainers.
+
 * Additions and changes
-- The usage examples were significantly redone to better reflect current
-  package functionality.
-- Added Armenian translation for date element (Vahe Khachikyan)
-- Added Dutch translation for date element (Michiel Rook)
-- validate() throws a PEAR error if rule added via addFormRule() returns junk
-  (see also bugs #243 and #338)
+- Added arrayMerge() method to HTML_QuickForm, this behaves like
+  builtin array_merge_recursive() but does not renumber numeric
+  array keys. The new method is now used throughout the QuickForm
+  instead of array_merge_recursive()
+- Added setDatasource() method
+- Added Estonian translation for date element (Ants Aasma)
+- Added Turkish translation for date element (Suat Imam-Oglu)
+- Added Norwegian translation for date element (Espen Carlsen)
+- All non-ASCII symbols in date translations are now encoded as 
+  HTML Unicode entities to prevent encoding problems
+- Renamed labels-default.php example to multiple-labels.php
+  (suggested by Ignatius Reilly)
 
 * Bugfixes
-- Fixed bug #351 (incorrect values set for groups with weird names)
-- Required elements in groups are once again marked correctly
-- Fixed setValue() method of date element (thanks to Orya and Mike Carter, 
-  see also bug #388)
-- Fixed bug #403 (typo in Rule_Callback::getValidationScript())
-- Fixed bug #356 (javascript generation for groups with $appendName = false)
-- Fixed bug #328 (js values in hierselect not escaped properly)
-- Fixed bug #302 (better support for RFC 2821 and RFC 2822 in Rule_Email)
-- Fixed bug #253 (ArraySmarty renderer broken with radiobuttons)
-- Partial fix for bug #202 (ArraySmarty renderer broke on elements with
+- Fixed #735 (applyFilter() failed for elements with "complex" names and
+  grouped elements)
+- Fixed #872 (possible get_class()-related issues in PHP5)
+- Fixed #925 (XHTML compliance, see the note)
+- Fixed #741 (frozen elements lost 'id' attribute)
+- Final fix for #202 (ArraySmarty renderer broke on elements with
   brackets in names)
-- Fixed bug #493 (non-existant method in setConstants())
-- Fixed bug #209 (Flexy renderer broken with groups having '_' in names)
+- Fixed #645 (ArraySmarty renderer had problems with anonymous elements)
+- Fixed #734 (ArraySmarty renderer did not honour the change of Smarty
+  delimiters)
+- Fixed #745 (wrong removal of group name from elements)
+- Fixed #212 (ObjectFlexy renderer broke on elements with brackets in names)
     </notes>
     <filelist>
       <dir name="/" baseinstalldir="HTML">
@@ -150,7 +167,7 @@ Features:
             <file role="doc">QuickHtml_example.php</file>
             <file role="doc">SmartyDynamic_example.php</file>
             <file role="doc">SmartyStatic_example.php</file>
-            <file role="doc">labels-default.php</file>
+            <file role="doc">multiple-labels.php</file>
             <dir name="templates">
               <file role="doc">it-dynamic-2.html</file>
               <file role="doc">it-dynamic.html</file>
@@ -178,6 +195,35 @@ Features:
     </deps>
   </release>
   <changelog>
+  <release>
+    <version>3.2.1</version>
+    <date>2004-01-03</date>
+    <state>stable</state>
+    <notes>
+* Additions and changes
+- The usage examples were significantly redone to better reflect current
+  package functionality.
+- Added Armenian translation for date element (Vahe Khachikyan)
+- Added Dutch translation for date element (Michiel Rook)
+- validate() throws a PEAR error if rule added via addFormRule() returns junk
+  (see also bugs #243 and #338)
+
+* Bugfixes
+- Fixed bug #351 (incorrect values set for groups with weird names)
+- Required elements in groups are once again marked correctly
+- Fixed setValue() method of date element (thanks to Orya and Mike Carter, 
+  see also bug #388)
+- Fixed bug #403 (typo in Rule_Callback::getValidationScript())
+- Fixed bug #356 (javascript generation for groups with $appendName = false)
+- Fixed bug #328 (js values in hierselect not escaped properly)
+- Fixed bug #302 (better support for RFC 2821 and RFC 2822 in Rule_Email)
+- Fixed bug #253 (ArraySmarty renderer broken with radiobuttons)
+- Partial fix for bug #202 (ArraySmarty renderer broke on elements with
+  brackets in names)
+- Fixed bug #493 (non-existant method in setConstants())
+- Fixed bug #209 (Flexy renderer broken with groups having '_' in names)
+    </notes>
+  </release>
   <release>
     <version>3.2</version>
     <date>2003-11-05</date>
