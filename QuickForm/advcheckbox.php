@@ -209,6 +209,19 @@ class HTML_QuickForm_advcheckbox extends HTML_QuickForm_checkbox
     } //end func toHtml
     
     // }}}
+    // {{{ getFrozenHtml()
+
+   /**
+    * Unlike checkbox, this has to append a hidden input in both
+    * checked and non-checked states
+    */
+    function getFrozenHtml()
+    {
+        return ($this->getChecked()? '<tt>[x]</tt>': '<tt>[ ]</tt>') .
+               $this->_getPersistantData();
+    }
+
+    // }}}
     // {{{ onQuickFormEvent()
 
     /**
