@@ -192,7 +192,7 @@ class HTML_QuickForm_advcheckbox extends HTML_QuickForm_checkbox
         $oldJs   = $this->getAttribute('onclick');
         $this->updateAttributes(array(
             'name'    => $this->getPrivateName($oldName),
-            'onclick' => $this->getOnclickJs($oldName) . ' ' . $oldJs;
+            'onclick' => $this->getOnclickJs($oldName) . ' ' . $oldJs
         ));
         $html = parent::toHtml() . '<input type="hidden" name="' . $oldName . 
                 '" value="' . $this->_values[$this->getChecked()? 1: 0] . '" />';
