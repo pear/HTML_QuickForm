@@ -72,6 +72,7 @@ class HTML_QuickForm_radio extends HTML_QuickForm_input {
         $this->_persistantFreeze = true;
         $this->setType('radio');
         $this->_text = $text;
+        $this->_generateId();
     } //end constructor
     
     // }}}
@@ -124,7 +125,8 @@ class HTML_QuickForm_radio extends HTML_QuickForm_input {
      */
     function toHtml()
     {
-        return HTML_QuickForm_input::toHtml() . '' . $this->_text;
+        return HTML_QuickForm_input::toHtml() . 
+               '<label for="' . $this->getAttribute('id') . '">' . $this->_text . "</label>";
     } //end func toHtml
     
     // }}}

@@ -396,6 +396,27 @@ class HTML_QuickForm_element extends HTML_Common {
     } // end func accept
 
     // }}}
+    // {{{ _generateId()
+
+   /**
+    * Automatically generates and assigns an 'id' attribute for the element.
+    * 
+    * Currently used to ensure that labels work on radio buttons and
+    * checkboxes. Per idea of Alexander Radivanovich.
+    *
+    * @access private
+    * @return void 
+    */
+    function _generateId()
+    {
+        static $idx = 1;
+
+        if (!$this->getAttribute('id')) {
+            $this->updateAttributes(array('id' => 'qf_' . substr(md5(microtime() . $idx++), 0, 6)));
+        }
+    } // end func _generateId
+
+    // }}}
 
 } // end class HTML_QuickForm_element
 ?>
