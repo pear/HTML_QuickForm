@@ -43,7 +43,8 @@ $GLOBALS['HTML_QUICKFORM_ELEMENT_TYPES'] =
             'date'          =>array('HTML/QuickForm/date.php','HTML_QuickForm_date'),
             'static'        =>array('HTML/QuickForm/static.php','HTML_QuickForm_static'),
             'header'        =>array('HTML/QuickForm/header.php', 'HTML_QuickForm_header'),
-            'html'          =>array('HTML/QuickForm/html.php', 'HTML_QuickForm_html')
+            'html'          =>array('HTML/QuickForm/html.php', 'HTML_QuickForm_html'),
+            'hierselect'    =>array('HTML/QuickForm/hierselect.php', 'HTML_QuickForm_hierselect')
         );
 
 $GLOBALS['_HTML_QuickForm_registered_rules'] = array(

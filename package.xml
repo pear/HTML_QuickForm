@@ -46,15 +46,11 @@ Features:
     </maintainer>
   </maintainers>
   <release>
-    <version>3.0</version>
-    <date>2003-06-04</date>
+    <version>3.1</version>
+    <date>2003-07-??</date>
     <state>stable</state>
     <notes>
-* Fixes
-
-- do not use submit values for 'submit' elements also (reported by Thomas Schulz, Mike Carter)
-- assorted small fixes to HTML_QuickForm's methods and PHPDoc documentation
-- HTML_QuickForm::apiVersion() returns 3.0 now
+- Added a new hierselect element, a group of two selects where the first select changes the options of the second select using javascript (Bertrand Mansion)
     </notes>
     <filelist>
       <dir name="/" baseinstalldir="HTML">
@@ -70,6 +66,7 @@ Features:
           <file role="php">header.php</file>
           <file role="php">hidden.php</file>
           <file role="php">hiddenselect.php</file>
+          <file role="php">hierselect.php</file>
           <file role="php">html.php</file>
           <file role="php">image.php</file>
           <file role="php">input.php</file>
@@ -125,6 +122,18 @@ Features:
     </deps>
   </release>
   <changelog>
+  <release>
+    <version>3.0</version>
+    <date>2003-06-04</date>
+    <state>stable</state>
+    <notes>
+* Fixes
+
+- do not use submit values for 'submit' elements also (reported by Thomas Schulz, Mike Carter)
+- assorted small fixes to HTML_QuickForm's methods and PHPDoc documentation
+- HTML_QuickForm::apiVersion() returns 3.0 now
+    </notes>
+  </release>
   <release>
     <version>3.0RC1</version>
     <date>2003-05-28</date>
