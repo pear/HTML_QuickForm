@@ -330,7 +330,7 @@ class HTML_QuickForm_select extends HTML_QuickForm_element {
         if (isset($values)) {
             $this->setSelected($values);
         }
-        while (list($key, $val) = each($arr)) {
+        foreach ($arr as $key => $val) {
             $this->addOption($key, $val);
         }
         return true;
@@ -504,7 +504,7 @@ class HTML_QuickForm_select extends HTML_QuickForm_element {
         // Fix me : doesn't work for multiple.
         $value = '';
         if (is_array($this->_values)) {
-            while (list($key,$val) = each($this->_values)) {
+            foreach ($this->_values as $key => $val) {
                 for ($i=0; $i<count($this->_options); $i++) {
                     $optionTxt = $this->_options[$i]["text"];
                     $optionVal = $this->_options[$i]["attr"]["value"];
