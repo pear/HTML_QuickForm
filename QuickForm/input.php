@@ -172,24 +172,18 @@ class HTML_QuickForm_input extends HTML_QuickForm_element {
      */
     function onQuickFormEvent($event, $arg, &$caller)
     {
-        // submit values are not possible for 'reset', 'image', 'button'
-        // not sure ehat to do about 'submit'
+        // do not use submit values for button-type elements
         $type = $this->getType();
-        if ('reset' != $type && 'image' != $type && 'button' != $type) {
+        if (('updateValue' != $event) ||
+            ('submit' != $type && 'reset' != $type && 'image' != $type && 'button' != $type)) {
             parent::onQuickFormEvent($event, $arg, $caller);
         } else {
-            switch ($event) {
-                case 'updateValue':
-                    $value = $this->_findValue($caller->_constantValues);
-                    if (null === $value) {
-                        $value = $this->_findValue($caller->_defaultValues);
-                    }
-                    if (null !== $value) {
-                        $this->setValue($value);
-                    }
-                    break;
-                default:
-                    parent::onQuickFormEvent($event, $arg, $caller);
+            $value = $this->_findValue($caller->_constantValues);
+            if (null === $value) {
+                $value = $this->_findValue($caller->_defaultValues);
+            }
+            if (null !== $value) {
+                $this->setValue($value);
             }
         }
         return true;

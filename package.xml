@@ -46,23 +46,16 @@ Features:
     </maintainer>
   </maintainers>
   <release>
-    <version>3.0RC1</version>
-    <date>2003-05-28</date>
-    <state>beta</state>
+    <version>3.0</version>
+    <date>2003-06-??</date>
+    <state>stable</state>
     <notes>
-* Bugfixes
+* Fixes
 
-- setMaxfileSize() does not throw pear error anymore (Alexey Borzov)
-- onQuickFormEvent 'updateValue' fixes, elements that cannot actually have a submit value do not try to use one (Alexey Borzov)
-- _loadElement() now returns a reference (Alexey Borzov)
-- Several fixes to usage examples (Alexey Borzov, Thomas Schulz, Joerg Bruckmann)
+- do not use submit values for 'submit' elements also (reported by Thomas Schulz, Mike Carter)
+- assorted small fixes to HTML_QuickForm's methods and PHPDoc documentation
+- HTML_QuickForm::apiVersion() returns 3.0 now
 
-* Changes
-
-- Added time to the date element (Jason Rust)
-- Required groups now show the asterisk (Bertrand Mansion)
-- Optimizations in HTML_QuickForm_group's methods (Alexey Borzov)
-- ArraySmarty renderer now requires a Smarty object and uses Smarty templates for 'required' and errors output (Thomas Schulz)
     </notes>
     <filelist>
       <dir name="/" baseinstalldir="HTML">
@@ -133,6 +126,26 @@ Features:
     </deps>
   </release>
   <changelog>
+  <release>
+    <version>3.0RC1</version>
+    <date>2003-05-28</date>
+    <state>beta</state>
+    <notes>
+* Bugfixes
+
+- setMaxfileSize() does not throw pear error anymore (Alexey Borzov)
+- onQuickFormEvent 'updateValue' fixes, elements that cannot actually have a submit value do not try to use one (Alexey Borzov)
+- _loadElement() now returns a reference (Alexey Borzov)
+- Several fixes to usage examples (Alexey Borzov, Thomas Schulz, Joerg Bruckmann)
+
+* Changes
+
+- Added time to the date element (Jason Rust)
+- Required groups now show the asterisk (Bertrand Mansion)
+- Optimizations in HTML_QuickForm_group's methods (Alexey Borzov)
+- ArraySmarty renderer now requires a Smarty object and uses Smarty templates for 'required' and errors output (Thomas Schulz)
+    </notes>
+  </release>
   <release>
     <version>3.0Beta2</version>
     <date>2003-05-13</date>
