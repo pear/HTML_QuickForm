@@ -122,7 +122,7 @@ $form->addData('
   </tr>
   <tr>
     <td colspan="2" align="center">');
-$form->addElement('reset','tmp_submit','Reset Form');
+$form->addElement('reset','tmp_reset','Reset Form');
 $form->addElement('submit','tmp_submit','Submit Form');
 $form->addData('
     </td>
