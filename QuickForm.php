@@ -58,6 +58,7 @@ define('QUICKFORM_INVALID_RULE',           -2);
 define('QUICKFORM_NONEXIST_ELEMENT',       -3);
 define('QUICKFORM_INVALID_FILTER',         -4);
 define('QUICKFORM_UNREGISTERED_ELEMENT',   -5);
+define('QUICKFORM_INVALID_ELEMENT_NAME',   -6);
 
 // }}}
 
@@ -87,6 +88,14 @@ class HTML_QuickForm extends HTML_Common {
      * @access   private
      */
     var $_elementIndex = array();
+
+    /**
+     * Array containing indexes of duplicate elements
+     * @since     2.10
+     * @var  array
+     * @access   private
+     */
+    var $_duplicateIndex = array();
 
     /**
      * Array containing required field IDs
@@ -427,6 +436,16 @@ class HTML_QuickForm extends HTML_Common {
             }
             foreach ($defaultValues as $key => $value) {
                 $this->_defaultValues[$key] = $value;
+                if (isset($this->_elementIndex[$key])) {
+                    $element =& $this->getElement($key);
+                    $element->onQuickFormEvent('setDefault', $value, $this);
+                    if (isset($this->_duplicateIndex[$key])) {
+                        foreach ($this->_duplicateIndex[$key] as $index) {
+                            $element =& $this->_elements[$index];
+                            $element->onQuickFormEvent('setDefault', $value, $this);
+                        }
+                    }
+                }
             }
         }
     } // end func setDefaults
@@ -459,6 +478,16 @@ class HTML_QuickForm extends HTML_Common {
             }
             foreach ($constantValues as $key => $value) {
                 $this->_constantValues[$key] = $value;
+                if (isset($this->_elementIndex[$key])) {
+                    $element =& $this->getElement($key);
+                    $element->onQuickFormEvent('setConstant', $value, $this);
+                    if (isset($this->_duplicateIndex[$key])) {
+                        foreach ($this->_duplicateIndex[$key] as $index) {
+                            $element =& $this->_elements[$index];
+                            $element->onQuickFormEvent('setConstant', $value, $this);
+                        }
+                    }
+                }
             }
         }
     } // end func setConstants
@@ -563,9 +592,9 @@ class HTML_QuickForm extends HTML_Common {
         }
         $className = $GLOBALS['HTML_QUICKFORM_ELEMENT_TYPES'][$type][1];
         $includeFile = $GLOBALS['HTML_QUICKFORM_ELEMENT_TYPES'][$type][0];
-        include_once $includeFile;
+        include_once($includeFile);
         $elementObject = new $className();
-        foreach (range(0, 4) as $i) {
+        for ($i = 0; $i < 5; $i++) {
             if (!isset($args[$i])) {
                 $args[$i] = null;
             }
@@ -585,7 +614,7 @@ class HTML_QuickForm extends HTML_Common {
      *
      * @param    string     $element        element object or type of element to add (text, textarea, file...)
      * @since    1.0
-     * @return   index of element 
+     * @return   reference to element
      * @access   public
      */
     function &addElement($element)
@@ -594,14 +623,28 @@ class HTML_QuickForm extends HTML_Common {
            $elementObject = &$element;
         } else {
             $args = func_get_args();
-            $elementObject = &$this->_loadElement('addElement', $element, array_slice($args, 1));
+            $elementObject =& $this->_loadElement('addElement', $element, array_slice($args, 1));
             if (PEAR::isError($elementObject)) {
                 return $elementObject;
             }
         }
         $elementName = $elementObject->getName();
-        $elementLabel = $elementObject->getLabel();
-        $elementValue = null;
+        
+        // Add the element if it is not an incompatible duplicate
+        if (isset($this->_elementIndex[$elementName])) {
+            if ($this->_elements[$this->_elementIndex[$elementName]]->getType() ==
+                $elementObject->getType()) {
+                $this->_elements[] =& $elementObject;
+                $this->_duplicateIndex[$elementName][] = count($this->_elements) - 1;
+            } else {
+                return PEAR::raiseError(null, QUICKFORM_INVALID_ELEMENT_NAME, null, E_USER_WARNING, "Element '$elementName' already exists in HTML_QuickForm::addElement()", 'HTML_QuickForm_Error', true);
+            }
+        } else {
+            $this->_elements[] =& $elementObject;
+            $this->_elementIndex[$elementName] = count($this->_elements) - 1;
+        }
+
+        // Set element values
         if (isset($this->_submitValues[$elementName])) {
             $elementObject->onQuickFormEvent('setDefault', $this->_submitValues[$elementName], $this);
         } elseif (isset($this->_defaultValues[$elementName])) {
@@ -610,10 +653,6 @@ class HTML_QuickForm extends HTML_Common {
         if (isset($this->_constantValues[$elementName])) {
             $elementObject->onQuickFormEvent('setConstant', $this->_constantValues[$elementName], $this);
         }
-        $this->_elements[] =& $elementObject;
-        end($this->_elements);
-        $index = key($this->_elements);
-        $this->_elementIndex[$elementName] = $index;
 
         return $elementObject;
     } // end func addElement
@@ -773,6 +812,32 @@ class HTML_QuickForm extends HTML_Common {
          }
          return false;
      } // end func getElementType
+
+     // }}}
+     // {{{ updateElementAttr()
+
+    /**
+     * Updates Attributes for one or more elements
+     *
+     * @param      mixed    $elements   Array of element names/objects or string of elements to be updated
+     * @param      mixed    $attrs      Array or sting of html attributes
+     * @since      2.10
+     * @access     public
+     * @return     void
+     */
+    function updateElementAttr($elements, $attrs)
+    {
+        if (is_string($elements)) {
+            $elements = split('[ ]?,[ ]?', $elements);
+        }
+        foreach ($elements as $element) {
+            if (is_object($element) && is_subclass_of($element, 'HTML_QuickForm_element')) {
+                $element->updateAttributes($attrs);
+            } elseif (isset($this->_elementIndex[$element])) {
+                $this->_elements[$this->_elementIndex[$element]]->updateAttributes($attrs);
+            }
+        }
+    } // end func updateElementAttr
 
     // }}}
     // {{{ renderElement()
@@ -1279,7 +1344,7 @@ class HTML_QuickForm extends HTML_Common {
      */
     function isTypeRegistered($type)
     {
-        return in_array($type, array_keys($GLOBALS['HTML_QUICKFORM_ELEMENT_TYPES']));
+        return isset($GLOBALS['HTML_QUICKFORM_ELEMENT_TYPES'][$type]);
     } // end func isTypeRegistered
 
     // }}}
@@ -2193,13 +2258,27 @@ class HTML_QuickForm extends HTML_Common {
                     $returnVal['errors'][$name] = $error;
                 }
                 if (isset($currentSection)) {
-                    $returnVal['sections'][$currentSection]['elements'][$name] = 
-                        array_merge(array('required'=>$this->isElementRequired($name)),
-                            $element->toArray());
+                    if (isset($this->_duplicateIndex[$name])) {
+                        $returnVal['sections'][$currentSection]['elements'][$name][] = 
+                            array_merge(array('required'=>$this->isElementRequired($name)),
+                                $element->toArray());
+                    } else {
+                        $returnVal['sections'][$currentSection]['elements'][$name] = 
+                            array_merge(array('required'=>$this->isElementRequired($name)),
+                                $element->toArray());
+                    }
+
                 } else {
-                    $returnVal['elements'][$name] = 
-                        array_merge(array('required'=>$this->isElementRequired($name)),
-                            $element->toArray());
+                    if (isset($this->_duplicateIndex[$name])) {
+                        $returnVal['elements'][$name][] = 
+                            array_merge(array('required'=>$this->isElementRequired($name)),
+                                $element->toArray());
+                    } else {
+                        $returnVal['elements'][$name] = 
+                            array_merge(array('required'=>$this->isElementRequired($name)),
+                                $element->toArray());
+                    }
+
                 }
             }
         }
@@ -2245,7 +2324,8 @@ class HTML_QuickForm extends HTML_Common {
                 QUICKFORM_INVALID_RULE          => 'the rule does not exist as a registered rule',
                 QUICKFORM_NONEXIST_ELEMENT      => 'nonexistent html element',
                 QUICKFORM_INVALID_FILTER        => 'invalid filter',
-                QUICKFORM_UNREGISTERED_ELEMENT  => 'unregistered element'
+                QUICKFORM_UNREGISTERED_ELEMENT  => 'unregistered element',
+                QUICKFORM_INVALID_ELEMENT_NAME  => 'element already exists'
             );
         }
 
