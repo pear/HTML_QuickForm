@@ -10,7 +10,7 @@
 */
 
 require_once ("HTML/QuickForm.php");
-$form = new HTML_QuickForm('frmTest', 'GET');
+$form = new HTML_QuickForm('frmTest', 'get');
 // Fills with some defaults values
 $defaultValues['itxtTest']  = 'Test Text Box';
 $defaultValues['itxaTest']  = 'Hello World';
@@ -22,11 +22,11 @@ $defaultValues['phoneNo']   = array('513', '123', '3456');
 $defaultValues['iradYesNo'] = 'Y';
 $defaultValues['ichkABC']   = array('A'=>true,'B'=>true);
 $defaultValues['QFText']    = '153.5';
-$defaultValues['dateTest1']    = array('d'=>11, 'M'=>1, 'Y'=>2003);
+$defaultValues['dateTest1']    = array('d'=>11, 'm'=>1, 'Y'=>2003);
 $form->setDefaults($defaultValues);
 
 $constantValues['dateTest3']    = time();
-$form->setconstants($constantValues);
+$form->setConstants($constantValues);
 
 // Elements will be displayed in the order they are declared
 $form->addHeader('Normal Elements');
