@@ -40,21 +40,22 @@ Features:
     </maintainer>
   </maintainers>
   <release>
-    <version>2.3</version>
-    <date>2002-06-19</date>
+    <version>2.4</version>
+    <date>2002-10-21</date>
     <state>stable</state>
     <notes>
-* Important API change in the way select elements load arrays.
-* Added the possibility to set a template for an element only.
-* Fixes in the creation of select elements with multiple attribute.
-* Added consistency in the magic_quotes handling.
-* Added recursive filters on setDefaults an setConstants values.
-* Added getSubmitValue (same as getSubmitValues but for one value only).
-* Removed HTML_QuickForm_date element: it needs more work.
-* Added the HTML_QuickForm_advcheckbox element in package and in registered elements.
-* Added one example for the HTML_QuickForm_advcheckbox element.
-* Added setPersistantFreeze accessor method in element.php.
-* Fixed problems with password field values.
+* Use $_POST, $_GET and $_FILES instead of $HTTP_.
+* Better error checking in renderElement().
+* Fixed freeze() for removed elements.
+* Added new element 'hiddenselect'.
+* Added optional $in_data parameter to method toHtml so that data can be added to the form right before it is rendered.  Useful when using with a template system.
+* Changed the way the key is obtained for _elementIndex in addElement() to accomodate with removeElement().
+* Some changes to _buildRules(): Made some of the javascript variables private which did not need have a global scope (such as frm).
+* Added new rule: emailorblank.
+* Fixes in HTML_QuickForm_Element.
+* Fixes in QuickForm_example2.php.
+* Added getElements() in HTML_QuickForm_Group which returns an array of all elements in group by reference.
+* Added getGroupType() in HTML_QuickForm_Group which returns the type of group as string or 'mixed' if group is composed of different element types.
     </notes>
     <filelist>
       <dir name="/" baseinstalldir="HTML">
@@ -67,6 +68,7 @@ Features:
           <file role="php">file.php</file>
           <file role="php">group.php</file>
           <file role="php">hidden.php</file>
+          <file role="php">hiddenselect.php</file>
           <file role="php">image.php</file>
           <file role="php">input.php</file>
           <file role="php">link.php</file>
@@ -89,6 +91,24 @@ Features:
     </filelist>
   </release>
   <changelog>
+  <release>
+    <version>2.3</version>
+    <date>2002-06-19</date>
+    <state>stable</state>
+    <notes>
+* Important API change in the way select elements load arrays.
+* Added the possibility to set a template for an element only.
+* Fixes in the creation of select elements with multiple attribute.
+* Added consistency in the magic_quotes handling.
+* Added recursive filters on setDefaults an setConstants values.
+* Added getSubmitValue (same as getSubmitValues but for one value only).
+* Removed HTML_QuickForm_date element: it needs more work.
+* Added the HTML_QuickForm_advcheckbox element in package and in registered elements.
+* Added one example for the HTML_QuickForm_advcheckbox element.
+* Added setPersistantFreeze accessor method in element.php.
+* Fixed problems with password field values.
+    </notes>
+    </release>
     <release>
       <version>2.2</version>
       <date>2002-05-29</date>
