@@ -29,6 +29,7 @@ require_once 'HTML/QuickForm/Renderer.php';
  * 
  * The form array structure is the following:
  * array(
+ *   'frozen'           => 'whether the form is frozen',
  *   'validationScript' => 'javascript for client-side validation',
  *   'attributes'       => 'attributes for <form> tag',
  *   'requiredNote      => 'note about the required elements',
@@ -74,9 +75,11 @@ require_once 'HTML/QuickForm/Renderer.php';
  *   'frozen'    => 'whether element is frozen',
  *   'label'     => 'label for the element',
  *   'required'  => 'whether element is required',
+ *   'error'     => 'error associated with the element',
  *   // if element is not a group
  *   'html'      => 'HTML for the element'
  *   // if element is a group
+ *   'separator' => 'separator for group elements',
  *   'elements'  => array(
  *     element_1,
  *     ...
@@ -138,6 +141,7 @@ class HTML_QuickForm_Renderer_Array extends HTML_QuickForm_Renderer
     function startForm(&$form)
     {
         $this->_ary = array(
+            'frozen'            => $form->isFrozen(),
             'validationScript'  => $form->getValidationScript(),
             'attributes'        => $form->getAttributesString(),
             'requiredNote'      => $form->getRequiredNote()
@@ -157,7 +161,7 @@ class HTML_QuickForm_Renderer_Array extends HTML_QuickForm_Renderer
 
     function renderElement(&$element, $required, $error)
     {
-        $elAry = $this->_elementToArray($element, $required);
+        $elAry = $this->_elementToArray($element, $required, $error);
         if (!empty($error)) {
             $this->_ary['errors'][$elAry['name']] = $error;
         }
@@ -173,7 +177,7 @@ class HTML_QuickForm_Renderer_Array extends HTML_QuickForm_Renderer
 
     function startGroup(&$group, $required, $error)
     {
-        $this->_currentGroup = $this->_elementToArray($group, $required);
+        $this->_currentGroup = $this->_elementToArray($group, $required, $error);
         if (!empty($error)) {
             $this->_ary['errors'][$this->_currentGroup['name']] = $error;
         }
@@ -193,9 +197,10 @@ class HTML_QuickForm_Renderer_Array extends HTML_QuickForm_Renderer
     * @access private
     * @param  object    An HTML_QuickForm_element object
     * @param  bool      Whether an element is required
+    * @param  string    Error associated with the element
     * @return array
     */
-    function _elementToArray(&$element, $required)
+    function _elementToArray(&$element, $required, $error)
     {
         $ret = array(
             'name'      => $element->getName(),
@@ -203,12 +208,14 @@ class HTML_QuickForm_Renderer_Array extends HTML_QuickForm_Renderer
             'type'      => $element->getType(),
             'frozen'    => $element->isFrozen(),
             'label'     => $element->getLabel(),
-            'required'  => $required
+            'required'  => $required,
+            'error'     => $error
         );
         if ('group' == $ret['type']) {
-            $ret['elements'] = array();
+            $ret['separator'] = $element->_separator;
+            $ret['elements']  = array();
         } else {
-            $ret['html']     = $element->toHtml();
+            $ret['html']      = $element->toHtml();
         }
         return $ret;
     }

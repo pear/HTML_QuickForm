@@ -1590,6 +1590,22 @@ class HTML_QuickForm extends HTML_Common {
     } // end func freeze
         
     // }}}
+    // {{{ isAllFrozen()
+
+    /**
+     * Returns whether or not the form is frozen
+     *
+     * @since     3.0
+     * @access    public
+     * @return    boolean
+     * @throws    
+     */
+    function isFrozen()
+    {
+         return $this->_freezeAll;
+    } // end func isAllFrozen
+
+    // }}}
     // {{{ process()
 
     /**
