@@ -257,7 +257,15 @@ class HTML_QuickForm extends HTML_Common {
         if (!$trackSubmit || isset($_REQUEST['_qf__' . $formName])) {
             if (1 == get_magic_quotes_gpc()) {
                 $this->_submitValues = $this->_recursiveFilter('stripslashes', 'get' == $method? $_GET: $_POST);
-                $this->_submitFiles  = $this->_recursiveFilter('stripslashes', $_FILES);
+                foreach ($_FILES as $keyFirst => $valFirst) {
+                    foreach ($valFirst as $keySecond => $valSecond) {
+                        if ('name' == $keySecond) {
+                            $this->_submitFiles[$keyFirst][$keySecond] = $this->_recursiveFilter('stripslashes', $valSecond);
+                        } else {
+                            $this->_submitFiles[$keyFirst][$keySecond] = $valSecond;
+                        }
+                    }
+                }
             } else {
                 $this->_submitValues = 'get' == $method? $_GET: $_POST;
                 $this->_submitFiles  = $_FILES;
@@ -1002,11 +1010,14 @@ class HTML_QuickForm extends HTML_Common {
                 $type = $newName;
             }
 
-            // Radios need to be handled differently when required
-            if ($type == 'required' && $groupObj->getGroupType() == 'radio') {
-                $howmany = ($howmany == 0) ? 1 : $howmany;
-            } else {
-                $howmany = ($howmany == 0) ? count($groupObj->getElements()) : $howmany;
+            // addGroupRule() should also handle <select multiple>
+            if (is_a($groupObj, 'html_quickform_group')) {
+                // Radios need to be handled differently when required
+                if ($type == 'required' && $groupObj->getGroupType() == 'radio') {
+                    $howmany = ($howmany == 0) ? 1 : $howmany;
+                } else {
+                    $howmany = ($howmany == 0) ? count($groupObj->getElements()) : $howmany;
+                }
             }
 
             $this->_rules[$group][] = array('type'       => $type,
