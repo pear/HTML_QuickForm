@@ -1457,7 +1457,9 @@ class HTML_QuickForm extends HTML_Common {
      */
     function validate()
     {
-        if (count($this->_rules) == 0 || count($this->_submitValues) == 0) {
+        if (count($this->_rules) == 0 && count($this->_submitValues) > 0) {
+            return true;
+        } elseif (count($this->_rules) == 0 || count($this->_submitValues) == 0) {
             return false;
         }
         foreach ($this->_rules as $elementName => $rules) {
@@ -1516,6 +1518,9 @@ class HTML_QuickForm extends HTML_Common {
             $message = $rule['message'];
             $validation = $rule['validation'];
             $ruleData = $this->_registeredRules[$type];
+            if (is_array($submitValue) && count($submitValue) == 0) {
+                $submitValue = '';
+            }
             switch ($ruleData[0]) {
                 case 'regex':
                     $regex = str_replace('%data%', $format, $ruleData[1]);
@@ -1570,7 +1575,7 @@ class HTML_QuickForm extends HTML_Common {
     function _validateGroup($groupName, $rules, $values)
     {
         foreach ($rules as $rule) {
-            if (!isset($rule['howmany'])) {
+            if (!isset($rule['howmany']) && !isset($rule['elementIndex'])) {
                 // validate the group as a whole,
                 // rule was set using addRule instead of addGroupRule
                 $this->_validateElement($groupName, array($rule), $values);
@@ -1580,7 +1585,6 @@ class HTML_QuickForm extends HTML_Common {
                 $group =& $this->getElement($groupName);
                 $elements =& $group->getElements();
 
-                $type = $format = $message = null;
                 $type = $rule['type'];
                 // error out if the rule is not registered
                 if (!$this->isRuleRegistered($type)) {
@@ -2077,9 +2081,9 @@ class HTML_QuickForm extends HTML_Common {
         $returnVal['attributes'] = $this->getAttributesString();
         $returnVal['requiredNote'] = $this->getRequiredNote();
         foreach ($this->_elements as $element) {
-            if (isset($element["header"])) {
+            if (isset($element['header'])) {
                 $returnVal['sections'][$sectionCount] = 
-                    array('header'=>$element["header"]);
+                    array('header'=>$element['header']);
                 $currentSection = $sectionCount++;
             } else {
                 $name = $element->getName();
@@ -2090,7 +2094,6 @@ class HTML_QuickForm extends HTML_Common {
                 if ($this->_freezeAll) {
                     $element->freeze();
                 }
-                $html = $element->toHtml();
                 $error = $this->getElementError($name);
                 if (isset($error)) {
                     $returnVal['errors'][$name] = $error;
