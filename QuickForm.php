@@ -1332,7 +1332,7 @@ class HTML_QuickForm extends HTML_Common {
                 case 'regex':
                     $regex = str_replace('%data%', $format, $ruleData[1]);
                     if (!preg_match($regex, $submitValue)) {
-                        if (empty($submitValue) && !$this->isElementRequired($elementName)) {
+                        if ((!isset($submitValue) || $submitValue == '') && !$this->isElementRequired($elementName)) {
                             continue 2;
                         } else {
                             $this->_errors[$elementName] = $message;
@@ -1341,7 +1341,7 @@ class HTML_QuickForm extends HTML_Common {
                     }
                     break;
                 case 'function':
-                    if (empty($submitValue) && isset($this->_submitFiles[$elementName])) {
+                    if ((!isset($submitValue) || $submitValue == '') && isset($this->_submitFiles[$elementName])) {
                         // Element is an uploaded file
                         if (!$this->isUploadedFile($elementName) &&
                             !$this->isElementRequired($elementName)) {
@@ -1349,7 +1349,7 @@ class HTML_QuickForm extends HTML_Common {
                         } else {
                             $submitValue = $this->_submitFiles[$elementName];
                         }
-                    } elseif (empty($submitValue) && !$this->isElementRequired($elementName)) {
+                    } elseif ((!isset($submitValue) || $submitValue == '') && !$this->isElementRequired($elementName)) {
                         continue 2;
                     }
                     if (isset($ruleData[2])) {
@@ -1417,7 +1417,7 @@ class HTML_QuickForm extends HTML_Common {
                         case 'regex':
                             $regex = str_replace('%data%', $format, $ruleData[1]);
                             if (!preg_match($regex, $value)) {
-                                if (empty($value) && !$this->isElementRequired($groupName.'['.$elementIndex.']')) {
+                                if ((!isset($value) || $value == '') && !$this->isElementRequired($groupName.'['.$elementIndex.']')) {
                                     continue 2;
                                 } else {
                                     $this->_errors[$groupName] = $message;
@@ -1438,7 +1438,7 @@ class HTML_QuickForm extends HTML_Common {
                             case 'regex':
                                 $regex = str_replace('%data%', $format, $ruleData[1]);
                                 if (!preg_match($regex, $value)) {
-                                    if (empty($value) && !$this->isElementRequired($groupName)) {
+                                    if ((!isset($value) || $value == '') && !$this->isElementRequired($groupName)) {
                                         continue 2;
                                     } else {
                                         if ($howmany == 0) {
