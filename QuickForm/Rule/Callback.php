@@ -55,8 +55,11 @@ class HTML_QuickForm_Rule_Callback extends HTML_QuickForm_Rule
             } else {
                 return $callback[0]($value, $options);
             }
+        } elseif (is_callable($options)) {
+            return call_user_func($options, $value);
+        } else {
+            return true;
         }
-        return true;
     } // end func validate
 
     /**
@@ -89,8 +92,13 @@ class HTML_QuickForm_Rule_Callback extends HTML_QuickForm_Rule
      */
     function getValidationScript($jsValue, $jsField, $jsMessage, $jsReset, $options = null)
     {
+        if (isset($this->_data[$this->name])) {
+            $callback = $this->_data[$this->name][0];
+        } else {
+            $callback = is_array($options)? $options[1]: $options;
+        }
         $js = "$jsValue\n" .
-              "  if (value != '' && !" . $this->_data[$this->name][0] . "('$jsField', value) && !errFlag['$jsField']) {\n" .
+              "  if (value != '' && !{$callback}('$jsField', value) && !errFlag['$jsField']) {\n" .
               "    errFlag['$jsField'] = true;\n" .
               "    _qfMsg = _qfMsg + '\\n - $jsMessage';\n" .
               $jsReset .
