@@ -56,6 +56,8 @@ Features:
 * Fixes in QuickForm_example2.php.
 * Added getElements() in HTML_QuickForm_Group which returns an array of all elements in group by reference.
 * Added getGroupType() in HTML_QuickForm_Group which returns the type of group as string or 'mixed' if group is composed of different element types.
+* Fixes in file upload validation rules.
+* Added a few new examples for filters, rules, file uploads usage.
     </notes>
     <filelist>
       <dir name="/" baseinstalldir="HTML">
