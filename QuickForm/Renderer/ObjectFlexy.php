@@ -282,7 +282,7 @@ class QuickformFlexyForm {
      /**
       * Array of QuickformElementObject elements.  If there are headers in the form
       * this will be empty and the elements will be in the 
-      * seperate sections
+      * separate sections
       * @var array $elements
       */
      var $elements;
@@ -378,10 +378,10 @@ class QuickformFlexyElement {
     var $html;
 
     /**
-     * If element is a group, the group seperator
-     * @var string $seperator
+     * If element is a group, the group separator
+     * @var mixed $separator
      */
-    var $seperator;
+    var $separator;
 
     /**
      * If element is a group, an array of subelements

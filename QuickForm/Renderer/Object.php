@@ -176,7 +176,16 @@ class HTML_QuickForm_Renderer_Object extends HTML_QuickForm_Renderer {
         $ret->value = $element->getValue();
         $ret->type = $element->getType();
         $ret->frozen = $element->isFrozen();
-        $ret->label = $element->getLabel();
+        $labels = $element->getLabel();
+        if (is_array($labels)) {
+            $ret->label = array_shift($labels);
+            foreach ($labels as $key => $label) {
+                $key = is_int($key)? $key + 2: $key;
+                $ret->{'label_' . $key} = $label;
+            }
+        } else {
+            $ret->label = $labels;
+        }
         $ret->required = $required;
         $ret->error = $error;
 
@@ -185,7 +194,7 @@ class HTML_QuickForm_Renderer_Object extends HTML_QuickForm_Renderer {
             $ret->styleTemplate = "styles/". $ret->style .".html";
         }
         if($ret->type == 'group') {
-            $ret->seperator = $element->_seperator;
+            $ret->separator = $element->_separator;
             $ret->elements = array();
         } else {
             $ret->html = $element->toHtml();
@@ -283,7 +292,7 @@ class QuickformForm {
      /**
       * Array of QuickformElementObject elements.  If there are headers in the form
       * this will be empty and the elements will be in the 
-      * seperate sections
+      * separate sections
       * @var array $elements
       */
      var $elements;
@@ -377,10 +386,10 @@ class QuickformElement {
     var $html;
 
     /**
-     * If element is a group, the group seperator
-     * @var string $seperator
+     * If element is a group, the group separator
+     * @var mixed $separator
      */
-    var $seperator;
+    var $separator;
 
     /**
      * If element is a group, an array of subelements
