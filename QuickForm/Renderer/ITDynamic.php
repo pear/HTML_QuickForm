@@ -246,6 +246,8 @@ class HTML_QuickForm_Renderer_ITDynamic extends HTML_QuickForm_Renderer
         }
         if ($this->_tpl->blockExists($prefix . '_' . $type)) {
             return $prefix . '_' . $type;
+        } elseif ($this->_tpl->blockExists($prefix . '_' . $name)) {
+            return $prefix . '_' . $name;
         } else {
             return $prefix . '_element';
         }
