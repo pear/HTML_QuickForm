@@ -163,9 +163,11 @@ Deprecated features:
             <file role="doc">ITDynamic_example.php</file>
             <file role="doc">ITDynamic_example2.php</file>
             <file role="doc">ITStatic_example.php</file>
+            <file role="doc">SmartyDynamic_example.php</file>
             <file role="doc">it-dynamic-2.html</file>
             <file role="doc">it-dynamic.html</file>
             <file role="doc">it-static.html</file>
+            <file role="doc">smarty-dynamic.html</file>
           </dir>
         </dir>
       </dir>

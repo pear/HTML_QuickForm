@@ -1,0 +1,132 @@
+<!--  $Id$ -->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+<title>Smarty dynamic renderer</title>
+
+<style type="text/css">
+{literal}
+body, td, th {
+   font-family: sans-serif;
+   color : Navy;
+   background-color : #EEE;
+   font-size : smaller;
+   white-space: nowrap;
+}
+
+.maintable {
+   border : thin dashed #D0D0D0;
+   background-color : #EEE;
+}
+
+.header {
+   color : #FFF;
+   background-color : #999;
+}
+
+.subheader {
+   color : #FFF;
+   background-color : #BBB;
+}
+
+.green {
+   background-color : #CFC;
+   color : black;
+}
+{/literal}
+</style>
+
+</head>
+
+<body>
+{if $frm.validationScript}
+<script language="javascript">
+<!-- 
+    {$frm.validationScript}
+//-->
+</script>
+{/if}
+<table border="1" class="maintable" align="center">
+    <form{$frm.attributes}>
+    
+    {if $frm.errors and $i eq 0}
+    <tr>
+        <td valign="top" colspan="2"> 
+            <b><font color="red">Please correct the following errors in your form:</font></b>
+            <ul>
+            {foreach item=error from=$frm.errors}
+                <li>{$error}</li>
+            {/foreach}
+            </ul>
+        </td>
+    </tr>    
+    {/if}
+     
+    {foreach item=sec key=i from=$frm.sections}
+        <tr>
+            <td class="{if $i eq 0}header{else}subheader{/if}" colspan="2">
+            <b>{$sec.header}</b></td>
+        </tr>
+              
+        {foreach item=element from=$sec.elements}
+            
+            <!-- hidden element -->   
+            {if $element.type eq "hidden"}
+                {$element.html}       
+            
+            <!-- buttons -->
+            {elseif $element.type eq "submit"
+                 or $element.type eq "button"
+                 or $element.type eq "reset"}
+                {if not $frm.frozen}
+                <tr>   
+                    <td>&nbsp;</td>
+                    <td align="left">{$element.html}</td>
+                </tr>
+                {/if}      
+            
+            <!-- grouped elements -->    
+            {elseif $element.type eq "group"}
+                <tr>
+                    <td valign="top"><b>{$element.label}:</b></td>
+                    <td>
+                    {if $element.error}<font color="red">{$element.error}</font><br />{/if}
+                    {foreach key=gkey item=gitem from=$element.elements}
+                        {$gitem.label}
+                        {$gitem.html}{if $gitem.required and not $gitem.frozen and not $frm.frozen}<font color="red">*</font>{/if}                           
+                        {if $element.separator}{cycle values=$element.separator}{/if}
+                    {/foreach}
+                    </td>
+                </tr>
+            
+            <!-- normal elements and textareas -->
+            {else}
+                <tr>
+                {if $element.type eq "textarea"}               
+                    <td colspan="2"><b>{$element.label}</b><br />
+                {else}
+                    <td valign="top"><b>{$element.label}:</b></td>
+                    <td>
+                {/if}
+                    
+                    {if $element.error}<font color="red">{$element.error}</font><br />{/if}
+                    {$element.html}{if $element.required and not $element.frozen and not $frm.frozen}<font color="red">*</font>{/if}
+                    </td>
+                </tr>
+            {/if}
+        {/foreach}
+    
+    {/foreach}
+    
+    {if $frm.requiredNote and not $frm.frozen}
+    <tr>
+        <td>&nbsp;</td>
+        <td valign="top">{$frm.requiredNote}</td>
+    </tr>
+    {/if}
+    </form>   
+</table>
+
+</body>
+</html>
