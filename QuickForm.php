@@ -910,7 +910,7 @@ class HTML_QuickForm extends HTML_Common {
             $this->_rules[$element] = array();
         }
         if ($validation == 'client') {
-            $this->updateAttributes(array('onsubmit'=>'return validate_'.$this->_attributes['name'] . '();'));
+            $this->updateAttributes(array('onsubmit'=>'return validate_'.$this->_attributes['id'] . '(this);'));
         }
         $this->_rules[$element][] = array(
             'type'        => $type,
@@ -981,7 +981,7 @@ class HTML_QuickForm extends HTML_Common {
                         $required++;
                     }
                     if ('client' == $validation) {
-                        $this->updateAttributes(array('onsubmit'=>'return validate_'.$this->_attributes['name'] . '();'));
+                        $this->updateAttributes(array('onsubmit'=>'return validate_'.$this->_attributes['id'] . '(this);'));
                     }
                 }
             }
@@ -1012,7 +1012,7 @@ class HTML_QuickForm extends HTML_Common {
                 $this->_required[] = $group;
             }
             if ($validation == 'client') {
-                $this->updateAttributes(array('onsubmit'=>'return validate_'.$this->_attributes['name'] . '();'));
+                $this->updateAttributes(array('onsubmit'=>'return validate_'.$this->_attributes['id'] . '(this);'));
             }
         }
     } // end func addGroupRule
@@ -1580,11 +1580,10 @@ class HTML_QuickForm extends HTML_Common {
             return
                 "\n<script type=\"text/javascript\">\n" .
                 "<!-- \n" . 
-                "function validate_" . $this->_attributes['name'] . "() {\n" .
+                "function validate_" . $this->_attributes['id'] . "(frm) {\n" .
                 "  var value = '';\n" .
                 "  var errFlag = new Array();\n" .
-                "  _qfMsg = '';\n" .
-                "  var frm = document.forms['" . $this->_attributes['name'] . "'];\n" .
+                "  _qfMsg = '';\n\n" .
                 join("\n", $test) .
                 "\n  if (_qfMsg != '') {\n" .
                 "    _qfMsg = '" . strtr($this->_jsPrefix, $js_escape) . "' + _qfMsg;\n" .
