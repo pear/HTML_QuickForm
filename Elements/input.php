@@ -131,7 +131,7 @@ class HTML_QuickForm_input extends HTML_QuickForm_element {
             $html = $this->getFrozenHtml();
         } else {
             $tabs = $this->_getTabs();
-            $html = "\n$tabs<INPUT".$this->_getAttrString($this->_attributes)."></INPUT>";
+            $html = "\n$tabs<input".$this->_getAttrString($this->_attributes)." />";
         }
         return $html;
     } //end func toHtml
