@@ -39,7 +39,7 @@ class HTML_QuickForm_checkbox extends HTML_QuickForm_input {
      * @since     1.1
      * @access    private
      */
-    var $_text = "";
+    var $_text = '';
 
     // }}}
     // {{{ constructor
@@ -48,7 +48,8 @@ class HTML_QuickForm_checkbox extends HTML_QuickForm_input {
      * Class constructor
      * 
      * @param     string    $elementName    (optional)Input field name attribute
-     * @param     string    $value          (optional)Input field value
+     * @param     string    $elementLabel   (optional)Input field value
+     * @param     string    $text           (optional)Checkbox display text
      * @param     mixed     $attributes     (optional)Either a typical HTML attribute string 
      *                                      or an associative array
      * @since     1.0
@@ -56,7 +57,7 @@ class HTML_QuickForm_checkbox extends HTML_QuickForm_input {
      * @return    void
      * @throws    
      */
-    function HTML_QuickForm_checkbox($elementName=null, $elementLabel=null, $text=null, $attributes=null)
+    function HTML_QuickForm_checkbox($elementName=null, $elementLabel=null, $text='', $attributes=null)
     {
         HTML_QuickForm_input::HTML_QuickForm_input($elementName, $elementLabel, $attributes);
         $this->_persistantFreeze = true;
@@ -227,10 +228,18 @@ class HTML_QuickForm_checkbox extends HTML_QuickForm_input {
             case 'addElement':
             case 'createElement':
                 $this->$className($arg[0], $arg[1], $arg[2], $arg[3]);
+                // need to set the submit value in case setDefault never gets called
+                $elementName = $this->getName();
+                if (count($caller->_submitValues) > 0) {
+                    $this->setChecked(isset($caller->_submitValues[$elementName]));
+                }
                 break;
             case 'setDefault':
-                $vars = $caller->getSubmitValues();
-                if (count($vars) == 0) {
+                // In form display, default value is always overidden by submitted value
+                $elementName = $this->getName();
+                if (count($caller->_submitValues) > 0) {
+                    $this->setChecked(isset($caller->_submitValues[$elementName]));
+                } else {
                     $this->setChecked($arg);
                 }
                 break;
@@ -242,7 +251,7 @@ class HTML_QuickForm_checkbox extends HTML_QuickForm_input {
             break;
         }
         return true;
-    } // end func onQuickFormLoad
+    } // end func onQuickFormEvent
 
     // }}}
 
