@@ -882,8 +882,14 @@ class HTML_QuickForm extends HTML_Common {
                       'message'     => $message,
                       'validation'  => $validation,
                       'reset'       => $reset);
+
         if ($type != 'function' && $this->getElementType($element) == 'group') {
-            $rule['howmany'] = ('required' == $type)? 1: 0;
+            $group =& $this->getElement($element);
+            if ($type == 'required' && $group->getGroupType() == 'radio') {
+                $rule['howmany'] = 1;
+            } else {
+                $rule['howmany'] = 0;
+            }
         }
         $this->_rules[$element][] = $rule;
     } // end func addRule
@@ -917,8 +923,8 @@ class HTML_QuickForm extends HTML_Common {
         if (!isset($this->_rules[$group])) {
             $this->_rules[$group] = array();
         }
+        $groupObj =& $this->getElement($group);
         if (is_array($arg1)) {
-            $groupObj =& $this->getElement($group);
             foreach ($arg1 as $elementIndex => $rules) {
                 $elementName = $groupObj->getElementName($elementIndex);
                 if ($elementName !== false) {
@@ -946,11 +952,17 @@ class HTML_QuickForm extends HTML_Common {
             if (!$this->isRuleRegistered($type)) {
                 return PEAR::raiseError(null, QUICKFORM_INVALID_RULE, null, E_USER_WARNING, "Rule '$type' is not registered in HTML_QuickForm::addGroupRule()", 'HTML_QuickForm_Error', true);
             }
+
+            // Radios need to be handled differently when required
+            if ($type == 'required' && $groupObj->getGroupType() == 'radio') {
+                $howmany = ($howmany == 0) ? 1 : $howmany;
+            }
+
             $this->_rules[$group][] = array('type'       => $type,
                                             'format'     => $format, 
                                             'message'    => $arg1,
                                             'validation' => $validation,
-                                            'howmany'    => ('required' == $type && 0 == $howmany)? 1: $howmany);
+                                            'howmany'    => $howmany);
             if ($type == 'required') {
                 $this->_required[] = $group;
             }
@@ -1489,14 +1501,14 @@ class HTML_QuickForm extends HTML_Common {
             if (!is_array($values)) {
                 $values = array($values);
             }
-            foreach ($values as $value) {
-                if (isset($value) && '' != $value) {
-                    if ($this->_validateElement($groupName, $value, $format, $ruleData)) {
-                        $total++;
-                    } else {
-                        return false;
-                    }
+            foreach ( $values as $value ) {
+                if ($this->_validateElement($groupName, $value, $format, $ruleData)) {
+                    $total++;
                 }
+            }
+            if ($howmany == 0) {
+                 $group =& $this->getElement($groupName);
+                 $howmany = count($group->getElements());
             }
             if ($total < $howmany) {
                 return false;
