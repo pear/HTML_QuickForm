@@ -19,7 +19,12 @@ $defaultValues['phoneNo']   = array('513', '123', '3456');
 $defaultValues['iradYesNo'] = 'Y';
 $defaultValues['ichkABC']   = array('A'=>true,'B'=>true);
 $defaultValues['QFText']    = '153.5';
+$defaultValues['dateTest1']    = array('d'=>11, 'M'=>1, 'Y'=>2003);
 $form->setDefaults($defaultValues);
+
+$constantValues['dateTest3']    = time();
+$form->setconstants($constantValues);
+
 // Elements will be displayed in the order they are declared
 $form->addHeader('Normal Elements');
 // Classic form elements
@@ -39,13 +44,21 @@ $form->addElement('select', 'iselTest', 'Test Select:', array('A'=>'A', 'B'=>'B'
 $select = &$form->getElement('iselTest');
 $select->setSize(5);
 $select->setMultiple(true);
+
+$form->addHeader('Date Elements');
+// Date elements
+$form->addElement('date', 'dateTest1', 'Date1:', array('format'=>'dmY', 'minYear'=>2000, 'maxYear'=>2004));
+$form->addElement('date', 'dateTest2', 'Date2:', array('format'=>'d-F-Y', 'language'=>'de'));
+$form->addElement('date', 'dateTest3', 'Today is:', array('format'=>'l D d M Y'));
+
+
 $form->addHeader('Grouped Elements');
 // Grouped elements
 $name['last'] = &HTML_QuickForm::createElement('text', 'last');
 $name['last']->setSize(30);
 $name['first'] = &HTML_QuickForm::createElement('text', 'first');
 $name['first']->setSize(20);
-$form->addElementGroup($name, 'Name (last, first):', 'name', ',&nbsp');
+$form->addElementGroup($name, 'Name (last, first):', 'name', ',&nbsp;');
 // Creates a group of text inputs
 $areaCode = &HTML_QuickForm::createElement('text', '');
 $areaCode->setSize(3);
