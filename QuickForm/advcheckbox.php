@@ -247,7 +247,9 @@ class HTML_QuickForm_advcheckbox extends HTML_QuickForm_checkbox
                         $value = $this->_findValue($caller->_defaultValues);
                     }
                 }
-                $this->setValue($value);
+                if (null !== $value) {
+                    $this->setValue($value);
+                }
                 break;
             default:
                 parent::onQuickFormEvent($event, $arg, $caller);
