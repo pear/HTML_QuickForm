@@ -191,7 +191,7 @@ class HTML_QuickForm_Renderer_ITDynamic extends HTML_QuickForm_Renderer
         $blockName = $this->_matchBlock($group);
         $this->_tpl->setCurrentBlock($blockName . '_loop');
         $this->_groupElementIdx = 0;
-        $this->_groupSeparator  = empty($group->_separator)? '&nbsp;': $group->_separator;
+        $this->_groupSeparator  = is_null($group->_separator)? '&nbsp;': $group->_separator;
         // show an '*' near the required element
         if ($required) {
             $this->_showRequired = true;
