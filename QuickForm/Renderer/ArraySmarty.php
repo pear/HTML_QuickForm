@@ -27,7 +27,7 @@ require_once 'HTML/QuickForm/Renderer/Array.php';
  * useful for an Smarty template
  *
  * Based on old toArray() code and ITStatic renderer.
- * 
+ *
  * The form array structure is the following:
  * Array (
  *  [frozen]       => whether the complete form is frozen'
@@ -70,7 +70,7 @@ require_once 'HTML/QuickForm/Renderer/Array.php';
  *          [nth_gitem_name] => Array for the nth element in group
  *      )
  * )
- * 
+ *
  * @access public
  */
 class HTML_QuickForm_Renderer_ArraySmarty extends HTML_QuickForm_Renderer_Array
@@ -87,13 +87,7 @@ class HTML_QuickForm_Renderer_ArraySmarty extends HTML_QuickForm_Renderer_Array
     */
     var $_elementIdx = 0;
 
-   /**
-    * If elements have been added with the same name
-    * @var array
-    */
-    var $_duplicateElements = array();
-
-   /**
+    /**
     * The current element index inside a group
     * @var integer
     */
@@ -124,21 +118,13 @@ class HTML_QuickForm_Renderer_ArraySmarty extends HTML_QuickForm_Renderer_Array
         $this->_tpl =& $tpl;
     } // end constructor
 
-
-    function startForm(&$form)
-    {
-        parent::startForm($form);
-
-        $this->_formName = $form->getAttribute('name');
-
-        if (count($form->_duplicateIndex) > 0) {
-            // Take care of duplicate elements
-            foreach ($form->_duplicateIndex as $elementName => $indexes) {
-                $this->_duplicateElements[$elementName] = 0;
-            }
-        }
-    } // end func startForm
-
+   /**
+    * Called when visiting a header element
+    *
+    * @param    object     An HTML_QuickForm_header element being visited
+    * @access   public
+    * @return   void
+    */
     function renderHeader(&$header)
     {
         if ($name = $header->getName()) {
@@ -149,18 +135,25 @@ class HTML_QuickForm_Renderer_ArraySmarty extends HTML_QuickForm_Renderer_Array
         $this->_currentSection = $this->_sectionCount++;
     } // end func renderHeader
 
-
+   /**
+    * Called when visiting a group, before processing any group elements
+    *
+    * @param    object     An HTML_QuickForm_group object being visited
+    * @param    bool       Whether a group is required
+    * @param    string     An error message associated with a group
+    * @access   public
+    * @return   void
+    */
     function startGroup(&$group, $required, $error)
     {
         parent::startGroup($group, $required, $error);
         $this->_groupElementIdx = 1;
     } // end func startGroup
 
-
    /**
     * Creates an array representing an element containing
     * the key for storing this
-    * 
+    *
     * @access private
     * @param  object    An HTML_QuickForm_element object
     * @param  bool      Whether an element is required
@@ -170,9 +163,10 @@ class HTML_QuickForm_Renderer_ArraySmarty extends HTML_QuickForm_Renderer_Array
     function _elementToArray(&$element, $required, $error)
     {
         $ret = parent::_elementToArray($element, $required, $error);
+
         if ('group' == $ret['type']) {
             $ret['html'] = $element->toHtml();
-            // we don't need this field, see the array structure
+            // we don't need the element, see the array structure
             unset($ret['elements']);
         }
         if (!empty($this->_required)){
@@ -182,74 +176,60 @@ class HTML_QuickForm_Renderer_ArraySmarty extends HTML_QuickForm_Renderer_Array
             $this->_renderError($ret['label'], $ret['html'], $error);
             $ret['error'] = $error;
         }
-        
-        // create a simple element key
-        $ret['key'] = $ret['name'];
-
-        // grouped elements
-        if (strstr($ret['key'], '[') or $this->_currentGroup) {
-            // TODO: this should scale...
-            preg_match('/([^]]*)\\[([^]]*)\\]/', $ret['key'], $matches);
-            // pseudo group element
-            if (empty($this->_currentGroup)) {
-                if ($matches[2] != '') {
-                    $newret['key'] = $matches[1];
-                    $newret[$matches[2]] = $ret;
-                    $ret = $newret;
-                } else {
-                    $ret['key'] = $matches[1];
-                }
-            // real group element
-            } elseif (empty($matches[2])) {
-                if ($ret['type'] == 'radio') {
-                    $ret['key'] = $ret['value'];
-                } else {
-                    $ret['key'] = $this->_groupElementIdx++;
-                }
+        // create the keys for grouped elements
+        if (strstr($ret['name'], '[') or $this->_currentGroup) {
+            preg_match('/([^]]*)\\[([^]]*)\\]/', $ret['name'], $matches);
+            if (isset($matches[1])) {
+                $sKeysSub = substr_replace($ret['name'], '', 0, strlen($matches[1]));
+                $sKeysSub = str_replace(
+                    array('['  ,   ']', '[\'\']'),
+                    array('[\'', '\']', '[]'    ),
+                    $sKeysSub
+                );
+                $sKeys = '[\'' . $matches[1]  . '\']' . $sKeysSub;
             } else {
-                $ret['key'] = $matches[2];
+                $sKeys = '[\'' . $ret['name'] . '\']';
             }
-        // element is a duplicate
-        } elseif (isset($this->_duplicateElements[$ret['key']])) {
-            $newret['key'] = $ret['key'];
-            if ($ret['type'] == 'radio') {
-                $subkey = $ret['value'];
-            } else {
-                $subkey = intval($this->_duplicateElements[$ret['key']]);
+            // reduce string of keys on a real group element
+            if (!empty($this->_currentGroup)) {
+                $sKeys = str_replace($this->_currentGroup['keys'], '', $sKeys);
             }
-            $newret[$subkey] = $ret;
-            $ret = $newret;
-            $this->_duplicateElements[$ret['key']]++;
-        // element has no name
-        } elseif ($ret['key'] == '') {
-            $ret['key'] = 'element_' . $this->_elementIdx;
+        // element without a name
+        } elseif ($ret['name'] == '') {
+            $sKeys = '[\'element_' . $this->_elementIdx . '\']';
+        // other elements
+        } else {
+            $sKeys = '[\'' . $ret['name'] . '\']';
+        }
+        // for radios: add extra key from value
+        if ('radio' == $ret['type'] and substr($sKeys, -2) != '[]') {
+            $sKeys .= '[\'' . $ret['value'] . '\']';
         }
         $this->_elementIdx++;
+        $ret['keys'] = $sKeys;
         return $ret;
-    }
-
+    } // end func _elementToArray
 
    /**
     * Stores an array representation of an element in the form array
-    * 
+    *
     * @access private
     * @param array  Array representation of an element
     * @return void
     */
     function _storeArray($elAry)
     {
-        $key = $elAry['key'];
-        unset($elAry['key']);
+        $sKeys = $elAry['keys'];
+        unset($elAry['keys']);
         // where should we put this element...
         if (is_array($this->_currentGroup) && ('group' != $elAry['type'])) {
-            $this->_currentGroup[$key] = $elAry;
-        } elseif (isset($this->_ary[$key])) {
-            $this->_ary[$key] = $this->_ary[$key] + $elAry;
+            $toEval = '$this->_currentGroup' . $sKeys . ' = $elAry;';
         } else {
-            $this->_ary[$key] = $elAry;
+            $toEval = '$this->_ary' . $sKeys . ' = $elAry;';
         }
+        eval($toEval);
+        return;
     }
-
 
    /**
     * Called when an element is required
@@ -267,11 +247,12 @@ class HTML_QuickForm_Renderer_ArraySmarty extends HTML_QuickForm_Renderer_Array
     */
     function _renderRequired(&$label, &$html, &$required, &$error)
     {
-        $this->_tpl->assign( array ('label'    => $label,
-                                    'html'     => $html,
-                                    'required' => $required,
-                                    'error'    => $error ));
-
+        $this->_tpl->assign(array(
+            'label'    => $label,
+            'html'     => $html,
+            'required' => $required,
+            'error'    => $error
+        ));
         if (!empty($label) && strpos($this->_required, '{$label') !== false) {
             $label = $this->_tplFetch($this->_required);
         }
@@ -280,7 +261,6 @@ class HTML_QuickForm_Renderer_ArraySmarty extends HTML_QuickForm_Renderer_Array
         }
         $this->_tpl->clear_assign(array('label', 'html', 'required'));
     } // end func _renderRequired
-
 
    /**
     * Called when an element has a validation error
@@ -300,7 +280,6 @@ class HTML_QuickForm_Renderer_ArraySmarty extends HTML_QuickForm_Renderer_Array
     {
         $this->_tpl->assign(array('label' => '', 'html' => '', 'error' => $error));
         $error = $this->_tplFetch($this->_error);
-
         $this->_tpl->assign(array('label' => $label, 'html'  => $html));
 
         if (!empty($label) && strpos($this->_error, '{$label') !== false) {
@@ -309,8 +288,7 @@ class HTML_QuickForm_Renderer_ArraySmarty extends HTML_QuickForm_Renderer_Array
             $html = $this->_tplFetch($this->_error);
         }
         $this->_tpl->clear_assign(array('label', 'html', 'error'));
-    }// end func _renderError
-
+    } // end func _renderError
 
    /**
     * Process an template sourced in a string with Smarty
@@ -329,7 +307,6 @@ class HTML_QuickForm_Renderer_ArraySmarty extends HTML_QuickForm_Renderer_Array
         }
         return smarty_function_eval(array('var' => $tplSource), $this->_tpl);
     }// end func _tplFetch
-
 
    /**
     * Sets the way required elements are rendered
@@ -353,7 +330,6 @@ class HTML_QuickForm_Renderer_ArraySmarty extends HTML_QuickForm_Renderer_Array
         $this->_required = $template;
     } // end func setRequiredTemplate
 
-
    /**
     * Sets the way elements with validation errors are rendered
     *
@@ -366,13 +342,13 @@ class HTML_QuickForm_Renderer_ArraySmarty extends HTML_QuickForm_Renderer_Array
     * will put the error message in red on top of the element html.
     *
     * If you want all error messages to be output in the main error block, use
-    * the {$form.errors} part of the rendered array that collects all raw error 
+    * the {$form.errors} part of the rendered array that collects all raw error
     * messages.
     *
     * If you want to place all error messages manually, do not specify {$html}
     * nor {$label}.
     *
-    * Groups can have special layouts. With this kind of groups, you have to 
+    * Groups can have special layouts. With this kind of groups, you have to
     * place the formated error message manually. In this case, use {$form.group.error}
     * where you want the formated error message to appear in the form.
     *
