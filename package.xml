@@ -140,6 +140,7 @@ contact the package maintainers.
           <file role="php">submit.php</file>
           <file role="php">text.php</file>
           <file role="php">textarea.php</file>
+          <file role="php">xbutton.php</file>
           <file role="php">Renderer.php</file>
           <file role="php">Rule.php</file>
           <file role="php">RuleRegistry.php</file>
