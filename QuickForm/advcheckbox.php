@@ -193,7 +193,6 @@ class HTML_QuickForm_advcheckbox extends HTML_QuickForm_checkbox {
         // run it through the input constructor again with the new name
         HTML_QuickForm_input::HTML_QuickForm_input($newName, $this->getLabel(), $this->getAttributes());
         $vars = array_merge($GLOBALS['HTTP_GET_VARS'], $GLOBALS['HTTP_POST_VARS']);
-        $vars = HTML_QuickForm::_formizeArray($vars);
         if (isset($vars[$oldName]) && $vars[$oldName] == $this->_values[1]) {
             $this->setChecked(true);
         }
