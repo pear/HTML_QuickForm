@@ -214,7 +214,7 @@ class HTML_QuickForm_RuleRegistry
     {
         $jsIndex = isset($index)? '[' . $index . ']': '';
         $tmp_reset = $reset? "    var field = frm.elements['$elementName'];\n": '';
-        if ($element->getType() == 'group' && $element->getGroupType() != 'radio') {
+        if (is_a($element, 'html_quickform_group')) {
             $value =
                 "  value{$jsIndex} = new Array();\n" .
                 "  var valueIdx = 0;\n" .
@@ -258,9 +258,10 @@ class HTML_QuickForm_RuleRegistry
                     "      }\n" .
                     "    }\n";
             }
+
         } elseif ($element->getType() == 'select') {
-            $elementName .= $element->getMultiple()? '[]': '';
             if ($element->getMultiple()) {
+                $elementName .= '[]';
                 $value =
                     "  value{$jsIndex} = new Array();\n" .
                     "  var valueIdx = 0;\n" .
@@ -273,12 +274,12 @@ class HTML_QuickForm_RuleRegistry
                 $value = "  value{$jsIndex} = frm.elements['{$elementName}'].options[frm.elements['{$elementName}'].selectedIndex].value;\n";
             }
             if ($reset) {
-                $tmp_reset = 
-                    "    var _select = frm.elements['{$elementName}'];\n" .
-                    "    for (var i = 0; i < _select.options.length; i++) {\n" .
-                    "      _select.options[i].selected = _select.options[i].defaultSelected;\n" .
+                $tmp_reset .= 
+                    "    for (var i = 0; i < field.options.length; i++) {\n" .
+                    "      field.options[i].selected = field.options[i].defaultSelected;\n" .
                     "    }\n";
             }
+
         } elseif ($element->getType() == 'checkbox') {
             $value = "  if (frm.elements['$elementName'].checked) {\n" .
                      "    value{$jsIndex} = '1';\n" .
@@ -286,6 +287,7 @@ class HTML_QuickForm_RuleRegistry
                      "    value{$jsIndex} = '';\n" .
                      "  }";
             $tmp_reset .= ($reset) ? "    field.checked = field.defaultChecked;\n" : '';
+
         } elseif ($element->getType() == 'radio') {
             $value = "  value{$jsIndex} = '';\n" .
                      "  for (var i = 0; i < frm.elements['$elementName'].length; i++) {\n" .
@@ -294,10 +296,11 @@ class HTML_QuickForm_RuleRegistry
                      "    }\n" .
                      "  }";
             if ($reset) {
-                $tmp_reset .= "    for (var i = 0; i < frm.elements['$elementName'].length; i++) {\n" .
-                              "      frm.elements['$elementName'][i].checked = frm.elements['$elementName'][i].defaultChecked;\n" .
+                $tmp_reset .= "    for (var i = 0; i < field.length; i++) {\n" .
+                              "      field[i].checked = field[i].defaultChecked;\n" .
                               "    }";
             }
+
         } else {
             $value = "  value{$jsIndex} = frm.elements['$elementName'].value;";
             $tmp_reset .= ($reset) ? "    field.value = field.defaultValue;\n" : '';

@@ -269,7 +269,7 @@ class HTML_QuickForm extends HTML_Common {
      */
     function apiVersion()
     {
-        return 3.0;
+        return 3.2;
     } // end func apiVersion
 
     // }}}
@@ -899,11 +899,12 @@ class HTML_QuickForm extends HTML_Common {
      * @param    string     $format        (optional)Required for extra rule data
      * @param    int        $howmany       (optional)How many valid elements should be in the group
      * @param    string     $validation    (optional)Where to perform validation: "server", "client"
+     * @param    bool       $reset         Client-side: whether to reset the element's value to its original state if validation failed.
      * @since    2.5
      * @access   public
      * @throws   HTML_QuickForm_Error
      */
-    function addGroupRule($group, $arg1, $type='', $format=null, $howmany=0, $validation = 'server')
+    function addGroupRule($group, $arg1, $type='', $format=null, $howmany=0, $validation = 'server', $reset = false)
     {
         if (!$this->elementExists($group)) {
             return PEAR::raiseError(null, QUICKFORM_NONEXIST_ELEMENT, null, E_USER_WARNING, "Group '$group' does not exist in HTML_QuickForm::addGroupRule()", 'HTML_QuickForm_Error', true);
@@ -916,6 +917,8 @@ class HTML_QuickForm extends HTML_Common {
                 $elementName = $groupObj->getElementName($elementIndex);
                 foreach ($rules as $rule) {
                     $format = (isset($rule[2])) ? $rule[2] : null;
+                    $validation = (isset($rule[3]) && 'client' == $rule[3])? 'client': 'server';
+                    $reset = isset($rule[4]) && $rule[4];
                     $type = $rule[1];
                     if (false === ($newName = $this->isRuleRegistered($type, true))) {
                         return PEAR::raiseError(null, QUICKFORM_INVALID_RULE, null, E_USER_WARNING, "Rule '$type' is not registered in HTML_QuickForm::addGroupRule()", 'HTML_QuickForm_Error', true);
@@ -927,7 +930,8 @@ class HTML_QuickForm extends HTML_Common {
                                                         'type'        => $type,
                                                         'format'      => $format, 
                                                         'message'     => $rule[0],
-                                                        'validation'  => 'server',
+                                                        'validation'  => $validation,
+                                                        'reset'       => $reset,
                                                         'group'       => $group);
 
                     if ('required' == $type || 'uploadedfile' == $type) {
@@ -935,7 +939,9 @@ class HTML_QuickForm extends HTML_Common {
                         $this->_required[] = $elementName;
                         $required++;
                     }
-
+                    if ('client' == $validation) {
+                        $this->updateAttributes(array('onsubmit'=>'return validate_'.$this->_attributes['name'] . '();'));
+                    }
                 }
             }
             if ($required > 0 && count($groupObj->getElements()) == $required) {
@@ -959,7 +965,8 @@ class HTML_QuickForm extends HTML_Common {
                                             'format'     => $format, 
                                             'message'    => $arg1,
                                             'validation' => $validation,
-                                            'howmany'    => $howmany);
+                                            'howmany'    => $howmany,
+                                            'reset'      => $reset);
             if ($type == 'required') {
                 $this->_required[] = $group;
             }
@@ -1467,7 +1474,12 @@ class HTML_QuickForm extends HTML_Common {
                     if (isset($rule['group'])) {
                         $group    =& $this->getElement($rule['group']);
                         $elements =& $group->getElements();
-                        $element  =& $elements[$group->getElementName($elementName)];
+                        foreach (array_keys($elements) as $key) {
+                            if ($elementName == $group->getElementName($key)) {
+                                $element =& $elements[$key];
+                                break;
+                            }
+                        }
                     } elseif ($dependent) {
                         $element   =  array();
                         $element[] =& $this->getElement($elementName);
