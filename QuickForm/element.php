@@ -265,28 +265,6 @@ class HTML_QuickForm_element extends HTML_Common {
     } //end func setPersistantFreeze
 
     // }}}
-    // {{{ toArray()
-
-    /**
-     * Returns the element as an array
-     *
-     * @since     1.1
-     * @access    public
-     * @return    array
-     * @throws    
-     */
-    function toArray()
-    {
-        $arr = array();
-        $arr['html'] = $this->toHtml();
-        $arr['value'] = $this->getValue();
-        $arr['type'] = $this->getType();
-        $arr['frozen'] = $this->_flagFrozen;
-        $arr['label'] = $this->getLabel();
-        return $arr;
-    } // end func toArray
-
-    // }}}
     // {{{ setLabel()
 
     /**

@@ -1853,58 +1853,11 @@ class HTML_QuickForm extends HTML_Common {
      */
     function toArray()
     {
-        $elementIndex = 1;
-        $sectionCount = 0;
-        $currentSection = null;
-        $returnVal = array();
-        $returnVal['validationScript'] = $this->getValidationScript();
-        $returnVal['attributes'] = $this->getAttributesString();
-        $returnVal['requiredNote'] = $this->getRequiredNote();
-        foreach ($this->_elements as $element) {
-            if (isset($element['header'])) {
-                $returnVal['sections'][$sectionCount] = 
-                    array('header'=>$element['header']);
-                $currentSection = $sectionCount++;
-            } else {
-                $name = $element->getName();
-                if (!isset($name) || $name == '') {
-                    $name = 'element_' . $elementIndex;
-                }
-                $elementIndex++;
-                if ($this->_freezeAll) {
-                    $element->freeze();
-                }
-                $error = $this->getElementError($name);
-                if (isset($error)) {
-                    $returnVal['errors'][$name] = $error;
-                }
-                if (isset($currentSection)) {
-                    if (isset($this->_duplicateIndex[$name])) {
-                        $returnVal['sections'][$currentSection]['elements'][$name][] = 
-                            array_merge(array('required'=>$this->isElementRequired($name)),
-                                $element->toArray());
-                    } else {
-                        $returnVal['sections'][$currentSection]['elements'][$name] = 
-                            array_merge(array('required'=>$this->isElementRequired($name)),
-                                $element->toArray());
-                    }
-
-                } else {
-                    if (isset($this->_duplicateIndex[$name])) {
-                        $returnVal['elements'][$name][] = 
-                            array_merge(array('required'=>$this->isElementRequired($name)),
-                                $element->toArray());
-                    } else {
-                        $returnVal['elements'][$name] = 
-                            array_merge(array('required'=>$this->isElementRequired($name)),
-                                $element->toArray());
-                    }
-
-                }
-            }
-        }
-        return $returnVal;
-    } // end func toArray
+        include_once 'HTML/QuickForm/Renderer/Array.php';
+        $renderer =& new HTML_QuickForm_Renderer_Array();
+        $this->accept($renderer);
+        return $renderer->toArray();
+     } // end func toArray
 
     // }}}
     // {{{ isError()
