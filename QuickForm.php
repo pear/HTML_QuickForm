@@ -1123,19 +1123,15 @@ class HTML_QuickForm extends HTML_Common {
      */
     function _buildElement(&$element)
     {
-        $html        = '';
-        $object      = $element;
-        $label       = $object->getLabel();
-        $elementName = $object->getName();
-        $elementType = $object->getType();
+        $label       = $element->getLabel();
+        $elementName = $element->getName();
         $required    = ($this->isElementRequired($elementName) && $this->_freezeAll == false);
         $error       = $this->getElementError($elementName);
-        if ($object->getType() != 'hidden') {
-            $html = $this->_wrapElement($object, $label, $required, $error);
+        if ($element->getType() != 'hidden') {
+            return $this->_wrapElement($element, $label, $required, $error);
         } else {
-            $html = "\n" . $this->_getTabs() . "\t" . $object->toHtml();
+            return "\n" . $this->_getTabs() . "\t" . $element->toHtml();
         }
-        return $html;
     } // end func _buildElement
     
     // }}}
