@@ -47,7 +47,7 @@ Features:
   </maintainers>
   <release>
     <version>2.10</version>
-    <date>2003-02-20</date>
+    <date>2003-03-07</date>
     <state>stable</state>
     <notes>
 * Email validation regex accepts lower and uppercases (Derick Rethans).
