@@ -169,6 +169,12 @@ class HTML_QuickForm_date extends HTML_QuickForm_group
             'weekdays_long' => array ('Nedμle', 'Pondμlν', 'Ϊterύ', 'Stψeda', 'Θtvrtek', 'Pαtek', 'Sobota'),
             'months_short'  => array ('Led', 'Ϊno', 'Bψe', 'Dub', 'Kvμ', 'Θen', 'Θec', 'Srp', 'Zαψ', 'Ψνj', 'Lis', 'Pro'),
             'months_long'   => array ('Leden', 'Ϊnor', 'Bψezen', 'Duben', 'Kvμten', 'Θerven', 'Θervenec', 'Srpen', 'Zαψν', 'Ψνjen', 'Listopad', 'Prosinec')
+        ),
+        'hy'    => array(
+            'weekdays_short'=> array ('ΞρΟ','ΊρΟ','Ίρω','βρω','Πέ·','ΰυρ','ήµΓ'),
+            'weekdays_long' => array ('ΞΗρ³ΟΗ','ΊρΟαυί³µΓΗ','Ίρ»ωί³µΓΗ','βαρ»ωί³µΓΗ', 'ΠΗέ·ί³µΓΗ', 'ΰυρµ³Γ', 'ή³µ³Γ'),
+            'months_short'  => array ('Πέν','φορ','Ψρο','²ερ','ΨΫλ','Πέλ','ΠΙλ','ϊ·λ','κεο','ΠΟο','άΫΩ','ΈΟο'),
+            'months_long'   => array ('Παυέν³ρ','φ»ορν³ρ','Ψ³ρο','²ερΗΙ','Ψ³ΫΗλ','ΠαυέΗλ','ΠαυΙΗλ','ϊ·αλοαλ','κ»εο»Ωµ»ρ','ΠαΟο»Ωµ»ρ','άαΫ»Ωµ»ρ','Έ»Οο»Ωµ»ρ')
         )
     );
 
