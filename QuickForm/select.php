@@ -113,8 +113,10 @@ class HTML_QuickForm_select extends HTML_QuickForm_element {
     {
         if (is_string($values)) {
             $values = split("[ ]?,[ ]?", $values);
-        }
-        $this->_values = $values;  
+            $this->_values = $values;
+        } else {
+            $this->_values[] = $values;
+        }  
     } //end func setSelected
     
     // }}}
@@ -494,7 +496,7 @@ class HTML_QuickForm_select extends HTML_QuickForm_element {
      */
     function getFrozenHtml()
     {
-    	// Fix me : doesn't work for multiple.
+        // Fix me : doesn't work for multiple.
         $value = '';
         if (is_array($this->_values)) {
             while (list($key,$val) = each($this->_values)) {
@@ -511,7 +513,7 @@ class HTML_QuickForm_select extends HTML_QuickForm_element {
                 $optionTxt = $this->_options[$i]["text"];
                 $optionVal = $this->_options[$i]["attr"]["value"];
                 if ($this->_values == $optionVal) {
-                	$value = $optionTxt;
+                    $value = $optionTxt;
                 }
             }
         }
