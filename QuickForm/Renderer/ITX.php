@@ -120,7 +120,7 @@ class HTML_QuickForm_Renderer_ITX extends HTML_QuickForm_Renderer
     {
         $blockName = $this->_matchBlock($element);
         // are we inside a group?
-        if ('qf_main_loop' != $this->_tpl->getCurrentBlock()) {
+        if ('qf_main_loop' != $this->_tpl->currentBlock) {
             if (0 != $this->_groupElementIdx && $this->_tpl->placeholderExists('qf_separator', $blockName)) {
                 if (is_array($this->_groupSeparator)) {
                     $this->_tpl->setVariable('qf_separator', $this->_groupSeparator[($this->_groupElementIdx - 1) % count($this->_groupSeparator)]);
@@ -211,12 +211,12 @@ class HTML_QuickForm_Renderer_ITX extends HTML_QuickForm_Renderer
         $name = $element->getName();
         $type = $element->getType();
         if (isset($this->_elementBlocks[$name]) && $this->_tpl->blockExists($this->_elementBlocks[$name])) {
-            if (('group' == $type) || ($this->_elementBlocks[$name] . '_loop' != $this->_tpl->getCurrentBlock())) {
+            if (('group' == $type) || ($this->_elementBlocks[$name] . '_loop' != $this->_tpl->currentBlock)) {
                 return $this->_elementBlocks[$name];
             }
         }
-        if ('group' != $type && 'qf_main_loop' != $this->_tpl->getCurrentBlock()) {
-            $prefix = substr($this->_tpl->getCurrentBlock(), 0, -5); // omit '_loop' postfix
+        if ('group' != $type && 'qf_main_loop' != $this->_tpl->currentBlock) {
+            $prefix = substr($this->_tpl->currentBlock, 0, -5); // omit '_loop' postfix
         } else {
             $prefix = 'qf';
         }
