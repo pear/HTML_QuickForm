@@ -359,15 +359,17 @@ class HTML_QuickForm extends HTML_Common {
      * Moves an uploaded file into the destination 
      * @param    string  $element  
      * @param    string  $dest
+     * @param    string  $fileName	(optional)destination name for uploaded file
      * @since     1.0
      * @access   public
      */
-    function moveUploadedFile($element, $dest)
+    function moveUploadedFile($element, $dest, $fileName='')
     {
         $file = $this->_submitFiles[$element];
         if ($dest != ""  && substr($dest, -1) != "/")
             $dest .= "/";
-        if (copy($file["tmp_name"], $dest . $file["name"])) {
+        $fileName = ($fileName != '') ? $fileName : $file['name'];
+        if (copy($file["tmp_name"], $dest . $fileName)) {
             @unlink($file["tmp_name"]);
             return true;
         } else {
