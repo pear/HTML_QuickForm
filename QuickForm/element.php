@@ -199,6 +199,21 @@ class HTML_QuickForm_element extends HTML_Common
     } //end func freeze
 
     // }}}
+    // {{{ unfreeze()
+
+   /**
+    * Unfreezes the element so that it becomes editable
+    *
+    * @access public
+    * @return void
+    * @since  3.2.4
+    */
+    function unfreeze()
+    {
+        $this->_flagFrozen = false;
+    }
+
+    // }}}
     // {{{ getFrozenHtml()
 
     /**
