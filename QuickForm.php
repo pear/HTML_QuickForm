@@ -1089,7 +1089,7 @@ class HTML_QuickForm extends HTML_Common {
                                 "$tabs\t\tvar regex = $regex;\n"  .
                                 "$tabs\t\tif (!regex.test(field.value) && !errFlag['$elementName']) {\n" .
                                 "$tabs\t\t\terrFlag['$elementName'] = true;\n" .
-								"$tabs\t\t\t_qfMsg = unescape(_qfMsg + '\\n' + field.value + ' - ".rawurlencode($message)."');\n".
+                                "$tabs\t\t\t_qfMsg = unescape(_qfMsg + '\\n' + field.value + ' - ".rawurlencode($message)."');\n".
                                 $tmp_reset.
                                 "$tabs\t\t}";
                             break;
@@ -1413,11 +1413,11 @@ class HTML_QuickForm extends HTML_Common {
                         break;
                     case 'function':
                         if (method_exists($this, $ruleData[1])) {
-                        	if (isset($this->_submitValues[$elementName])) {
-                        		$element = $this->_submitValues[$elementName];
-                        	} elseif (isset($this->_submitFiles[$elementName])) {
-                        		$element = $this->_submitFiles[$elementName];
-                        	}
+                            if (isset($this->_submitValues[$elementName])) {
+                                $element = $this->_submitValues[$elementName];
+                            } elseif (isset($this->_submitFiles[$elementName])) {
+                                $element = $this->_submitFiles[$elementName];
+                            }
                             if (!$this->$ruleData[1]($elementName, $element, $format)) {
                                 $this->_errors[$elementName] = $message;
                                 continue 2;
