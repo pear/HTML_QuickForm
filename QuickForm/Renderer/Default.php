@@ -59,7 +59,7 @@ class HTML_QuickForm_Renderer_Default extends HTML_QuickForm_Renderer
     * @access   private
     */
     var $_formTemplate = 
-        "\n<form{attributes}>\n<table border=\"0\">\n{content}\n</table>\n</form>";
+        "\n<form{attributes}>\n<div>\n{hidden}<table border=\"0\">\n{content}\n</table>\n</div>\n</form>";
 
    /**
     * Required Note template string
@@ -130,6 +130,13 @@ class HTML_QuickForm_Renderer_Default extends HTML_QuickForm_Renderer
     var $_groupTemplate = '';
     
    /**
+    * Collected HTML of the hidden fields
+    * @var      string
+    * @access   private
+    */
+    var $_hiddenHtml = '';
+
+   /**
     * Constructor
     *
     * @access public
@@ -160,6 +167,7 @@ class HTML_QuickForm_Renderer_Default extends HTML_QuickForm_Renderer
     function startForm(&$form)
     {
         $this->_html = '';
+        $this->_hiddenHtml = '';
     } // end func startForm
 
    /**
@@ -178,6 +186,11 @@ class HTML_QuickForm_Renderer_Default extends HTML_QuickForm_Renderer
         }
         // add form attributes and content
         $html = str_replace('{attributes}', $form->getAttributes(true), $this->_formTemplate);
+        if (strpos($this->_formTemplate, '{hidden}')) {
+            $html = str_replace('{hidden}', $this->_hiddenHtml, $html);
+        } else {
+            $this->_html .= $this->_hiddenHtml;
+        }
         $this->_html = str_replace('{content}', $this->_html, $html);
         // add a validation script
         if ('' != ($script = $form->getValidationScript())) {
@@ -293,7 +306,7 @@ class HTML_QuickForm_Renderer_Default extends HTML_QuickForm_Renderer
     */
     function renderHidden(&$element)
     {
-        $this->_html .= "\n\t". $element->toHtml();
+        $this->_hiddenHtml .= $element->toHtml() . "\n";
     } // end func renderHidden
 
    /**
