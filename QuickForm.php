@@ -603,6 +603,7 @@ class HTML_QuickForm extends HTML_Common {
      * @param    string     $name           (optional)group name
      * @param    string     $separator      (optional)string to seperate elements
      * @return   reference to added group of elements
+     * @deprecated deprecated since 2.10, use addGroup() instead
      * @since    1.0
      * @access   public
      * @throws   PEAR_Error
@@ -668,10 +669,7 @@ class HTML_QuickForm extends HTML_Common {
      */    
     function getSubmitValue($element)
     {
-        if (isset($this->_submitValues[$element])) {
-            return $this->_submitValues[$element];
-        }
-        return null;
+        return $this->_findElementValue($element);
     } // end func getSubmitValue
 
     // }}}
@@ -1282,12 +1280,12 @@ class HTML_QuickForm extends HTML_Common {
             }
         }
         if (count($this->_errors) > 0) {
-            $files = $this->_submitFiles;
-            for (reset($files); $element=key($files); next($files)) {
-                $file = pos($files);
-                if (isset($file['tmp_name']) && 
-                    $this->isUploadedFile($file['tmp_name'])) {
-                    @unlink($file['tmp_name']);
+            if (is_array($files = $this->_submitFiles)) {
+                foreach ($files as $file) {
+                    if (isset($file['tmp_name']) && 
+                        $this->isUploadedFile($file['tmp_name'])) {
+                        @unlink($file['tmp_name']);
+                    }
                 }
             }
             return false;
