@@ -23,21 +23,16 @@ class RuleNumericRange extends HTML_QuickForm_Rule
         return true;
     }
 
-    function getValidationScript($jsValue, $jsField, $jsMessage, $jsReset, $options = null)
+    function getValidationScript($options = null)
     {
         $jsCheck = array();
         if (isset($options['min'])) {
-            $jsCheck[] = 'Number(value) >= ' . $options['min'];
+            $jsCheck[] = 'Number({jsVar}) >= ' . $options['min'];
         }
         if (isset($options['max'])) {
-            $jsCheck[] = 'Number(value) <= ' . $options['max'];
+            $jsCheck[] = 'Number({jsVar}) <= ' . $options['max'];
         }
-        return $jsValue .
-               "\n  if (value != '' && !(". implode(' && ', $jsCheck) . ") && !errFlag['$jsField']) {\n" .
-               "    errFlag['$jsField'] = true;\n" .
-               "    _qfMsg = _qfMsg + '\\n - $jsMessage';\n" .
-               $jsReset .
-               "  }\n";
+        return array('', "{jsVar} != '' && !(" . implode(' && ', $jsCheck) . ')');
     } // end func getValidationScript
 }
 
