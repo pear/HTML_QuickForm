@@ -52,7 +52,6 @@ Features:
     <notes>
 * New additions
 - Added a new hierselect element, a group of two selects where the first select changes the options of the second select using javascript (Bertrand Mansion)
-- Added a dategroup element which supersedes the date element (Alexey Borzov)
 - Added exportValue() and exportValues() methods, these should now be the preferred way to get form values (Alexey Borzov)
 - Added addFormRule() method, this adds the rule that validates the whole form (Alexey Borzov)
 - Added Italian date/dategroup names (Marco Piarulli)
@@ -65,6 +64,7 @@ Features:
 - Moved 'magic quotes' handling to QuickForm's constructor (Alexey Borzov)
 - Use strtr() instead of rawurlencode() for javascript messages (Bertrand Mansion)
 - Changed the nonzero rule to every numbers (negative or positive) except zero (David Sklar)
+- Date element has been entirely reworked and optimised (Alexey Borzov)
 
 * Bugfixes
 - Fixed a bug in HTML_QuickForm_group::getFrozenHtml() (Alexey Borzov, Wolfram Kriesing)
