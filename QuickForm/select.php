@@ -73,8 +73,8 @@ class HTML_QuickForm_select extends HTML_QuickForm_element {
         HTML_QuickForm_element::HTML_QuickForm_element($elementName, $elementLabel, $attributes);
         $this->_persistantFreeze = true;
         $this->_type = 'select';
-        if ($this->getAttribute('multiple') && strpos($elementName,']') < 2) {
-            $this->setName($elementName.'[]');
+        if ($this->getAttribute('multiple')) {
+            $this->setMultiple(true);
         }
         if (isset($options)) {
             $this->load($options);
@@ -279,7 +279,7 @@ class HTML_QuickForm_select extends HTML_QuickForm_element {
      */
     function getMultiple()
     {
-        return $this->getAttribute("multiple");
+        return $this->getAttribute('multiple');
     } //end func getMultiple
 
     // }}}
@@ -300,13 +300,13 @@ class HTML_QuickForm_select extends HTML_QuickForm_element {
     function addOption($text, $value, $attributes=null)
     {
         $attributes = $this->_parseAttributes($attributes);
-        if ($this->getAttribute("selected") && !in_array($value, $this->_values)) {
+        if ($this->getAttribute('selected') && !in_array($value, $this->_values)) {
             $this->_values[] = $value;
             array_unique($this->_values);
         }
-        $attr = array("value"=>$value);
+        $attr = array('value'=>$value);
         $this->_updateAttrArray($attributes, $attr);
-        $this->_options[] = array("text"=>$text, "attr"=>$attributes);
+        $this->_options[] = array('text'=>$text, 'attr'=>$attributes);
     } // end func addOption
     
     // }}}
@@ -501,7 +501,6 @@ class HTML_QuickForm_select extends HTML_QuickForm_element {
      */
     function getFrozenHtml()
     {
-        // Fix me : doesn't work for multiple.
         $value = '';
         if (is_array($this->_values)) {
             foreach ($this->_values as $key => $val) {
@@ -523,12 +522,12 @@ class HTML_QuickForm_select extends HTML_QuickForm_element {
             }
         }
         if (is_array($value)) {
-            $html = join(', ', $value);
+            $html = join('<br />', $value);
             if ($this->_persistantFreeze) {
                 $name = $this->getName();
-                foreach ($value as $item) {
+                foreach ($value as $key => $item) {
                     $html .= '<input type="hidden" name="' . 
-                        $name . '" value="' . $this->_values[0] . '" />';
+                        $name . '" value="' . $this->_values[$key] . '" />';
                 }
             }
         } else {
