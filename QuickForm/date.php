@@ -68,6 +68,18 @@ class HTML_QuickForm_date extends HTML_QuickForm_element
                             "months_short"  => array ("Jan", "Fev", "Mar", "Avr", "Mai", "Jun", "Jul", "Aou", "Sep", "Oct", "Nov", "Dec"),
                             "months_long"   => array ("Janvier", "Fevrier", "Mars", "Avril", "Mai", "Juin", "Juillet", "Aout", "Septembre", "Octobre", "Novembre", "Decembre")
                         ),
+                        "hu"    => array (
+                            "weekdays_short"=> array ("V", "H", "K", "Sze", "Cs", "P", "Szo"),
+                            "weekdays_long" => array ("vasárnap", "hétfo_", "kedd", "szerda", "csütörtök", "péntek", "szombat"),
+                            "months_short"  => array ("jan", "feb", "márc", "ápr", "máj", "jún", "júl", "aug", "szept", "okt", "nov", "dec"),
+                            "months_long"   => array ("január", "február", "március", "április", "május", "június", "július", "augusztus", "szeptember", "október", "november", "december")
+                        ),
+                        "pl"    => array (
+                            "weekdays_short"=> array ("Nie", "Pon", "Wto", "¦ro", "Czw", "Pi±", "Sob"),
+                            "weekdays_long" => array ("Niedziela", "Poniedzia³ek", "Wtorek", "¦roda", "Czwartek", "Pi±tek", "Sobota"),
+                            "months_short"  => array ("Sty", "Lut", "Mar", "Kwi", "Maj", "Cze", "Lip", "Sie", "Wrz", "Pa¼", "Lis", "Gru"),
+                            "months_long"   => array ("Styczeñ", "Luty", "Marzec", "Kwiecieñ", "Maj", "Czerwiec", "Lipiec", "Sierpieñ", "Wrzesieñ", "Pa¼dziernik", "Listopad", "Grudzieñ")
+                        )
                         "sl"    => array (
                             "weekdays_short"=> array ("Ned", "Pon", "Tor", "Sre", "Cet", "Pet", "Sob"),
                             "weekdays_long" => array ("Nedelja", "Ponedeljek", "Torek", "Sreda", "Cetrtek", "Petek", "Sobota"),
