@@ -80,7 +80,7 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
      * @return    void
      * @throws    
      */
-    function HTML_QuickForm_group($elementName=null, $elementLabel=null, $elements=null, $seperator=null)
+    function HTML_QuickForm_group($elementName=null, $elementLabel=null, $elements=null, $seperator='')
     {
         HTML_Common::HTML_Common();
         if (isset($elementName)) {
@@ -196,11 +196,9 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
     /**
      * Gets the grouped elements
      *
-     * @param     array     $elements   Array of elements
-     * @since     1.1
+     * @since     2.4
      * @access    public
-     * @return    void
-     * @throws    
+     * @return    array
      */
     function &getElements()
     {
@@ -246,6 +244,7 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
     function toHtml()
     {
         $html = '';
+        $htmlArr = array();
         $name = $this->getName();
         $value = $this->getValue();
         foreach ($this->_elements as $key => $element) {
@@ -272,9 +271,9 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
                 $element->freeze();
             }
             $element->_tabOffset = $this->_tabOffset;
-            $html[] = $element->toHtml();
+            $htmlArr[] = $element->toHtml();
         }
-        $html = join($this->_seperator, $html);
+        $html = implode((string)$this->_seperator, $htmlArr);
         return $html;
     } //end func toHtml
     
