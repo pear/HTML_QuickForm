@@ -21,15 +21,23 @@
 require_once 'HTML/QuickForm/Renderer.php';
 
 /**
- * A concrete renderer for HTML_QuickForm, using HTML_Template_ITX
+ * A concrete renderer for HTML_QuickForm, using Integrated Templates.
+ * 
+ * This is a "dynamic" renderer, which means that concrete form look 
+ * is defined at runtime. This also means that you can define 
+ * <b>one</b> template file for <b>all</b> your forms. That template
+ * should contain a block for every element 'look' appearing in your 
+ * forms and also some special blocks (consult the examples). If a
+ * special block is not set for an element, the renderer falls back to
+ * a default one.
  * 
  * @author Alexey Borzov <borz_off@cs.msu.su>
  * @access public
  */
-class HTML_QuickForm_Renderer_ITX extends HTML_QuickForm_Renderer
+class HTML_QuickForm_Renderer_ITDynamic extends HTML_QuickForm_Renderer
 {
    /**
-    * An HTML_Template_ITX instance
+    * A template class (HTML_Template_ITX or HTML_Template_Sigma) instance
     * @var object
     */
     var $_tpl = null;
@@ -74,9 +82,9 @@ class HTML_QuickForm_Renderer_ITX extends HTML_QuickForm_Renderer
    /**
     * Constructor
     *
-    * @param object     An HTML_Template_ITX object to use
+    * @param object     An HTML_Template_ITX/HTML_Template_Sigma object to use
     */
-    function HTML_QuickForm_Renderer_ITX(&$tpl)
+    function HTML_QuickForm_Renderer_ITDynamic(&$tpl)
     {
         $this->HTML_QuickForm_Renderer();
         $this->_tpl =& $tpl;

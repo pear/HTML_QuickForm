@@ -8,8 +8,10 @@
  */
 
 require_once 'HTML/QuickForm.php';
+require_once 'HTML/QuickForm/Renderer/ITDynamic.php';
 require_once 'HTML/Template/ITX.php';
-require_once 'HTML/QuickForm/Renderer/ITX.php';
+// can also use HTML_Template_Sigma instead of HTML_Template_ITX
+//require_once 'HTML/Template/Sigma.php';
 
 $form = new HTML_QuickForm('frmTest', 'post');
 
@@ -64,12 +66,19 @@ $form->addRule('itxaTest', 'Test TextArea is a required field', 'required');
 $form->addRule('iradYesNo', 'Check Yes or No', 'required');
 $form->addGroupRule('name', array('last' => array(array('Last name is required', 'required'))));
 
+// try to validate the form
+if ($form->validate()) {
+    $form->freeze();
+}
+
 // create a template object and load the template file
 $tpl =& new HTML_Template_ITX('.');
-$tpl->loadTemplateFile('itx.html', true, true);
+// or else
+//$tpl =& new HTML_Template_Sigma('.');
+$tpl->loadTemplateFile('it-dynamic.html', true, true);
 
 // create a renderer
-$renderer =& new HTML_QuickForm_Renderer_ITX($tpl);
+$renderer =& new HTML_QuickForm_Renderer_ITDynamic($tpl);
 
 // assign elements to blocks
 $renderer->setElementBlock(array(
