@@ -178,7 +178,6 @@ class HTML_QuickForm_Renderer_ITStatic extends HTML_QuickForm_Renderer
         // are we inside a group?
         if (!empty($this->_inGroup)) {
             $varName = $this->_formName.'_'.str_replace(array('[', ']'), '_', $name);
-
             if (substr($varName, -2) == '__') {
                 // element name is of type : group[]
                 $varName = $this->_inGroup.'_'.$this->_elementIndex.'_';
@@ -194,11 +193,21 @@ class HTML_QuickForm_Renderer_ITStatic extends HTML_QuickForm_Renderer
                     $this->_showRequired = true;
                 }
                 if (!empty($label)) {
-                    $this->_tpl->setVariable($varName.'label', $label);
+                    if (is_array($label)) {
+                        foreach ($label as $key => $value) {
+                            $this->_tpl->setVariable($varName.'label_'.$key, $value);
+                        }
+                    } else {
+                        $this->_tpl->setVariable($varName.'label', $label);
+                    }
                 }
                 $this->_tpl->setVariable($varName.'html', $html);
             }
+
         } else {
+
+            $name = str_replace(array('[', ']'), array('_', ''), $name);
+
             if (isset($this->_duplicateElements[$name])) {
                 // Element is a duplicate
                 $varName = $this->_formName.'_'.$name.'_'.$this->_duplicateElements[$name];
@@ -217,8 +226,13 @@ class HTML_QuickForm_Renderer_ITStatic extends HTML_QuickForm_Renderer
             if (!empty($error)) {
                 $this->_renderError($label, $html, $error);
             }
-
-            $this->_tpl->setVariable($varName.'_label', $label);
+            if (is_array($label)) {
+                foreach ($label as $key => $value) {
+                    $this->_tpl->setVariable($varName.'_label_'.$key, $value);
+                }
+            } else {
+                $this->_tpl->setVariable($varName.'_label', $label);
+            }
             $this->_tpl->setVariable($varName.'_html', $html);
         }
     } // end func renderElement
@@ -274,7 +288,13 @@ class HTML_QuickForm_Renderer_ITStatic extends HTML_QuickForm_Renderer
                 }
             }
         }
-        $this->_tpl->setVariable($varName.'_label', $label);
+        if (is_array($label)) {
+            foreach ($label as $key => $value) {
+                $this->_tpl->setVariable($varName.'_label_'.$key, $value);
+            }
+        } else {
+            $this->_tpl->setVariable($varName.'_label', $label);
+        }
         $this->_inGroup = $varName;
     } // end func startGroup
 
@@ -352,7 +372,11 @@ class HTML_QuickForm_Renderer_ITStatic extends HTML_QuickForm_Renderer
     function _renderRequired(&$label, &$html)
     {
         if (!empty($label) && strpos($this->_required, '{label}') !== false) {
-            $label = str_replace('{label}', $label, $this->_required);
+            if (is_array($label)) {
+                $label[0] = str_replace('{label}', $label[0], $this->_required);
+            } else {
+                $label = str_replace('{label}', $label, $this->_required);
+            }
         }
         if (!empty($html) && strpos($this->_required, '{html}') !== false) {
             $html = str_replace('{html}', $html, $this->_required);
@@ -376,7 +400,11 @@ class HTML_QuickForm_Renderer_ITStatic extends HTML_QuickForm_Renderer
     function _renderError(&$label, &$html, $error)
     {
         if (!empty($label) && strpos($this->_error, '{label}') !== false) {
-            $label = str_replace(array('{label}', '{error}'), array($label, $error), $this->_error);
+            if (is_array($label)) {
+                $label[0] = str_replace(array('{label}', '{error}'), array($label[0], $error), $this->_error);
+            } else {
+                $label = str_replace(array('{label}', '{error}'), array($label, $error), $this->_error);
+            }
         } elseif (!empty($html) && strpos($this->_error, '{html}') !== false) {
             $html = str_replace(array('{html}', '{error}'), array($html, $error), $this->_error);
         } else {
