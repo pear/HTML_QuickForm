@@ -63,11 +63,12 @@ Features:
     <notes>
 Additions and changes:
 - Added 'autocomplete' element (Matteo Di Giovinazzo)
-- Added possibility to check whether form was actually submitted
+- Added possibility to check whether form was actually submitted (see also bug #185)
 - QuickForm now correctly handles 'file' elements with [] in name,
   'file' elements inside groups
-- 'date' element will display year select in reverse order if 'minYear' > 'maxYear'
+- 'date' element will display year select in reverse order if 'minYear' &gt; 'maxYear'
 - Added possibility to set increment value for some 'date' element selects
+- Added 'y' format to 'date' element
 
 Migration to 3.2:
 - Features that were marked deprecated in previous releases are REMOVED
@@ -75,6 +76,9 @@ Migration to 3.2:
 
 Bugfixes:
 - Fixed PEAR bug #140 (empty label tags for checkboxes and radios)
+- Fixed PEAR bug #175 (error in 'date' element's German translation)
+- Fixed PEAR bug #70 (Flexy renderer didn't handle multiple labels for element)
+- Fixed PEAR bug #152 (JS function for 'hierselect' element not printed)
     </notes>
     <filelist>
       <dir name="/" baseinstalldir="HTML">
