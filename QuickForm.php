@@ -81,6 +81,7 @@ define('QUICKFORM_UNREGISTERED_ELEMENT',   -5);
 define('QUICKFORM_INVALID_ELEMENT_NAME',   -6);
 define('QUICKFORM_INVALID_PROCESS',        -7);
 define('QUICKFORM_DEPRECATED',             -8);
+define('QUICKFORM_INVALID_DATASOURCE',     -9);
 
 // }}}
 
@@ -142,6 +143,15 @@ class HTML_QuickForm extends HTML_Common {
      * @access   public
      */ 
     var $_jsPostfix = 'Please correct these fields.';
+
+    /**
+     * Datasource object implementing the informal
+     * datasource protocol
+     * @since     3.3
+     * @var  object
+     * @access   private
+     */
+    var $_datasource;
 
     /**
      * Array of default form values
@@ -328,6 +338,34 @@ class HTML_QuickForm extends HTML_Common {
     } // end func elementExists
 
     // }}}
+    // {{{ setDatasource()
+
+    /**
+     * Sets a datasource object for this form object
+     *
+     * @param     object   $datasource          datasource object implementing the informal datasource protocol
+     * @param     mixed    $defaultsFilter      string or array of filter(s) to apply to default values
+     * @param     mixed    $constantsFilter     string or array of filter(s) to apply to constants values
+     * @since     3.3
+     * @access    public
+     * @return    void
+     */
+    function setDatasource(&$datasource, $defaultsFilter = null, $constantsFilter = null)
+    {
+        if (is_object($datasource)) {
+            $this->_datasource =& $datasource;
+            if (is_callable(array($datasource, 'defaultValues'))) {
+                $this->setDefaultValues($datasource->defaultValues($this), $defaultsFilter);
+            }
+            if (is_callable(array($datasource, 'constantValues'))) {
+                $this->setConstants($datasource->constantValues($this), $constantsFilter);
+            }
+        } else {
+            return PEAR::raiseError(null, QUICKFORM_INVALID_DATASOURCE, null, E_USER_WARNING, "Datasource is not an object in QuickForm::setDatasource()", 'HTML_QuickForm_Error', true);
+        }
+    } // end func setDatasource
+
+    // }}}
     // {{{ setDefaults()
 
     /**
@@ -339,7 +377,7 @@ class HTML_QuickForm extends HTML_Common {
      * @access    public
      * @return    void
      */
-    function setDefaults($defaultValues=null, $filter=null)
+    function setDefaults($defaultValues = null, $filter = null)
     {
         if (is_array($defaultValues)) {
             if (isset($filter)) {
@@ -357,7 +395,7 @@ class HTML_QuickForm extends HTML_Common {
                     $defaultValues = $this->_recursiveFilter($filter, $defaultValues);
                 }
             }
-            $this->_defaultValues = array_merge($this->_defaultValues, $defaultValues);
+            $this->_defaultValues = HTML_QuickForm::arrayMerge($this->_defaultValues, $defaultValues);
             foreach (array_keys($this->_elements) as $key) {
                 $this->_elements[$key]->onQuickFormEvent('updateValue', null, $this);
             }
@@ -378,7 +416,7 @@ class HTML_QuickForm extends HTML_Common {
      * @access    public
      * @return    void
      */
-    function setConstants($constantValues=null, $filter=null)
+    function setConstants($constantValues = null, $filter = null)
     {
         if (is_array($constantValues)) {
             if (isset($filter)) {
@@ -396,7 +434,7 @@ class HTML_QuickForm extends HTML_Common {
                     $constantValues = $this->_recursiveFilter($filter, $constantValues);
                 }
             }
-            $this->_constantValues = array_merge($this->_constantValues, $constantValues);
+            $this->_constantValues = HTML_QuickForm::arrayMerge($this->_constantValues, $constantValues);
             foreach (array_keys($this->_elements) as $key) {
                 $this->_elements[$key]->onQuickFormEvent('updateValue', null, $this);
             }
@@ -647,7 +685,7 @@ class HTML_QuickForm extends HTML_Common {
             $value = isset($this->_submitValues[$elementName])? $this->_submitValues[$elementName]: array();
             if (is_array($value) && isset($this->_submitFiles[$elementName])) {
                 foreach ($this->_submitFiles[$elementName] as $k => $v) {
-                    $value = @array_merge_recursive($value, $this->_reindexFiles($this->_submitFiles[$elementName][$k], $k));
+                    $value = HTML_QuickForm::arrayMerge($value, $this->_reindexFiles($this->_submitFiles[$elementName][$k], $k));
                 }
             }
 
@@ -1059,6 +1097,40 @@ class HTML_QuickForm extends HTML_Common {
     } // end func _recursiveFilter
 
     // }}}
+    // {{{ arrayMerge()
+
+   /**
+    * Merges two arrays
+    *
+    * Merges two array like the PHP function array_merge but recursively.
+    * The main difference is that existing keys will not be renumbered
+    * if they are integers.
+    *
+    * @access   puplic
+    * @param    array   $a  original array
+    * @param    array   $b  array which will be merged into first one
+    * @return   array   merged array
+    */
+    function arrayMerge($a, $b)
+    {
+        foreach ($b as $k => $v) {
+            if (is_array($v)) {
+                if (isset($a[$k]) && !is_array($a[$k])) {
+                    $a[$k] = $v;
+                } else {
+                    if (!isset($a[$k])) {
+                        $a[$k] = array();
+                    }
+                    $a[$k] = HTML_QuickForm::arrayMerge($a[$k], $v);
+                }
+            } else {
+                $a[$k] = $v;
+            }
+        }
+        return $a;
+    } // end func arrayMerge
+
+    // }}}
     // {{{ isTypeRegistered()
 
     /**
@@ -1368,7 +1440,7 @@ class HTML_QuickForm extends HTML_Common {
         if (!is_callable($callback)) {
             return PEAR::raiseError(null, QUICKFORM_INVALID_PROCESS, null, E_USER_WARNING, "Callback function does not exist in QuickForm::process()", 'HTML_QuickForm_Error', true);
         }
-        $values = ($mergeFiles === true) ? array_merge($this->_submitValues, $this->_submitFiles) : $this->_submitValues;
+        $values = ($mergeFiles === true) ? HTML_QuickForm::arrayMerge($this->_submitValues, $this->_submitFiles) : $this->_submitValues;
         return call_user_func($callback, $values);
     } // end func process
 
@@ -1536,7 +1608,7 @@ class HTML_QuickForm extends HTML_Common {
      */
     function getSubmitValues($mergeFiles = false)
     {
-        return $mergeFiles? array_merge($this->_submitValues, $this->_submitFiles): $this->_submitValues;
+        return $mergeFiles? HTML_QuickForm::arrayMerge($this->_submitValues, $this->_submitFiles): $this->_submitValues;
     } // end func getSubmitValues
 
     // }}}
@@ -1616,7 +1688,7 @@ class HTML_QuickForm extends HTML_Common {
                 $value = $this->_elements[$key]->exportValue($this->_submitValues, true);
                 if (is_array($value)) {
                     // This shit throws a bogus warning in PHP 4.3.x
-                    $values = @array_merge_recursive($values, $value);
+                    $values = HTML_QuickForm::arrayMerge($values, $value);
                 }
             }
         } else {
@@ -1675,7 +1747,8 @@ class HTML_QuickForm extends HTML_Common {
                 QUICKFORM_UNREGISTERED_ELEMENT  => 'unregistered element',
                 QUICKFORM_INVALID_ELEMENT_NAME  => 'element already exists',
                 QUICKFORM_INVALID_PROCESS       => 'process callback does not exist',
-                QUICKFORM_DEPRECATED            => 'method is deprecated'
+                QUICKFORM_DEPRECATED            => 'method is deprecated',
+                QUICKFORM_INVALID_DATASOURCE    => 'datasource is not an object'
             );
         }
 
