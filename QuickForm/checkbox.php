@@ -138,7 +138,7 @@ class HTML_QuickForm_checkbox extends HTML_QuickForm_input
     {
         if ($this->getChecked()) {
             return '<tt>[x]</tt>' .
-                   '<input type="hidden" name="' . $this->getName() . '" value="1" />';
+                   $this->_getPersistantData();
         } else {
             return '<tt>[ ]</tt>';
         }

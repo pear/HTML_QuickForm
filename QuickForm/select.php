@@ -522,8 +522,15 @@ class HTML_QuickForm_select extends HTML_QuickForm_element {
         $html = empty($value)? '&nbsp;': join('<br />', $value);
         if ($this->_persistantFreeze) {
             $name = $this->getPrivateName();
+            // Only use id attribute if doing single hidden input
+            if (1 == count($value)) {
+                $id     = $this->getAttribute('id');
+                $idAttr = isset($id)? ' id="' . $id . '"': '';
+            } else {
+                $idAttr = '';
+            }
             foreach ($value as $key => $item) {
-                $html .= '<input type="hidden" name="' . 
+                $html .= '<input type="hidden"' . $idAttr . ' name="' . 
                     $name . '" value="' . $this->_values[$key] . '" />';
             }
         }

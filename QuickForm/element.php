@@ -211,18 +211,32 @@ class HTML_QuickForm_element extends HTML_Common
     function getFrozenHtml()
     {
         $value = $this->getValue();
-        if ($value != '') {
-            $html = htmlspecialchars($value);
-        } else {
-            $html = '&nbsp;';
-        }
-        if ($this->_persistantFreeze) {
-            $html .= '<input type="hidden" name="' . 
-                $this->getName() . '" value="' . htmlspecialchars($value) . '" />';
-        }
-        return $html;
+        return ('' != $value? htmlspecialchars($value): '&nbsp;') .
+               $this->_getPersistantData();
     } //end func getFrozenHtml
     
+    // }}}
+    // {{{ _getPersistantData()
+
+   /**
+    * Used by getFrozenHtml() to pass the element's value if _persistantFreeze is on
+    * 
+    * @access private
+    * @return string
+    */
+    function _getPersistantData()
+    {
+        if (!$this->_persistantFreeze) {
+            return '';
+        } else {
+            $id = $this->getAttribute('id');
+            return '<input type="hidden"' .
+                   (isset($id)? ' id="' . $id . '"': '') .
+                   ' name="' . $this->getName() . '"' .
+                   ' value="' . htmlspecialchars($this->getValue()) . '" />';
+        }
+    }
+
     // }}}
     // {{{ isFrozen()
 
