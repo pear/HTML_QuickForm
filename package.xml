@@ -5,55 +5,77 @@
 <package version="1.0">
   <name>HTML_QuickForm</name>
   <summary>The PEAR::HTML_QuickForm package provides methods for creating, validating, processing HTML forms.</summary>
+  <description>
+    The PEAR::HTML_QuickForm package provides methods for creating, validating, processing HTML forms.
+    Features:
+     * Creates xHTML compliant form elements of various type.
+     * Allows you to choose an unlimited number of html attributes.
+     * Allows you to create your own custom elements using your own classes.
+     * Process form values (you should override the process method).
+     * Creates javascript validation code using regular expression.
+     * Server-side validation too.
+     * Allows you to create your own validation rules.
+     * Manages file uploads.
+     * Allows you to freeze some elements in your form.
+     * Allows you to customize the look of your form in many ways.
+  </description>
   <maintainers>
     <maintainer>
       <user>mansion</user>
       <name>Bertrand Mansion</name>
       <email>bmansion@mamasam.com</email>
+      <role>lead</role>
+    </maintainer>
+    <maintainer>
+      <user>adaniel</user>
+      <name>Adam Daniel</name>
+      <email>adaniel1@eesus.jnj.com</email>
+      <role>lead</role>
     </maintainer>
   </maintainers>
-
   <release>
-    <version>1.0</version>
-    <date>2001-09-06</date>
+    <version>1.12</version>
+    <date>2002/03/22</date>
+    <state>stable</state>
     <notes>
-      This is the initial release of the HTML_QuickForm package.
-    </notes>
-  </release>
-
-  <release>
-    <version>1.4</version>
-    <date>2001-11-05</date>
-    <notes>
-      Install paths should be fixed. Installation has to be done in HTML/QuickForm.
-      File upload and javascript work ok.
+      Changed directory structure for package installation.
     </notes>
     <filelist>
-      <dir name="/" baseinstalldir="HTML/QuickForm">
+      <dir name="/" baseinstalldir="HTML">
         <file role="php">QuickForm.php</file>
-        <dir name="Elements">
-	  <file role="php">button.php</file>
-	  <file role="php">checkbox.php</file>
-	  <file role="php">date.php</file>
-	  <file role="php">element.php</file>
-	  <file role="php">file.php</file>
-	  <file role="php">group.php</file>
-	  <file role="php">hidden.php</file>
-	  <file role="php">image.php</file>
-	  <file role="php">input.php</file>
-	  <file role="php">password.php</file>
-	  <file role="php">radio.php</file>
-	  <file role="php">reset.php</file>
-	  <file role="php">select.php</file>
-	  <file role="php">submit.php</file>
-	  <file role="php">text.php</file>
-	  <file role="php">textarea.php</file>
+        <dir name="QuickForm">
+          <file role="php">button.php</file>
+          <file role="php">checkbox.php</file>
+          <file role="php">element.php</file>
+          <file role="php">file.php</file>
+          <file role="php">group.php</file>
+          <file role="php">hidden.php</file>
+          <file role="php">image.php</file>
+          <file role="php">input.php</file>
+          <file role="php">password.php</file>
+          <file role="php">radio.php</file>
+          <file role="php">reset.php</file>
+          <file role="php">select.php</file>
+          <file role="php">submit.php</file>
+          <file role="php">text.php</file>
+          <file role="php">textarea.php</file>
         </dir>
         <dir name="docs" role="doc">
-	  <file>QuickForm_example.php</file>
+          <file>QuickForm_example.php</file>
         </dir>
       </dir>
     </filelist>
+    <deps>
+      <dep type="pkg" rel="ge" version="1.11">HTML_Common</dep>
+    </deps>
   </release>
-
+  <changelog>
+    <release>
+      <version>1.0</version>
+      <date>2001-09-06</date>
+      <notes>
+        This is the initial release of the HTML_QuickForm package.
+      </notes>
+    </release>
+  </changelog>
 </package>
