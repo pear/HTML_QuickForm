@@ -346,7 +346,7 @@ class HTML_QuickForm_element extends HTML_Common {
     {
         global $caller;
         // make it global so we can access it in any of the other methods if needed
-        $caller = $callerLocal;
+        $caller =& $callerLocal;
         $className = get_class($this);
         switch ($event) {
             case 'addElement':
