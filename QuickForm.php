@@ -202,7 +202,7 @@ class HTML_QuickForm extends HTML_Common {
      * @since     1.0
      * @access    public
      */
-    var $_requiredNote = '<font size="1" color="#FF0000">*</font><font size="1"> denotes required field</font>';
+    var $_requiredNote = '<span style="font-size:60%;font-color:#ff0000;">*</span><span style="font-size:60%;"> denotes required field</span>';
 
     /**
      * Array of registered element types
@@ -1804,7 +1804,7 @@ class HTML_QuickForm extends HTML_Common {
                 "$tabs\t\t}\n" .
                 "$tabs\t\treturn true;\n" .
                 "$tabs }\n";
-            $html = "$tabs\n<script language=\"javascript\" type=\"text/javascript\">\n" .
+            $html = "$tabs\n<script type=\"text/javascript\">\n" .
                     "$tabs<!-- \n" . $html . "$tabs//-->\n" .
                     "$tabs</script>";
         }

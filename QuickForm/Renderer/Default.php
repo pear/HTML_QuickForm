@@ -43,7 +43,7 @@ class HTML_QuickForm_Renderer_Default extends HTML_QuickForm_Renderer
     * @access   private
     */
     var $_headerTemplate = 
-        "\n\t<tr>\n\t\t<td nowrap=\"nowrap\" align=\"left\" valign=\"top\" colspan=\"2\" bgcolor=\"#CCCCCC\"><b>{header}</b></td>\n\t</tr>";
+        "\n\t<tr>\n\t\t<td style=\"white-space:nowrap;text-align:left;vertical-align:top;background-color:#cccccc;\" nowrap=\"nowrap\" align=\"left\" valign=\"top\" colspan=\"2\"><b>{header}</b></td>\n\t</tr>";
 
    /**
     * Element template string
@@ -51,7 +51,7 @@ class HTML_QuickForm_Renderer_Default extends HTML_QuickForm_Renderer
     * @access   private
     */
     var $_elementTemplate = 
-        "\n\t<tr>\n\t\t<td align=\"right\" valign=\"top\"><!-- BEGIN required --><font color=\"red\">*</font><!-- END required --><b>{label}</b></td>\n\t\t<td valign=\"top\" align=\"left\"><!-- BEGIN error --><font color=\"#FF0000\">{error}</font><br /><!-- END error -->\t{element}</td>\n\t</tr>";
+        "\n\t<tr>\n\t\t<td style=\"text-align:right;vertical-align:top;\" align=\"right\" valign=\"top\"><!-- BEGIN required --><span style=\"text-color:#ff0000\">*</span><!-- END required --><b>{label}</b></td>\n\t\t<td style=\"text-align:left;vertical-align:top;\" valign=\"top\" align=\"left\"><!-- BEGIN error --><span style=\"text-color:#ff0000\">{error}</span><br /><!-- END error -->\t{element}</td>\n\t</tr>";
 
    /**
     * Form template string
@@ -59,7 +59,7 @@ class HTML_QuickForm_Renderer_Default extends HTML_QuickForm_Renderer
     * @access   private
     */
     var $_formTemplate = 
-        "\n<table border=\"0\">\n\t<form{attributes}>{content}\n\t</form>\n</table>";
+        "\n<table style=\"border:0px;\">\n\t<form{attributes}>{content}\n\t</form>\n</table>";
 
    /**
     * Required Note template string
@@ -67,7 +67,7 @@ class HTML_QuickForm_Renderer_Default extends HTML_QuickForm_Renderer
     * @access   private
     */
     var $_requiredNoteTemplate = 
-        "\n\t<tr>\n\t\t<td></td>\n\t<td align=\"left\" valign=\"top\">{requiredNote}</td>\n\t</tr>";
+        "\n\t<tr>\n\t\t<td></td>\n\t<td style=\"text-align:left;vertical-align:top;\" align=\"left\" valign=\"top\">{requiredNote}</td>\n\t</tr>";
 
    /**
     * Array containing the templates for customised elements
