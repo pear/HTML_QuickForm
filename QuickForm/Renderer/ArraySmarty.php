@@ -166,7 +166,7 @@ class HTML_QuickForm_Renderer_ArraySmarty extends HTML_QuickForm_Renderer_Array
 
         if ('group' == $ret['type']) {
             $ret['html'] = $element->toHtml();
-            // we don't need the element, see the array structure
+            // we don't need the elements, see the array structure
             unset($ret['elements']);
         }
         if (!empty($this->_required)){
@@ -176,7 +176,7 @@ class HTML_QuickForm_Renderer_ArraySmarty extends HTML_QuickForm_Renderer_Array
             $this->_renderError($ret['label'], $ret['html'], $error);
             $ret['error'] = $error;
         }
-        // create the keys for grouped elements
+        // create keys for elements grouped by native group or name
         if (strstr($ret['name'], '[') or $this->_currentGroup) {
             preg_match('/([^]]*)\\[([^]]*)\\]/', $ret['name'], $matches);
             if (isset($matches[1])) {
@@ -190,9 +190,15 @@ class HTML_QuickForm_Renderer_ArraySmarty extends HTML_QuickForm_Renderer_Array
             } else {
                 $sKeys = '[\'' . $ret['name'] . '\']';
             }
-            // reduce string of keys on a real group element
-            if (!empty($this->_currentGroup)) {
-                $sKeys = str_replace($this->_currentGroup['keys'], '', $sKeys);
+            // special handling for elements in native groups
+            if ($this->_currentGroup) {
+                // skip unnamed group items unless radios: no name -> no static access
+                // identification: have the same key string as the parent group
+                if ($this->_currentGroup['keys'] == $sKeys and 'radio' != $ret['type']) {
+                    return false;
+                }
+                // reduce string of keys by remove leading group keys
+                $sKeys = substr_replace($sKeys, '', 0, strlen($this->_currentGroup['keys']));
             }
         // element without a name
         } elseif ($ret['name'] == '') {
@@ -219,15 +225,17 @@ class HTML_QuickForm_Renderer_ArraySmarty extends HTML_QuickForm_Renderer_Array
     */
     function _storeArray($elAry)
     {
-        $sKeys = $elAry['keys'];
-        unset($elAry['keys']);
-        // where should we put this element...
-        if (is_array($this->_currentGroup) && ('group' != $elAry['type'])) {
-            $toEval = '$this->_currentGroup' . $sKeys . ' = $elAry;';
-        } else {
-            $toEval = '$this->_ary' . $sKeys . ' = $elAry;';
+        if ($elAry) {
+            $sKeys = $elAry['keys'];
+            unset($elAry['keys']);
+            // where should we put this element...
+            if (is_array($this->_currentGroup) && ('group' != $elAry['type'])) {
+                $toEval = '$this->_currentGroup' . $sKeys . ' = $elAry;';
+            } else {
+                $toEval = '$this->_ary' . $sKeys . ' = $elAry;';
+            }
+            eval($toEval);
         }
-        eval($toEval);
         return;
     }
 
