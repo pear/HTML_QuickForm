@@ -244,9 +244,10 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
     function getGroupType()
     {
         $prevType = '';
-        foreach ($this->_elements as $element) {
+        foreach (array_keys($this->_elements) as $key) {
+            $element =& $this->_elements[$key];
             $type = $element->getType();
-            if ($type != $prevType) {
+            if ($type != $prevType && $prevType != '') {
                 return 'mixed';
             }
             $prevType = $type;
