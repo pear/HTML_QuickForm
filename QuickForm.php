@@ -888,13 +888,27 @@ class HTML_QuickForm extends HTML_Common {
      */
     function addRule($element, $message, $type, $format=null, $validation='server', $reset = false, $force = false)
     {
-        if (!$force && !$this->elementExists($element)) {
-            return PEAR::raiseError(null, QUICKFORM_NONEXIST_ELEMENT, null, E_USER_WARNING, "Element '$element' does not exist in HTML_QuickForm::addRule()", 'HTML_QuickForm_Error', true);
+        if (!$force) {
+            if (!is_array($element) && !$this->elementExists($element)) {
+                return PEAR::raiseError(null, QUICKFORM_NONEXIST_ELEMENT, null, E_USER_WARNING, "Element '$element' does not exist in HTML_QuickForm::addRule()", 'HTML_QuickForm_Error', true);
+            } elseif (is_array($element)) {
+                foreach ($element as $el) {
+                    if (!$this->elementExists($el)) {
+                        return PEAR::raiseError(null, QUICKFORM_NONEXIST_ELEMENT, null, E_USER_WARNING, "Element '$el' does not exist in HTML_QuickForm::addRule()", 'HTML_QuickForm_Error', true);
+                    }
+                }
+            }
         }
         if (false === ($newName = $this->isRuleRegistered($type, true))) {
             return PEAR::raiseError(null, QUICKFORM_INVALID_RULE, null, E_USER_WARNING, "Rule '$type' is not registered in HTML_QuickForm::addRule()", 'HTML_QuickForm_Error', true);
         } elseif (is_string($newName)) {
             $type = $newName;
+        }
+        if (is_array($element)) {
+            $dependent = $element;
+            $element   = array_shift($dependent);
+        } else {
+            $dependent = null;
         }
         if ($type == 'required' || $type == 'uploadedfile') {
             $this->_required[] = $element;
@@ -910,7 +924,8 @@ class HTML_QuickForm extends HTML_Common {
             'format'      => $format,
             'message'     => $message,
             'validation'  => $validation,
-            'reset'       => $reset
+            'reset'       => $reset,
+            'dependent'   => $dependent
         );
     } // end func addRule
 
@@ -1148,7 +1163,7 @@ class HTML_QuickForm extends HTML_Common {
      */
     function isRuleRegistered($name, $autoRegister = false)
     {
-        include_once('HTML/QuickForm/Validate.php');
+        include_once('HTML/QuickForm/RuleRegistry.php');
         if (is_scalar($name) && isset($GLOBALS['_HTML_QuickForm_registered_rules'][$name])) {
             return true;
         } elseif (!$autoRegister) {
@@ -1164,11 +1179,11 @@ class HTML_QuickForm extends HTML_Common {
                     $ruleName = strtolower($name);
                     break;
                 }
-                $parent = get_parent_class($parent);
-            } while ($parent);
+            } while ($parent = get_parent_class($parent));
         }
         if ($ruleName) {
-            $this->registerRule($ruleName, null, $name);
+            $registry =& HTML_QuickForm_RuleRegistry::getInstance();
+            $registry->registerRule($ruleName, null, $name);
         }
         return $ruleName;
     } // end func isRuleRegistered
@@ -1185,7 +1200,7 @@ class HTML_QuickForm extends HTML_Common {
      */
     function getRegisteredRules()
     {
-        include_once('HTML/QuickForm/Validate.php');
+        include_once('HTML/QuickForm/RuleRegistry.php');
         return array_keys($GLOBALS['_HTML_QuickForm_registered_rules']);
     } // end func getRegisteredRules
 
@@ -1393,7 +1408,7 @@ class HTML_QuickForm extends HTML_Common {
         }
 
         include_once('HTML/QuickForm/RuleRegistry.php');
-        $validate =& HTML_QuickForm_RuleRegistry::getInstance();
+        $registry =& HTML_QuickForm_RuleRegistry::getInstance();
 
         foreach ($this->_rules as $target => $rules) {
             $submitValue = $this->getSubmitValue($target);
@@ -1408,10 +1423,16 @@ class HTML_QuickForm extends HTML_Common {
                     // Element is not required
                     continue 2;
                 }
-                if (is_array($submitValue) && !isset($rule['howmany'])) {
-                    $result = $validate->validate($rule['type'], $submitValue, $rule['format'], true);
+                if (isset($rule['dependent']) && is_array($rule['dependent'])) {
+                    $values = array($submitValue);
+                    foreach ($rule['dependent'] as $elName) {
+                        $values[] = $this->getSubmitValue($elName);
+                    }
+                    $result = $registry->validate($rule['type'], $values, $rule['format'], true);
+                } elseif (is_array($submitValue) && !isset($rule['howmany'])) {
+                    $result = $registry->validate($rule['type'], $submitValue, $rule['format'], true);
                 } else {
-                    $result = $validate->validate($rule['type'], $submitValue, $rule['format'], false);
+                    $result = $registry->validate($rule['type'], $submitValue, $rule['format'], false);
                 }
 
                 if ($result === false || (!empty($rule['howmany']) && $rule['howmany'] > (int)$result)) {
@@ -1578,6 +1599,66 @@ class HTML_QuickForm extends HTML_Common {
     } // end func toHtml
 
     // }}}
+    // {{{ _getJsValue()
+
+   /**
+    * Returns JavaScript to get and to reset the element's value 
+    * 
+    * @access private
+    * @param  object HTML_QuickForm_element     element being processed
+    * @param  string    element's name
+    * @param  bool      whether to generate JavaScript to reset the value
+    * @param  integer   value's index in the array (only used for multielement rules)
+    * @return array     first item is value javascript, second is reset
+    */
+    function _getJsValue(&$element, $elementName, $reset = false, $index = null)
+    {
+        $jsIndex = isset($index)? '[' . $index . ']': '';
+        $tmp_reset = $reset? "    var field = frm.elements['$elementName'];\n": '';
+        if ($element->getType() == 'group' && $element->getGroupType() != 'radio' ||
+           ($element->getType() == 'select' && $element->getMultiple())) {
+            $value =
+                "  value{$jsIndex} = '';\n" .
+                "  for (var i = 0; i < frm.elements.length; i++) {\n" .
+                "    if (frm.elements[i].name.indexOf('$elementName') == 0) {\n" .
+                "      value{$jsIndex} += frm.elements[i].value;\n" .
+                "    }\n" .
+                "  }";
+            if ($reset) {
+                $tmp_reset =
+                    "    for (var i = 0; i < frm.elements.length; i++) {\n" .
+                    "      if (frm.elements[i].name.indexOf('$elementName') == 0) {\n" .
+                    "        frm.elements[i].value = frm.elements[i].defaultValue;\n" .
+                    "      }\n" .
+                    "    }\n";
+            }
+        } elseif ($element->getType() == 'checkbox') {
+            $value = "  if (frm.elements['$elementName'].checked) {\n" .
+                     "    value{$jsIndex} = '1';\n" .
+                     "  } else {\n" .
+                     "    value{$jsIndex} = '';\n" .
+                     "  }";
+            $tmp_reset .= ($reset) ? "    field.checked = field.defaultChecked;\n" : '';
+        } elseif ($element->getType() == 'group' && $element->getGroupType() == 'radio') {
+            $value = "  value{$jsIndex} = '';\n" .
+                     "  for (var i = 0; i < frm.elements['$elementName'].length; i++) {\n" .
+                     "    if (frm.elements['$elementName'][i].checked) {\n" .
+                     "      value{$jsIndex} = frm.elements['$elementName'][i].value;\n" .
+                     "    }\n" .
+                     "  }";
+            if ($reset) {
+                $tmp_reset .= "    for (var i = 0; i < field.length; i++) {\n" .
+                              "      field[i].checked = field[i].defaultChecked;\n" .
+                              "    }";
+            }
+        } else {
+            $value = "  value{$jsIndex} = frm.elements['$elementName'].value;";
+            $tmp_reset .= ($reset) ? "    field.value = field.defaultValue;\n" : '';
+        }
+        return array($value, $tmp_reset);
+    }
+
+    // }}}
     // {{{ getValidationScript()
 
     /**
@@ -1594,8 +1675,7 @@ class HTML_QuickForm extends HTML_Common {
         }
 
         include_once('HTML/QuickForm/RuleRegistry.php');
-        $validate =& HTML_QuickForm_RuleRegistry::getInstance();
-        $html = '';
+        $registry =& HTML_QuickForm_RuleRegistry::getInstance();
         $test = array();
         $js_escape = array(
             "\r"    => '\r',
@@ -1609,11 +1689,10 @@ class HTML_QuickForm extends HTML_Common {
         foreach ($this->_rules as $elementName => $rules) {
             foreach ($rules as $rule) {
                 if ($rule['validation'] == 'client') {
-                    $type       = $rule['type'];
-                    $message    = $rule['message'];
-                    $format     = $rule['format'];
                     $reset      = (isset($rule['reset'])) ? $rule['reset'] : false;
-                    $tmp_reset  = '';
+                    $dependent  = isset($rule['dependent']) && is_array($rule['dependent']);
+                    $jsReset    = '';
+                    $jsValue    = '';
 
                     if (isset($rule['group'])) {
                         $group =& $this->getElement($rule['group']);
@@ -1622,78 +1701,47 @@ class HTML_QuickForm extends HTML_Common {
                     } else {
                         $element =& $this->getElement($elementName);
                     }
-
-                    if ($element->getType() == 'group' && $element->getGroupType() != 'radio' ||
-                       ($element->getType() == 'select' && $element->getMultiple())) {
-                        $value =
-                            "  var value = '';\n" .
-                            "  for (var i = 0; i < frm.elements.length; i++) {\n" .
-                            "    if (frm.elements[i].name.indexOf('$elementName') == 0) {\n" .
-                            "      value += frm.elements[i].value;\n" .
-                            "    }\n" .
-                            "  }";
-                        if ($reset) {
-                            $tmp_reset =
-                                "  for (var i = 0; i < frm.elements.length; i++) {\n" .
-                                "    if (frm.elements[i].name.indexOf('$elementName') == 0) {\n" .
-                                "      frm.elements[i].value = frm.elements[i].defaultValue;\n" .
-                                "    }\n" .
-                                "  }\n";
+                    list($jsValue, $jsReset) = $this->_getJsValue($element, $elementName, $reset, $dependent? 0: null);
+                    if ($dependent) {
+                        foreach ($rule['dependent'] as $idx => $elName) {
+                            list($tmp_value, $tmp_reset) = $this->_getJsValue($this->getElement($elName), $elName, $reset, $idx + 1);
+                            $jsValue .= "\n" . $tmp_value;
+                            $jsReset .= $tmp_reset;
                         }
-                    } elseif ($element->getType() == 'checkbox') {
-                        $value = "  if (frm.elements['$elementName'].checked) {\n" .
-                                 "    var value = '1';\n" .
-                                 "  } else {\n" .
-                                 "    var value = '';\n" .
-                                 "  }";
-                        $tmp_reset = ($reset) ? "  field.checked = field.defaultChecked;\n" : '';
-                    } elseif ($element->getType() == 'group' && $element->getGroupType() == 'radio') {
-                        $value = "  var value = '';\n" .
-                                 "  for (var i = 0; i < frm.elements['$elementName'].length; i++) {\n" .
-                                 "    if (frm.elements['$elementName'][i].checked) {\n" .
-                                 "      var value = frm.elements['$elementName'][i].value;\n" .
-                                 "    }\n" .
-                                 "  }";
-                        if ($reset) {
-                            $tmp_reset = "  for (var i = 0; i < field.length; i++) {\n" .
-                                         "    field[i].checked = field[i].defaultChecked;\n" .
-                                         "  }";
-                        }
-                    } else {
-                        $value = "  var value = frm.elements['$elementName'].value;";
-                        $tmp_reset = ($reset) ? "  field.value = field.defaultValue;\n" : '';
+                        $jsValue = "  value = new Array();\n" . $jsValue;
                     }
 
-                    $test[] = $validate->getValidationScript($rule['type'],
-                                                             $value, 
+                    $test[] = $registry->getValidationScript($rule['type'],
+                                                             $jsValue, 
                                                              $elementName,
-                                                             strtr($message, $js_escape),
-                                                             $tmp_reset,
-                                                             $format);
+                                                             strtr($rule['message'], $js_escape),
+                                                             $jsReset,
+                                                             $rule['format']);
                 }
             }
         }
         if (is_array($test) && count($test) > 0) {
-            $html .=
+            return
+                "\n<script type=\"text/javascript\">\n" .
+                "<!-- \n" . 
                 "function validate_" . $this->_attributes['name'] . "() {\n" .
+                "  var value = '';\n" .
                 "  var errFlag = new Array();\n" .
                 "  _qfMsg = '';\n" .
-                "  var frm = document.forms['" . $this->_attributes['name'] . "'];\n";
-            $html .= join("\n", $test);
-            $html .=
+                "  var frm = document.forms['" . $this->_attributes['name'] . "'];\n" .
+                join("\n", $test) .
                 "\n  if (_qfMsg != '') {\n" .
-                "    _qfMsg = '$this->_jsPrefix' + _qfMsg;\n" .
-                "    _qfMsg = _qfMsg + '\\n$this->_jsPostfix';\n" .
+                "    _qfMsg = '" . strtr($this->_jsPrefix, $js_escape) . "' + _qfMsg;\n" .
+                "    _qfMsg = _qfMsg + '\\n" . strtr($this->_jsPostfix, $js_escape) . "';\n" .
                 "    alert(_qfMsg);\n" .
                 "    return false;\n" .
                 "  }\n" .
                 "  return true;\n" .
-                "}\n";
-            $html = "\n<script type=\"text/javascript\">\n" .
-                    "<!-- \n" . $html . "//-->\n" .
-                    "</script>";
+                "}\n" .
+                "//-->\n" .
+                "</script>";
         }
-        return $html;
+        return '';
     } // end func getValidationScript
 
     // }}}

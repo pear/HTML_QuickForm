@@ -90,7 +90,6 @@ class HTML_QuickForm_Rule_Callback extends HTML_QuickForm_Rule
     function getValidationScript($jsValue, $jsField, $jsMessage, $jsReset, $options = null)
     {
         $js = "$jsValue\n" .
-              "  var field = frm.elements['$jsField'];\n" .
               "  if (value != '' && !" . $this->_data[$this->name][0] . "('$jsField', value) && !errFlag['$jsField']) {\n" .
               "    errFlag['$jsField'] = true;\n" .
               "    _qfMsg = _qfMsg + '\\n - $jsMessage';\n" .

@@ -56,7 +56,6 @@ class HTML_QuickForm_Rule_Required extends HTML_QuickForm_Rule
     function getValidationScript($jsValue, $jsField, $jsMessage, $jsReset = '', $options = null)
     {
         $js = "$jsValue\n" .
-              "  var field = frm.elements['$jsField'];\n" .
               "  if (value == '' && !errFlag['$jsField']) {\n" .
               "    errFlag['$jsField'] = true;\n" .
               "    _qfMsg = _qfMsg + '\\n - $jsMessage';\n" .

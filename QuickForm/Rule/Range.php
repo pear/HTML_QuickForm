@@ -69,7 +69,6 @@ class HTML_QuickForm_Rule_Range extends HTML_QuickForm_Rule
         }
 
         $js = "$jsValue\n" .
-              "  var field = frm.elements['$jsField'];\n" .
               "  if (value != '' && ".$test." && !errFlag['$jsField']) {\n" .
               "    errFlag['$jsField'] = true;\n" .
               "    _qfMsg = _qfMsg + '\\n - $jsMessage';\n" .

@@ -93,7 +93,6 @@ class HTML_QuickForm_Rule_Regex extends HTML_QuickForm_Rule
         $regex = isset($this->_data[$this->name]) ? $this->_data[$this->name] : $options;
 
         $js = "$jsValue\n" .
-              "  var field = frm.elements['$jsField'];\n" .
               "  var regex = $regex;\n" .
               "  if (value != '' && !regex.test(value) && !errFlag['$jsField']) {\n" .
               "    errFlag['$jsField'] = true;\n" .

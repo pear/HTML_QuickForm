@@ -65,7 +65,6 @@ class HTML_QuickForm_Rule_Email extends HTML_QuickForm_Rule
     function getValidationScript($jsValue, $jsField, $jsMessage, $jsReset, $options = null)
     {
         $js = "$jsValue\n" .
-              "  var field = frm.elements['$jsField'];\n" .
               "  var regex = " . $this->regex . ";\n" .
               "  if (value != '' && !regex.test(value) && !errFlag['$jsField']) {\n" .
               "    errFlag['$jsField'] = true;\n" .
