@@ -5,7 +5,10 @@
 * @author      Adam Daniel <adaniel1@eesus.jnj.com>
 * @author      Bertrand Mansion <bmansion@mamasam.com>
 * @version     2.0
+*
+* $Id$ 
 */
+
 require_once ("HTML/QuickForm.php");
 $form = new HTML_QuickForm('frmTest', 'GET');
 // Fills with some defaults values
@@ -58,7 +61,7 @@ $name['last'] = &HTML_QuickForm::createElement('text', 'last');
 $name['last']->setSize(30);
 $name['first'] = &HTML_QuickForm::createElement('text', 'first');
 $name['first']->setSize(20);
-$form->addElementGroup($name, 'Name (last, first):', 'name', ',&nbsp;');
+$form->addGroup($name, 'name', 'Name (last, first):', ',&nbsp;');
 // Creates a group of text inputs
 $areaCode = &HTML_QuickForm::createElement('text', '');
 $areaCode->setSize(3);
@@ -69,22 +72,22 @@ $phoneNo1->setMaxLength(3);
 $phoneNo2 = &HTML_QuickForm::createElement('text', '');
 $phoneNo2->setSize(4);
 $phoneNo2->setMaxLength(4);
-$form->addElementGroup(array($areaCode, $phoneNo1, $phoneNo2), 'Telephone:', 'phoneNo', '-');
+$form->addGroup(array($areaCode, $phoneNo1, $phoneNo2), 'phoneNo', 'Telephone:', '-');
 // Creates a radio buttons group
 $radio[] = &HTML_QuickForm::createElement('radio', null, null, 'Yes', 'Y');
 $radio[] = &HTML_QuickForm::createElement('radio', null, null, 'No', 'N');
-$form->addElementGroup($radio, 'Yes/No:', 'iradYesNo');
+$form->addGroup($radio, 'iradYesNo', 'Yes/No:');
 // Creates a checkboxes group
 $checkbox[] = &HTML_QuickForm::createElement('checkbox', 'A', null, 'A');
 $checkbox[] = &HTML_QuickForm::createElement('checkbox', 'B', null, 'B');
 $checkbox[] = &HTML_QuickForm::createElement('checkbox', 'C', null, 'C');
-$form->addElementGroup($checkbox, 'ABC:', 'ichkABC', '<br>');
+$form->addGroup($checkbox, 'ichkABC', 'ABC:', '<br />');
 // Creates a group of buttons to be displayed at the bottom of the form
 $buttons[] = &HTML_QuickForm::createElement('submit', null, 'Submit');
 $buttons[] = &HTML_QuickForm::createElement('reset', null, 'Reset');
 $buttons[] = &HTML_QuickForm::createElement('image', 'iimgTest', '/images/apache_pb.gif');
 $buttons[] = &HTML_QuickForm::createElement('button', 'ibutTest', 'Test Button');
-$form->addElementGroup($buttons);
+$form->addGroup($buttons);
 $form->addHeader('Using the form element classes directly');
 $text = new HTML_QuickForm_text('QFText', 'QuickForm Text:');
 $form->addElement($text);

@@ -5,7 +5,7 @@
 * @author      Bertrand Mansion <bmansion@mamasam.com>
 * @version     2.5
 */
-// $Id$
+// $id:$
 
 require_once ("HTML/QuickForm.php");
 $form = new HTML_QuickForm('frmTest', 'GET');
@@ -31,7 +31,7 @@ $id['lastname']->setSize(30);
 $id['code'] = &HTML_QuickForm::createElement('text', 'code', 'Code');
 $id['code']->setSize(5);
 $id['code']->setMaxLength(4);
-$form->addElementGroup($id, 'ID:', 'id', ',&nbsp');
+$form->addGroup($id, 'id', 'ID:', ',&nbsp');
 
 $idGrp =& $form->getElement('id');
 $idGrp->setGroupTemplate('<table><tr>{content}</tr></table>');
@@ -47,24 +47,24 @@ $phoneNo1->setMaxLength(3);
 $phoneNo2 = &HTML_QuickForm::createElement('text', '');
 $phoneNo2->setSize(5);
 $phoneNo2->setMaxLength(4);
-$form->addElementGroup(array($areaCode, $phoneNo1, $phoneNo2), 'Telephone:', 'phoneNo', '-');
+$form->addGroup(array($areaCode, $phoneNo1, $phoneNo2), 'phoneNo', 'Telephone:', '-');
 
 // Creates a standard radio buttons group
 $radio[] = &HTML_QuickForm::createElement('radio', null, null, 'Yes', 'Y');
 $radio[] = &HTML_QuickForm::createElement('radio', null, null, 'No', 'N');
-$form->addElementGroup($radio, 'Yes/No:', 'iradYesNo');
+$form->addGroup($radio,  'iradYesNo', 'Yes/No:');
 
 // Creates a checkboxes group using an array of separators
 $checkbox[] = &HTML_QuickForm::createElement('checkbox', 'A', null, 'A');
 $checkbox[] = &HTML_QuickForm::createElement('checkbox', 'B', null, 'B');
 $checkbox[] = &HTML_QuickForm::createElement('checkbox', 'C', null, 'C');
 $checkbox[] = &HTML_QuickForm::createElement('checkbox', 'D', null, 'D');
-$form->addElementGroup($checkbox, 'ABCD:', 'ichkABC', array('&nbsp;', '<br />'));
+$form->addGroup($checkbox, 'ichkABC', 'ABCD:', array('&nbsp;', '<br />'));
 
 // Creates a group of buttons to be displayed at the bottom of the form
 $buttons[] = &HTML_QuickForm::createElement('submit', null, 'Submit');
 $buttons[] = &HTML_QuickForm::createElement('reset', null, 'Reset');
-$form->addElementGroup($buttons);
+$form->addGroup($buttons);
 
 // Adds validation rules for groups
 $form->addGroupRule('phoneNo', 'Please fill all phone fields', 'required');
