@@ -90,18 +90,12 @@ Features:
   </release>
   <changelog>
     <release>
-      <version>1.0</version>
-      <date>2001-09-06</date>
-      <notes>
-        This is the initial release of the HTML_QuickForm package.
-      </notes>
-    </release>
-    <release>
-      <version>1.12</version>
-      <date>2002-03-22</date>
+      <version>2.2</version>
+      <date>2002-05-29</date>
       <state>stable</state>
       <notes>
-        Changed directory structure for package installation.
+* Some fixes for file uploads.
+* Some fixes for hidden fields.
       </notes>
     </release>
     <release>
@@ -138,25 +132,31 @@ Here is a list of what's new in this version:
 * Added removeElement() method which removes the element from the elements list. Both methods accept parameters.
       </notes>
     </release>
-  <release>
-    <version>2.1</version>
-    <date>2002-05-24</date>
-    <state>stable</state>
-    <notes>
+    <release>
+      <version>2.1</version>
+      <date>2002-05-24</date>
+      <state>stable</state>
+      <notes>
 * Fixes for many if not all E_ALL warnings.
 * Filter function is now recursive.
 * Better handling of registered rules.
 * New regex for numeric validation.
-    </notes>
-  </release>
+      </notes>
+    </release>
     <release>
-    <version>2.2</version>
-    <date>2002-05-29</date>
-    <state>stable</state>
-    <notes>
-* Some fixes for file uploads.
-* Some fixes for hidden fields.
-    </notes>
-  </release>
+      <version>1.12</version>
+      <date>2002-03-22</date>
+      <state>stable</state>
+      <notes>
+        Changed directory structure for package installation.
+      </notes>
+    </release>
+    <release>
+      <version>1.0</version>
+      <date>2001-09-06</date>
+      <notes>
+        This is the initial release of the HTML_QuickForm package.
+      </notes>
+    </release>
   </changelog>
 </package>
