@@ -175,7 +175,7 @@ class HTML_QuickForm_RuleRegistry
         }
         $jsField = isset($ruleData['group'])? $ruleData['group']: $elementName;
         list ($jsPrefix, $jsCheck) = $rule->getValidationScript($ruleData['format']);
-        if (!isset($ruleData['howmany']) && $element->getType() != 'group') {
+        if (!isset($ruleData['howmany'])) {
             $js = $jsValue . "\n" . $jsPrefix . 
                   "  if (" . str_replace('{jsVar}', 'value', $jsCheck) . " && !errFlag['{$jsField}']) {\n" .
                   "    errFlag['{$jsField}'] = true;\n" .
@@ -189,14 +189,9 @@ class HTML_QuickForm_RuleRegistry
                   "    if (!(" . str_replace('{jsVar}', 'value[i]', $jsCheck) . ")) {\n" .
                   "      res++;\n" .
                   "    }\n" .
-                  "  }\n";
-            if (!isset($ruleData['howmany'])) {
-                $js .= "  if (res < ".count($element->_elements)." && !errFlag['{$jsField}']) {\n";
-            } else {
-                $js .= "  if (res < {$ruleData['howmany']} && !errFlag['{$jsField}']) {\n";
-            }
-            
-            $js .= "    errFlag['{$jsField}'] = true;\n" .
+                  "  }\n" . 
+                  "  if (res < {$ruleData['howmany']} && !errFlag['{$jsField}']) {\n" . 
+                  "    errFlag['{$jsField}'] = true;\n" .
                   "    _qfMsg = _qfMsg + '\\n - {$ruleData['message']}';\n" .
                   $jsReset .
                   "  }\n";
@@ -220,49 +215,52 @@ class HTML_QuickForm_RuleRegistry
         $jsIndex = isset($index)? '[' . $index . ']': '';
         $tmp_reset = $reset? "    var field = frm.elements['$elementName'];\n": '';
         if (is_a($element, 'html_quickform_group')) {
-            $value = "  var {$elementName}Elements = new Array(";
+            $value = "  var {$elementName}Elements = '::";
             for ($i = 0, $count = count($element->_elements); $i < $count; $i++) {
-                $grpElementName = $element->getElementName($i);
-                $value .= "'{$grpElementName}', ";
+                $value .= $element->getElementName($i) . '::';
             }
-            $value = substr($value, 0, -2) . ");\n";
             $value .=
+                "';\n" .
                 "  value{$jsIndex} = new Array();\n" .
                 "  var valueIdx = 0;\n" .
-                "  for (var i = 0; i < {$elementName}Elements.length; i++) {\n" .
-                "    var _element = frm.elements[{$elementName}Elements[i]];\n" .
-                "    switch (_element.type) {\n" .
-                "      case 'checkbox':\n" .
-                "      case 'radio':\n" .
-                "        if (_element.checked) {\n" .
+                "  for (var i = 0; i < frm.elements.length; i++) {\n" .
+                "    var _element = frm.elements[i];\n" .
+                "    if ({$elementName}Elements.indexOf(_element.name) > 0) {\n" . 
+                "      switch (_element.type) {\n" .
+                "        case 'checkbox':\n" .
+                "        case 'radio':\n" .
+                "          if (_element.checked) {\n" .
+                "            value{$jsIndex}[valueIdx++] = _element.value;\n" .
+                "          }\n" .
+                "          break;\n" .
+                "        case 'select':\n" .
+                "          if (-1 != _element.selectedIndex) {\n" .
+                "            value{$jsIndex}[valueIdx++] = _element.options[_element.selectedIndex].value;\n" .
+                "          }\n" .
+                "          break;\n" .
+                "        default:\n" .
                 "          value{$jsIndex}[valueIdx++] = _element.value;\n" .
-                "        }\n" .
-                "        break;\n" .
-                "      case 'select':\n" .
-                "        if (-1 != _element.selectedIndex) {\n" .
-                "          value{$jsIndex}[valueIdx++] = _element.options[_element.selectedIndex].value;\n" .
-                "        }\n" .
-                "        break;\n" .
-                "      default:\n" .
-                "        value{$jsIndex}[valueIdx++] = _element.value;\n" .
+                "      }\n" .
                 "    }\n" .
                 "  }\n";
             if ($reset) {
                 $tmp_reset =
-                    "    for (var i = 0; i < {$elementName}Elements.length; i++) {\n" .
-                    "      var _element = frm.elements[{$elementName}Elements[i]];\n" .
-                    "      switch (_element.type) {\n" .
-                    "        case 'checkbox':\n" .
-                    "        case 'radio':\n" .
-                    "          _element.checked = _element.defaultChecked;\n" .
-                    "          break;\n" .
-                    "        case 'select':\n" .
-                    "          for (var j = 0; j < _element.options.length; j++) {\n" .
-                    "            _element.options[j].selected = _element.options[j].defaultSelected;\n" .
-                    "          }\n" .
-                    "          break;\n" .
-                    "        default:\n" .
-                    "          _element.value = _element.defaultValue;\n" .
+                    "    for (var i = 0; i < frm.elements.length; i++) {\n" .
+                    "      var _element = frm.elements[i];\n" .
+                    "      if ({$elementName}Elements.indexOf(_element.name) > 0) {\n" . 
+                    "        switch (_element.type) {\n" .
+                    "          case 'checkbox':\n" .
+                    "          case 'radio':\n" .
+                    "            _element.checked = _element.defaultChecked;\n" .
+                    "            break;\n" .
+                    "          case 'select':\n" .
+                    "            for (var j = 0; j < _element.options.length; j++) {\n" .
+                    "              _element.options[j].selected = _element.options[j].defaultSelected;\n" .
+                    "            }\n" .
+                    "            break;\n" .
+                    "          default:\n" .
+                    "            _element.value = _element.defaultValue;\n" .
+                    "        }\n" .
                     "      }\n" .
                     "    }\n";
             }

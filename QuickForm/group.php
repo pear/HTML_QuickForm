@@ -430,7 +430,7 @@ class HTML_QuickForm_group extends HTML_QuickForm_element
             if ($this->_appendName) {
                 $elementName = $element->getName();
                 if (isset($elementName)) {
-                    $element->setName($name . '['.$elementName.']');
+                    $element->setName($name . '['. (strlen($elementName)? $elementName: $key) .']');
                 } else {
                     $element->setName($name);
                 }
