@@ -91,7 +91,7 @@ class HTML_QuickForm_select extends HTML_QuickForm_element {
      */
     function apiVersion()
     {
-        return 2.0;
+        return 2.3;
     } //end func apiVersion
 
     // }}}
@@ -328,7 +328,8 @@ class HTML_QuickForm_select extends HTML_QuickForm_element {
             $this->setSelected($values);
         }
         foreach ($arr as $key => $val) {
-            $this->addOption($key, $val);
+            // Warning: new API since release 2.3
+            $this->addOption($val, $key);
         }
         return true;
     } // end func loadArray
