@@ -59,13 +59,13 @@ class HTML_QuickForm_Rule_Range extends HTML_QuickForm_Rule
     {
         switch ($this->name) {
             case 'minlength': 
-                $test = 'value.length >= '.$options;
-                break;
-            case 'maxlength': 
                 $test = 'value.length <= '.$options;
                 break;
+            case 'maxlength': 
+                $test = 'value.length >= '.$options;
+                break;
             default: 
-                $test = '(value.length >= '.$options[0].' && value.length <= '.$options[1].')';
+                $test = '(value.length <= '.$options[0].' && value.length >= '.$options[1].')';
         }
 
         $js = "$jsValue\n" .
