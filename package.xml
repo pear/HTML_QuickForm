@@ -33,6 +33,12 @@ Features:
       <role>lead</role>
     </maintainer>
     <maintainer>
+      <user>avb</user>
+      <name>Alexey Borzov</name>
+      <email>borz_off@cs.msu.su</email>
+      <role>developer</role>
+    </maintainer>
+    <maintainer>
       <user>jrust</user>
       <name>Jason Rust</name>
       <email>jason@rustyparts.com</email>
@@ -40,16 +46,25 @@ Features:
     </maintainer>
   </maintainers>
   <release>
-    <version>2.9</version>
+    <version>2.10</version>
     <date>2003-02-20</date>
     <state>stable</state>
     <notes>
-* Added htmlspecialchars() to frozen elements output in every case.
-* Elements are not validated against a function if they are empty and not required.
-  It is easier this way for QuickForm to work with external validators.
-  This is already the way it is done when using regex validation.
-* Added javascript validation for select multiple and checkboxes.
-* Added simple javascript validation for groups: values are imploded in a string.
+* Email validation regex accepts lower and uppercases (Derick Rethans).
+* Added getUploadedFile() and isUploadedFile() methods (Wotjek Gdela).
+* XHTML compliant for the form tags (Jules Szemere).
+* Fixed Javascript validation when empty elements are not required (Joern Barthel).
+* Added possibility to call setDefaults() and setConstants() anytime.
+* Fix problem with duplicate element names (ex: radio).
+* Added method updateElementAttr() to update the attributes of multiple elements (Dan Wilson).
+* Slovanian translation of date in date element (Matej Dakol).
+* Fix bug in date element preventing submitted values to be used.
+* Removed nbsp; replace in frozen textarea (Carsten Bleek, Dan Wilson).
+
+This is probably the last release of QuickForm without template support.
+The next release will have two BC breaks:
+- Use of filters will be easier, no registration needed.
+- Groups with no name will not be supported anymore, even if name is not used.
     </notes>
     <filelist>
       <dir name="/" baseinstalldir="HTML">
@@ -92,6 +107,19 @@ Features:
     </filelist>
   </release>
   <changelog>
+  <release>
+    <version>2.9</version>
+    <date>2003-02-20</date>
+    <state>stable</state>
+    <notes>
+* Added htmlspecialchars() to frozen elements output in every case.
+* Elements are not validated against a function if they are empty and not required.
+  It is easier this way for QuickForm to work with external validators.
+  This is already the way it is done when using regex validation.
+* Added javascript validation for select multiple and checkboxes.
+* Added simple javascript validation for groups: values are imploded in a string.
+    </notes>
+  </release>
   <release>
     <version>2.8</version>
     <date>2003-02-18</date>
