@@ -778,10 +778,11 @@ class HTML_QuickForm extends HTML_Common {
             $elements =& $group->getElements();
             foreach (array_keys($elements) as $key) {
                 $name = $group->getElementName($key);
-                $v    = $this->getSubmitValue($name);
-                if ($name != $elementName && null !== $v) {
-                    // filter out radios
-                    $value[$name] = $v;
+                // filter out radios
+                if ($name != $elementName) {
+                    if (null !== ($v = $this->getSubmitValue($name))) {
+                        $value[$name] = $v;
+                    }
                 }
             }
 

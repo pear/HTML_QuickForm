@@ -57,45 +57,19 @@ Features:
     </maintainer -->
   </maintainers>
   <release>
-    <version>3.2.4</version>
-    <date>2004-10-18</date>
+    <version>3.2.4pl1</version>
+    <date>2004-10-20</date>
     <license>PHP License</license>
     <state>stable</state>
     <notes>
-* Additions and changes
-- Implemented HTML_QuickForm::insertElementBefore() method which 
-  allows adding elements into arbitrary places and reordering the 
-  existing form elements (thanks to Justin Patrin for initial
-  implementation and helpful comments, see request #1587)
-- Implemented HTML_QuickForm_element::unfreeze() method
-- HTML_QuickForm::removeElement() now returns reference to element
-  being removed
-- Array renderer outputs header name into the resultant array
-  (request #2276)
-- Added $staticLabels option to Array renderer's constructor, this
-  makes the renderer &quot;flatten&quot; the array of labels
-- Added Ukrainian translation for 'date' element (Andrey Kornilov)
-- Removed newline after &lt;script&gt; tags in 'autocomplete' and
-  'hierselect' elements (request #2373)
+- Fixed #2576: calling HTML_QuickForm::getSubmitValue() on a group 
+  of radio elements caused an infinite loop with PHP eventually 
+  dying of memory exhaustion. This was introduced in 3.2.4 in a 
+  fix for bug #2517, those upgrading from earlier releases should 
+  skip 3.2.4, those running 3.2.4 should upgrade ASAP.
 
-* Bugfixes
-- HTML_QuickForm::getSubmitValue() now properly returns null for
-  groups if form was not yet submitted (bug #2517)
-- stripslashes() is used only on 'name' element of file upload
-  data (bug #1843)
-- HTML_QuickForm::addGroupRule() now works better with &lt;select 
-  multiple&gt; elements (bug #1810)
-- Fixed notice if empty string was passed to date::setValue() 
-  (bug #2530)
-- Calling HTML_QuickForm_group::getFrozenHtml() no longer freezes 
-  the group (bug #1836)
-- Groups now correctly handle setPersistantFreeze() call (bug #1836)
-- ITDynamic renderer does not replace empty separator with &amp;nbsp;
-  anymore (bug #2354)
-- 'maxfilesize' rule returns false in case of file upload errors
-  (bug #2203)
-- Fixed Javascript generation for 'hierselect' elements (bug #1984)
-- Fixed examples using 'rangelength' rule (bug #2421)
+- Fixed #2571: selects after the second were not correctly 
+  populated in hierselect with 3 or more elements.
     </notes>
     <filelist>
       <dir name="/" baseinstalldir="HTML">
@@ -192,6 +166,48 @@ Features:
     </deps>
   </release>
   <changelog>
+  <release>
+    <version>3.2.4</version>
+    <date>2004-10-18</date>
+    <license>PHP License</license>
+    <state>stable</state>
+    <notes>
+* Additions and changes
+- Implemented HTML_QuickForm::insertElementBefore() method which 
+  allows adding elements into arbitrary places and reordering the 
+  existing form elements (thanks to Justin Patrin for initial
+  implementation and helpful comments, see request #1587)
+- Implemented HTML_QuickForm_element::unfreeze() method
+- HTML_QuickForm::removeElement() now returns reference to element
+  being removed
+- Array renderer outputs header name into the resultant array
+  (request #2276)
+- Added $staticLabels option to Array renderer's constructor, this
+  makes the renderer &quot;flatten&quot; the array of labels
+- Added Ukrainian translation for 'date' element (Andrey Kornilov)
+- Removed newline after &lt;script&gt; tags in 'autocomplete' and
+  'hierselect' elements (request #2373)
+
+* Bugfixes
+- HTML_QuickForm::getSubmitValue() now properly returns null for
+  groups if form was not yet submitted (bug #2517)
+- stripslashes() is used only on 'name' element of file upload
+  data (bug #1843)
+- HTML_QuickForm::addGroupRule() now works better with &lt;select 
+  multiple&gt; elements (bug #1810)
+- Fixed notice if empty string was passed to date::setValue() 
+  (bug #2530)
+- Calling HTML_QuickForm_group::getFrozenHtml() no longer freezes 
+  the group (bug #1836)
+- Groups now correctly handle setPersistantFreeze() call (bug #1836)
+- ITDynamic renderer does not replace empty separator with &amp;nbsp;
+  anymore (bug #2354)
+- 'maxfilesize' rule returns false in case of file upload errors
+  (bug #2203)
+- Fixed Javascript generation for 'hierselect' elements (bug #1984)
+- Fixed examples using 'rangelength' rule (bug #2421)
+    </notes>
+  </release>
   <release>
     <version>3.2.3</version>
     <date>2004-06-28</date>
