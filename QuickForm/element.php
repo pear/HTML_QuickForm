@@ -360,7 +360,9 @@ class HTML_QuickForm_element extends HTML_Common {
                 // default values are overriden by submitted
                 $value = $this->_findValue($caller->_constantValues);
                 if (null === $value) {
-                    if (isset($caller->_submitValues) && count($caller->_submitValues) > 0) {
+                    if (isset($caller->_submitValues) &&
+                        count($caller->_submitValues) > 0 &&
+                        $this->_findValue($caller->_submitValues) !== null) {
                         $value = $this->_findValue($caller->_submitValues);
                     } else {
                         $value = $this->_findValue($caller->_defaultValues);
