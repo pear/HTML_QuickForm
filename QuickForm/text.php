@@ -38,7 +38,7 @@ class HTML_QuickForm_text extends HTML_QuickForm_input {
      * Class constructor
      * 
      * @param     string    $elementName    (optional)Input field name attribute
-     * @param     string    $value          (optional)Input field value
+     * @param     string    $elementLabel   (optional)Input field label
      * @param     mixed     $attributes     (optional)Either a typical HTML attribute string 
      *                                      or an associative array
      * @since     1.0
@@ -65,9 +65,9 @@ class HTML_QuickForm_text extends HTML_QuickForm_input {
      * @return    void
      * @throws    
      */
-    function setSize($size="")
+    function setSize($size='')
     {
-        $this->updateAttributes(array("size"=>$size));
+        $this->updateAttributes(array('size'=>$size));
     } //end func setSize
 
     // }}}
@@ -82,9 +82,9 @@ class HTML_QuickForm_text extends HTML_QuickForm_input {
      * @return    void
      * @throws    
      */
-    function setMaxlength($maxlength="")
+    function setMaxlength($maxlength='')
     {
-        $this->updateAttributes(array("maxlength"=>$maxlength));
+        $this->updateAttributes(array('maxlength'=>$maxlength));
     } //end func setMaxlength
 
     // }}}
