@@ -223,7 +223,7 @@ class HTML_QuickForm_textarea extends HTML_QuickForm_element {
         $html = "$tabs<pre>" . $this->_value . "</pre>";
         if ($this->_persistantFreeze) {
             $html .= '<input type="hidden" name="' . 
-                $this->getName() . '" value="' . $this->_value . '" />';
+                $this->getName() . '" value="' . htmlspecialchars($this->_value) . '" />';
         }
         return $html;
     } //end func getFrozenHtml
