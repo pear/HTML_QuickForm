@@ -104,9 +104,14 @@ class HTML_QuickForm_Validate
             $rule->addData($ruleName, $data1, $data2);
             $GLOBALS['_HTML_QuickForm_registered_rules'][$ruleName] = $GLOBALS['_HTML_QuickForm_registered_rules']['callback'];
 
+        } elseif (is_object($data1)) {
+            // An instance of HTML_QuickForm_Rule
+            $this->_rules[get_class($data1)] = $data1;
+            $GLOBALS['_HTML_QuickForm_registered_rules'][$ruleName] = array(get_class($data1), null);
+
         } else {
-            // New rule
-            $GLOBALS['_HTML_QuickForm_registered_rules'][$ruleName] = array($data1, $data2);
+            // Rule class name
+            $GLOBALS['_HTML_QuickForm_registered_rules'][$ruleName] = array(strtolower($data1), $data2);
         }
     } // end func registerRule
 
