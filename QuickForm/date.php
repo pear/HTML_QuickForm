@@ -367,7 +367,7 @@ class HTML_QuickForm_date extends HTML_QuickForm_element
      * @return    void
      * @throws    
      */
-    function onQuickFormEvent($event, $arg, &$caller)
+    function onQuickFormEvent($event, $arg, &$callerLocal)
     {
         global $caller;
         // make it global so we can access it in any of the other methods if needed
