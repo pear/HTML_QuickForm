@@ -1355,7 +1355,7 @@ class HTML_QuickForm extends HTML_Common {
         }
         $elementType = $this->getElementType($elementName);
         if ($elementType == 'file') {
-            return $this->_submitFiles[$elementName];
+            return isset($this->_submitFiles[$elementName]) ? $this->_submitFiles[$elementName] : null;
         } elseif ($elementType == 'group') {
             $group =& $this->getElement($elementName);
             $values = null;
