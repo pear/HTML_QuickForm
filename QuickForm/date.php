@@ -70,7 +70,7 @@ class HTML_QuickForm_date extends HTML_QuickForm_element
                         ),
                         "hu"    => array (
                             "weekdays_short"=> array ("V", "H", "K", "Sze", "Cs", "P", "Szo"),
-                            "weekdays_long" => array ("vasárnap", "hétfo_", "kedd", "szerda", "csütörtök", "péntek", "szombat"),
+                            "weekdays_long" => array ("vasárnap", "hétfõ", "kedd", "szerda", "csütörtök", "péntek", "szombat"),
                             "months_short"  => array ("jan", "feb", "márc", "ápr", "máj", "jún", "júl", "aug", "szept", "okt", "nov", "dec"),
                             "months_long"   => array ("január", "február", "március", "április", "május", "június", "július", "augusztus", "szeptember", "október", "november", "december")
                         ),
