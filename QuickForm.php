@@ -827,7 +827,7 @@ class HTML_QuickForm extends HTML_Common {
             }
         }
         if (!$this->isRuleRegistered($type)) {
-            PEAR::raiseError(null, QUICKFORM_INVALID_RULE, null, E_USER_WARNING, "Rule '$type' is not registered in HTML_QuickForm::addRule()", 'HTML_QuickForm_Error', true);
+            return PEAR::raiseError(null, QUICKFORM_INVALID_RULE, null, E_USER_WARNING, "Rule '$type' is not registered in HTML_QuickForm::addRule()", 'HTML_QuickForm_Error', true);
         }
         if ($type == 'required' || $type == 'uploadedfile') {
             $this->_required[] = $element;
@@ -866,10 +866,11 @@ class HTML_QuickForm extends HTML_Common {
      * @param    string     $type          (optional)Rule type use getRegisteredType to get types
      * @param    string     $format        (optional)Required for extra rule data
      * @param    int        $howmany       (optional)How many elements to validate in the group (0 for all)
+     * @param    string     $validation    (optional)Where to perform validation: "server", "client"
      * @since    2.5
      * @access   public
      */
-    function addGroupRule($group, $arg1, $type='', $format='', $howmany=0)
+    function addGroupRule($group, $arg1, $type='', $format='', $howmany=0, $validation = 'server')
     {
         if (!$this->elementExists($group)) {
             return PEAR::raiseError(null, QUICKFORM_UNREGISTERED_ELEMENT, null, E_USER_WARNING, "Group '$group' does not exist in HTML_QuickForm::addGroupRule()", 'HTML_QuickForm_Error', true);
@@ -885,6 +886,9 @@ class HTML_QuickForm extends HTML_Common {
                     foreach ($rules as $rule) {
                         $format = (isset($rule[2])) ? $rule[2] : '';
                         $type = $rule[1];
+                        if (!$this->isRuleRegistered($type)) {
+                            return PEAR::raiseError(null, QUICKFORM_INVALID_RULE, null, E_USER_WARNING, "Rule '$type' is not registered in HTML_QuickForm::addGroupRule()", 'HTML_QuickForm_Error', true);
+                        }
                         $this->_rules[$group][] = array('type'        => $type,
                                                         'format'      => $format, 
                                                         'message'     => $rule[0],
@@ -900,13 +904,19 @@ class HTML_QuickForm extends HTML_Common {
                 }
             }
         } elseif (is_string($arg1)) {
+            if (!$this->isRuleRegistered($arg1)) {
+                return PEAR::raiseError(null, QUICKFORM_INVALID_RULE, null, E_USER_WARNING, "Rule '$type' is not registered in HTML_QuickForm::addGroupRule()", 'HTML_QuickForm_Error', true);
+            }
             $this->_rules[$group][] = array('type'       => $type,
                                             'format'     => $format, 
                                             'message'    => $arg1,
-                                            'validation' => 'server',
+                                            'validation' => $validation,
                                             'howmany'    => $howmany);
             if ($type == 'required') {
                 $this->_required[] = $group;
+            }
+            if ($validation == 'client') {
+                $this->updateAttributes(array('onsubmit'=>'return validate_'.$this->_attributes['name'] . '();'));
             }
         }
     } // end func addGroupRule
@@ -1056,7 +1066,7 @@ class HTML_QuickForm extends HTML_Common {
      */
     function isRuleRegistered($name)
     {
-        return in_array($name, array_keys($this->_registeredRules));
+        return isset($this->_registeredRules[$name]);
     } // end func isRuleRegistered
 
     // }}}
