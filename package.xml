@@ -69,7 +69,6 @@ Features:
 - Added support for multiple labels in ITStatic and ITDynamic renderers (Jon Wood, Alexey, Bertrand)
 
 - Added client-side validation parameter to addGroupRule() (Bertrand Mansion)
-- Modified validation logic for group elements when 'howmany' parameter is set (Alexey Borzov)
 
 - getSubmitValues() can now return uploaded files (Markus Wolff, Alexey Borzov)
 - Added new methods set/getMaxFileSize (Tommy Ipsen)
