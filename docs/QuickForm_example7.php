@@ -70,8 +70,13 @@ $form->addElementGroup($buttons);
 $form->addGroupRule('phoneNo', 'Please fill all phone fields', 'required');
 $form->addGroupRule('phoneNo', 'Values must be numeric', 'numeric');
 
+// Validate the radio buttons
+$form->addRule('iradYesNo', 'Check Yes or No', 'required');
+// This can also be done using:
+// $form->addGroupRule('iradYesNo', 'Radio is required', 'required', null, 1);
+
 // At least one element is required
-$form->addGroupRule('ichkABC', 'Please check at least one box', 'required', '', 1);
+$form->addGroupRule('ichkABC', 'Please check at least one box', 'required', null, 1);
 
 // More complex validation rules for groups
 $IDRules['lastname'][0] = array('Name is letters only', 'lettersonly');
