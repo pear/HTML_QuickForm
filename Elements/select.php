@@ -376,7 +376,8 @@ class HTML_QuickForm_select extends HTML_QuickForm_element {
                 }
                 $attrString = $this->_getAttrString($option['attr']);
                 $strHtml .=
-                    '<option' . $attrString . '>' . $option['text'] . '</option>';
+                    '<option' . $attrString . '>' .
+                    htmlentities($option['text']) . '</option>';
             }
             $strHtml .= $tabs . '</select>';
         }
