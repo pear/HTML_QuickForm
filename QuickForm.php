@@ -215,9 +215,10 @@ class HTML_QuickForm extends HTML_Common {
      * @param    string      $action            (optional)Form's action
      * @param    string      $target            (optional)Form's target defaults to '_self'
      * @param    mixed       $attributes        (optional)Extra attributes for <form> tag
+     * @param    bool        $trackSubmit       (optional)Whether to track if the form was submitted by adding a special hidden field
      * @access   public
      */
-    function HTML_QuickForm($formName='', $method='post', $action='', $target='_self', $attributes=null)
+    function HTML_QuickForm($formName='', $method='post', $action='', $target='_self', $attributes=null, $trackSubmit = false)
     {
         HTML_Common::HTML_Common($attributes);
         $method = (strtoupper($method) == 'GET') ? 'get' : 'post';
@@ -225,12 +226,18 @@ class HTML_QuickForm extends HTML_Common {
         $target = (empty($target) || $target == '_self') ? array() : array('target' => $target);
         $attributes = array('action'=>$action, 'method'=>$method, 'name'=>$formName, 'id'=>$formName) + $target;
         $this->updateAttributes($attributes);
-        if (1 == get_magic_quotes_gpc()) {
-            $this->_submitValues = $this->_recursiveFilter('stripslashes', 'get' == $method? $_GET: $_POST);
-        } else {
-            $this->_submitValues = 'get' == $method? $_GET: $_POST;
+        if (!$trackSubmit || isset($_REQUEST['_qf__' . $formName])) {
+            if (1 == get_magic_quotes_gpc()) {
+                $this->_submitValues = $this->_recursiveFilter('stripslashes', 'get' == $method? $_GET: $_POST);
+            } else {
+                $this->_submitValues = 'get' == $method? $_GET: $_POST;
+            }
+            $this->_submitFiles =& $_FILES;
         }
-        $this->_submitFiles =& $_FILES;
+        if ($trackSubmit) {
+            unset($this->_submitValues['_qf__' . $formName]);
+            $this->addElement('hidden', '_qf__' . $formName, null);
+        }
     } // end constructor
 
     // }}}
@@ -712,7 +719,9 @@ class HTML_QuickForm extends HTML_Common {
         if (isset($this->_submitValues[$elementName])) {
             $value = $this->_submitValues[$elementName];
             if (is_array($value) && isset($this->_submitFiles[$elementName])) {
-                $value = @array_merge($value, $this->_submitFiles[$elementName]);
+                foreach ($this->_submitFiles[$elementName] as $k => $v) {
+                    $value = @array_merge_recursive($value, $this->_reindexFiles($this->_submitFiles[$elementName][$k], $k));
+                }
             }
 
         } elseif ('file' == $this->getElementType($elementName)) {
@@ -750,6 +759,29 @@ class HTML_QuickForm extends HTML_Common {
         }
         return $value;
     } // end func getSubmitValue
+
+    // }}}
+    // {{{ _reindexFiles()
+
+   /**
+    * A helper function to change the indexes in $_FILES array
+    *
+    * @param  mixed   Some value from the $_FILES array
+    * @param  string  The key from the $_FILES array that should be appended
+    * @return array
+    */
+    function _reindexFiles($value, $key)
+    {
+        if (!is_array($value)) {
+            return array($key => $value);
+        } else {
+            $ret = array();
+            foreach ($value as $k => $v) {
+                $ret[$k] = $this->_reindexFiles($v, $key);
+            }
+            return $ret;
+        }
+    }
 
     // }}}
     // {{{ getElementError()
