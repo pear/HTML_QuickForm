@@ -19,7 +19,7 @@
 //
 // $Id$
 
-require_once("HTML/Common.php");
+require_once('HTML/Common.php');
 
 /**
  * Base class for form elements
@@ -41,7 +41,7 @@ class HTML_QuickForm_element extends HTML_Common {
      * @since     1.3
      * @access    private
      */
-    var $_label = "";
+    var $_label = '';
 
     /**
      * Form element type
@@ -231,7 +231,7 @@ class HTML_QuickForm_element extends HTML_Common {
         if (!empty($value)) {
             $html = $value;
         } else {
-            $html = 'N/A';
+            $html = '&nbsp;';
         }
         if ($this->_persistantFreeze) {
             $html .= '<input type="hidden" name="' . 
@@ -328,7 +328,7 @@ class HTML_QuickForm_element extends HTML_Common {
     function onQuickFormEvent($event, $arg, &$callerLocal)
     {
         global $caller;
-        // make it global so we can access it any of the other methods if needed
+        // make it global so we can access it in any of the other methods if needed
         $caller = $callerLocal;
         $className = get_class($this);
         switch ($event) {
