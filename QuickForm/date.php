@@ -98,8 +98,8 @@ class HTML_QuickForm_date extends HTML_QuickForm_group
         'de'    => array (
             'weekdays_short'=> array ('So', 'Mon', 'Di', 'Mi', 'Do', 'Fr', 'Sa'),
             'weekdays_long' => array ('Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'),
-            'months_short'  => array ('Jan', 'Feb', 'Marz', 'April', 'Mai', 'Juni', 'Juli', 'Aug', 'Sept', 'Okt', 'Nov', 'Dez'),
-            'months_long'   => array ('Januar', 'Februar', 'Marz', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember')
+            'months_short'  => array ('Jan', 'Feb', 'März', 'April', 'Mai', 'Juni', 'Juli', 'Aug', 'Sept', 'Okt', 'Nov', 'Dez'),
+            'months_long'   => array ('Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember')
         ),
         'fr'    => array (
             'weekdays_short'=> array ('Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'),
@@ -159,7 +159,7 @@ class HTML_QuickForm_date extends HTML_QuickForm_group
             'weekdays_short'=> array ('Ned', 'Pon', 'Uto', 'Str', 'Štv', 'Pia', 'Sob'),
             'weekdays_long' => array ('Nede¾a', 'Pondelok', 'Utorok', 'Streda', 'Štvrtok', 'Piatok', 'Sobota'),
             'months_short'  => array ('Jan', 'Feb', 'Mar', 'Apr', 'Máj', 'Jún', 'Júl', 'Aug', 'Sep', 'Okt', 'Nov', 'Dec'),
-            'months_long'   => array ('Január', 'Ferbruár', 'Marec', 'Apríl', 'Máj', 'Jún', 'Júl', 'August', 'September', 'Október', 'November', 'December')
+            'months_long'   => array ('Január', 'Február', 'Marec', 'Apríl', 'Máj', 'Jún', 'Júl', 'August', 'September', 'Október', 'November', 'December')
         ),
         'cs'    => array (
             'weekdays_short'=> array ('Ne', 'Po', 'Út', 'St', 'Èt', 'Pá', 'So'),
