@@ -50,6 +50,7 @@ class HTML_QuickForm_date extends HTML_QuickForm_group
     *       F => Long names of months
     *       m => Month numbers
     *       Y => Four digit year
+    *       y => Two digit year
     *       h => 12 hour format
     *       H => 23 hour  format
     *       i => Minutes
@@ -333,7 +334,7 @@ class HTML_QuickForm_date extends HTML_QuickForm_group
     {
         if (!is_array($value)) {
             // might be a unix epoch, then we fill all possible values
-            $arr = explode('-', date('w-d-n-Y-y-h-H-i-s-a-A', (int)$value));
+            $arr = explode('-', date('w-d-n-Y-h-H-i-s-a-A', (int)$value));
             $value = array(
                 'D' => $arr[0],
                 'l' => $arr[0],
