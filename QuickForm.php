@@ -390,7 +390,7 @@ class HTML_QuickForm extends HTML_Common {
                             $constantValues = $this->_recursiveFilter($val, $constantValues);
                         }
                     }
-                } elseif (!$this->is_callable($filter)) {
+                } elseif (!is_callable($filter)) {
                     return PEAR::raiseError(null, QUICKFORM_INVALID_FILTER, null, E_USER_WARNING, "Callback function does not exist in QuickForm::setConstants()", 'HTML_QuickForm_Error', true);
                 } else {
                     $constantValues = $this->_recursiveFilter($filter, $constantValues);
