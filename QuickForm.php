@@ -498,7 +498,7 @@ class HTML_QuickForm extends HTML_Common {
      *
      * @param    string  $element       Form element name
      * @param    string  $message       Message to display for invalid data
-     * @param    int     $type          Rule type use getRegisteredType to get types
+     * @param    int     $type          Rule type use getRegisteredRules to get types
      * @param    string  $format        (optional)Required for extra rule data
      * @param    int     $validation    (optional)Where to perform validation: "server", "client"
      * @since     1.0
@@ -836,6 +836,29 @@ class HTML_QuickForm extends HTML_Common {
     {
         return in_array($element, $this->_frozen);
     } // end func isElementFrozen
+
+    /**
+     * Sets JavaScript warning messages
+     * @since     1.5
+     * @access    public
+     * @return    void
+     */
+    function setJsWarnings($pref, $post)
+    {
+        $this->_jsPrefix = $pre;
+        $this->_jsPostfix = $post;
+    } // end func setJsWarnings
+    
+    /**
+     * Sets required-note
+     * @since     1.5
+     * @access    public
+     * @return    void
+     */
+    function setRequiredNote($note)
+    {
+        $this->_requiredNote = $note;
+    } // end func setRequiredNote
 
     /**
      * Performs the server side validation
