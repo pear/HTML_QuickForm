@@ -89,15 +89,6 @@ class HTML_QuickForm_element extends HTML_Common {
         if (isset($elementLabel)) {
             $this->setLabel($elementLabel);
         }
-        $vars = array_merge($_GET, $_POST);
-        if (isset($vars[$this->getName()])) {
-            if (is_string($vars[$this->getName()]) && get_magic_quotes_gpc() == 1) {
-                $submitValue = stripslashes($vars[$this->getName()]);
-            } else {
-                $submitValue = $vars[$this->getName()];
-            }
-            $this->setValue($submitValue);
-        }
     } //end constructor
     
     // }}}
@@ -354,12 +345,21 @@ class HTML_QuickForm_element extends HTML_Common {
                 $this->$className($arg[0], $arg[1], $arg[2], $arg[3], $arg[4]);
                 break;
             case 'setDefault':
-                $vars = array_merge($_GET, $_POST);
-                if (!isset($vars[$this->getName()])) {
-                    $this->setValue($arg);
+                // In form display, default value is always overidden by submitted value
+                $elementName = $this->getName();
+                if (isset($caller->_submitValues[$elementName])) {
+                    $value = $caller->_submitValues[$elementName];
+                } else {
+                    $value = $arg;
                 }
+                if (is_string($value) && get_magic_quotes_gpc() == 1) {
+                    $value = stripslashes($value);
+                }
+                $this->setValue($value);
                 break;
             case 'setConstant':
+                // In form display, constant value overides submitted value
+                // but submitted value is kept in _submitValues array
                 $this->setValue($arg);
                 break;
             case 'setGroupValue':
