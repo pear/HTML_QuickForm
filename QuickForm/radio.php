@@ -72,7 +72,7 @@ class HTML_QuickForm_radio extends HTML_QuickForm_input {
         $this->_persistantFreeze = true;
         $this->setType('radio');
         $this->_text = $text;
-        $vars = array_merge($GLOBALS['HTTP_GET_VARS'], $GLOBALS['HTTP_POST_VARS']);
+        $vars = array_merge($_GET, $_POST);
         if (isset($vars[$this->getName()]) && $vars[$this->getName()] == $this->getValue()) {
             $this->setChecked(true);
         }
@@ -208,7 +208,7 @@ class HTML_QuickForm_radio extends HTML_QuickForm_input {
                 $this->$className($arg[0], $arg[1], $arg[2], $arg[3], $arg[4]);
                 break;
             case 'setDefault':
-                $vars = array_merge($GLOBALS['HTTP_GET_VARS'], $GLOBALS['HTTP_POST_VARS']);
+                $vars = array_merge($_GET, $_POST);
                 if (!isset($vars[$this->getName()])) {
                     if ($arg == $this->getValue()) {
                         $this->setChecked(true);

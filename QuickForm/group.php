@@ -89,7 +89,7 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
         if (isset($elementLabel)) {
             $this->setLabel($elementLabel);
         }
-        $vars = array_merge($GLOBALS['HTTP_GET_VARS'], $GLOBALS['HTTP_POST_VARS']);
+        $vars = array_merge($_GET, $_POST);
         if (isset($vars[$this->getName()])) {
             if (is_string($vars[$this->getName()]) && get_magic_quotes_gpc() == 1) {
                 $submitValue = stripslashes($vars[$this->getName()]);
@@ -321,7 +321,7 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
                 $this->$className($arg[0], $arg[1], $arg[2], $arg[3]);
                 break;
             case 'setDefault':
-                $vars = array_merge($GLOBALS['HTTP_GET_VARS'], $GLOBALS['HTTP_POST_VARS']);
+                $vars = array_merge($_GET, $_POST);
                 if (!isset($vars[$this->getName()])) {
                     $this->setValue($arg);
                 }
