@@ -69,8 +69,9 @@ $form->addElement('html', '
     </td>
   </tr>
     <td align="left">');
-$form->addElement('text','tmp_text[ab]',null,'size="10"');
-$form->addElement('text','tmp_text[bc]',null,'size="10"');
+$txAb =& $form->createElement('text', 'ab', null, 'size="10"');
+$txBc =& $form->createElement('text', 'bc', null, 'size="10"');
+$form->addGroup(array(&$txAb, &$txBc), 'tmp_text', null, '');
 $form->addElement('html', '
     </td>
     <td align="right">
