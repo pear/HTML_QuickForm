@@ -118,9 +118,9 @@ class HTML_QuickForm_file extends HTML_QuickForm_input
         $className = get_class($this);
         switch ($event) {
             case 'addElement':
-                $form->updateAttributes(array("method"=>"POST", "enctype"=>"multipart/form-data"));
+                $caller->updateAttributes(array("method"=>"POST", "enctype"=>"multipart/form-data"));
                 if (!$caller->elementExists('MAX_FILE_SIZE')) {
-                    $err = &$form->addElement('hidden', 'MAX_FILE_SIZE', $form->_maxFileSize);
+                    $err = &$caller->addElement('hidden', 'MAX_FILE_SIZE', $caller->_maxFileSize);
                     if (PEAR::isError($err)) {
                         return $err;
                     }
