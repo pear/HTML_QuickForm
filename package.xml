@@ -82,6 +82,7 @@ Features:
 - Partial fix for bug #202 (ArraySmarty renderer broke on elements with
   brackets in names)
 - Fixed bug #493 (non-existant method in setConstants())
+- Fixed bug #209 (Flexy renderer broken with groups having '_' in names)
     </notes>
     <filelist>
       <dir name="/" baseinstalldir="HTML">
