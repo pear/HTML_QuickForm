@@ -101,7 +101,7 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
      * @return    void
      * @throws    
      */
-    function HTML_QuickForm_group($elementName=null, $elementLabel=null, $elements=null, $separator=null, $appendName = null)
+    function HTML_QuickForm_group($elementName=null, $elementLabel=null, $elements=null, $separator=null, $appendName = true)
     {
         HTML_Common::HTML_Common();
         if (isset($elementName)) {
