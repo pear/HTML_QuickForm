@@ -1413,7 +1413,12 @@ class HTML_QuickForm extends HTML_Common {
                         break;
                     case 'function':
                         if (method_exists($this, $ruleData[1])) {
-                            if (!$this->$ruleData[1]($elementName, $this->_submitValues[$elementName], $format)) {
+                        	if (isset($this->_submitValues[$elementName])) {
+                        		$element = $this->_submitValues[$elementName];
+                        	} elseif (isset($this->_submitFiles[$elementName])) {
+                        		$element = $this->_submitFiles[$elementName];
+                        	}
+                            if (!$this->$ruleData[1]($elementName, $element, $format)) {
                                 $this->_errors[$elementName] = $message;
                                 continue 2;
                             }
@@ -1491,7 +1496,7 @@ class HTML_QuickForm extends HTML_Common {
     function _ruleCheckMimeType($element, $value, $mimeType)
     {
         if (is_array($mimeType)) {
-            return in_array($this->_submitFiles[$element]['type'],$mimeType);
+            return in_array($this->_submitFiles[$element]['type'], $mimeType);
         }
         return $this->_submitFiles[$element]['type'] == $mimeType;
     } // end func _ruleCheckMimeType
