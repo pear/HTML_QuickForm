@@ -22,16 +22,16 @@
 
 $GLOBALS['_HTML_QuickForm_registered_rules'] = array(
     'required'      => array('html_quickform_rule_required', 'HTML/QuickForm/Rule/Required.php'),
-    'maxlength'     => array('html_quickform_rule_range', 	 'HTML/QuickForm/Rule/Range.php'),
-    'minlength'     => array('html_quickform_rule_range', 	 'HTML/QuickForm/Rule/Range.php'),
-    'rangelength'   => array('html_quickform_rule_range', 	 'HTML/QuickForm/Rule/Range.php'),
-    'email'         => array('html_quickform_rule_email', 	 'HTML/QuickForm/Rule/Email.php'),
-    'regex'         => array('html_quickform_rule_regex', 	 'HTML/QuickForm/Rule/Regex.php'),
-    'lettersonly'   => array('html_quickform_rule_regex', 	 'HTML/QuickForm/Rule/Regex.php'),
-    'alphanumeric'  => array('html_quickform_rule_regex', 	 'HTML/QuickForm/Rule/Regex.php'),
-    'numeric'       => array('html_quickform_rule_regex', 	 'HTML/QuickForm/Rule/Regex.php'),
-    'nopunctuation' => array('html_quickform_rule_regex', 	 'HTML/QuickForm/Rule/Regex.php'),
-    'nonzero'       => array('html_quickform_rule_regex', 	 'HTML/QuickForm/Rule/Regex.php'),
+    'maxlength'     => array('html_quickform_rule_range',    'HTML/QuickForm/Rule/Range.php'),
+    'minlength'     => array('html_quickform_rule_range',    'HTML/QuickForm/Rule/Range.php'),
+    'rangelength'   => array('html_quickform_rule_range',    'HTML/QuickForm/Rule/Range.php'),
+    'email'         => array('html_quickform_rule_email',    'HTML/QuickForm/Rule/Email.php'),
+    'regex'         => array('html_quickform_rule_regex',    'HTML/QuickForm/Rule/Regex.php'),
+    'lettersonly'   => array('html_quickform_rule_regex',    'HTML/QuickForm/Rule/Regex.php'),
+    'alphanumeric'  => array('html_quickform_rule_regex',    'HTML/QuickForm/Rule/Regex.php'),
+    'numeric'       => array('html_quickform_rule_regex',    'HTML/QuickForm/Rule/Regex.php'),
+    'nopunctuation' => array('html_quickform_rule_regex',    'HTML/QuickForm/Rule/Regex.php'),
+    'nonzero'       => array('html_quickform_rule_regex',    'HTML/QuickForm/Rule/Regex.php'),
     'callback'      => array('html_quickform_rule_callback', 'HTML/QuickForm/Rule/Callback.php')
 );
 
@@ -138,21 +138,22 @@ class HTML_QuickForm_Validate
      * @param     mixed    $values          Can be a scalar or an array of values 
      *                                      to be validated
      * @param     mixed    $options         Options used by the rule
+     * @param     mixed    $multiple        Whether to validate an array of values altogether
      * @access    public
      * @return    mixed    true if no error found, int of valid values (when an array of values is given) or false if error
      */
-    function validate($ruleName, $values, $options = null)
+    function validate($ruleName, $values, $options = null, $multiple = false)
     {
         $rule =& $this->getRule($ruleName);
 
-        if (is_array($values)) {
-	        $result = 0;
-    	    foreach ($values as $value) {
-    	        if ($rule->validate($value, $options) === true) {
-    	            $result++;
-    	        }
-	        }
-        	return ($result == 0) ? false : $result;
+        if (is_array($values) && !$multiple) {
+            $result = 0;
+            foreach ($values as $value) {
+                if ($rule->validate($value, $options) === true) {
+                    $result++;
+                }
+            }
+            return ($result == 0) ? false : $result;
         } else {
             return $rule->validate($values, $options);
         }

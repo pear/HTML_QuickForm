@@ -888,9 +888,6 @@ class HTML_QuickForm extends HTML_Common {
                       'validation'  => $validation,
                       'reset'       => $reset);
 
-        if ($type != 'function' && $this->getElementType($element) == 'group') {
-            $rule['howmany'] = 1;
-        }
         $this->_rules[$element][] = $rule;
     } // end func addRule
 
@@ -1419,7 +1416,11 @@ class HTML_QuickForm extends HTML_Common {
                     // Element is not required
                     continue 2;
                 }
-                $result = $validate->validate($rule['type'], $submitValue, $rule['format']);
+                if (is_array($submitValue) && !isset($rule['howmany'])) {
+                    $result = $validate->validate($rule['type'], $submitValue, $rule['format'], true);
+                } else {
+                    $result = $validate->validate($rule['type'], $submitValue, $rule['format'], false);
+                }
 
                 if ($result === false || (!empty($rule['howmany']) && $rule['howmany'] > (int)$result)) {
                     if (isset($rule['group'])) {
