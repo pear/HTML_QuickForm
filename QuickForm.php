@@ -37,7 +37,8 @@ $GLOBALS['HTML_QUICKFORM_ELEMENT_TYPES'] =
             'select'        =>array('HTML/QuickForm/select.php','HTML_QuickForm_select'),
             'text'          =>array('HTML/QuickForm/text.php','HTML_QuickForm_text'),
             'textarea'      =>array('HTML/QuickForm/textarea.php','HTML_QuickForm_textarea'),
-            'link'          =>array('HTML/QuickForm/link.php','HTML_QuickForm_link')
+            'link'          =>array('HTML/QuickForm/link.php','HTML_QuickForm_link'),
+            'advcheckbox'   =>array('HTML/QuickForm/advcheckbox.php','HTML_QuickForm_advcheckbox'),
         );
 
 // {{{ error codes
