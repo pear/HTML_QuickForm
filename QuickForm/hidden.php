@@ -72,6 +72,21 @@ class HTML_QuickForm_hidden extends HTML_QuickForm_input {
     } //end func freeze
 
     // }}}
+    // {{{ accept()
+
+   /**
+    * Accepts a renderer
+    *
+    * @param object     An HTML_QuickForm_Renderer object
+    * @access public
+    * @return void 
+    */
+    function accept(&$renderer)
+    {
+        $renderer->renderHidden($this);
+    } // end func accept
+
+    // }}}
 
 } //end class HTML_QuickForm_hidden
 ?>
