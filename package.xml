@@ -57,41 +57,29 @@ Features:
     </maintainer>
   </maintainers>
   <release>
-    <version>3.2</version>
-    <date>2003-11-05</date>
+    <version>3.2.1</version>
+    <date>2003-12-??</date>
     <state>stable</state>
     <notes>
-* Major changes in this release
-Refactored form validation using Strategy/Factory/Singleton patterns. Rules are now
-processed by subclasses of HTML_QuickForm_Rule class, HTML_QuickForm_RuleRegistry manages
-registering the rules and instantiating the rule classes. Backwards compatibility was
-completely preserved. (Bertrand Mansion)
-- Added ability to set a rule on several elements. Added 'compare' rule that compares the 
-  values of two form elements  to take advantage of this. (Alexey Borzov)
-- New 'callback' rule and an improved 'email' rule.
-- Function-based rules can now be used without registering.
-- Added 2 new examples for built-in and custom rules. (Alexey Borzov)
-- Javascript validation opportunities were enhanced, validation of groups, radios, checkboxes, 
-  selects now works correctly (see also PEAR bug #184) (Alexey Borzov, Hodicska Gergely)
-
-* Other additions and changes
-- Added 'autocomplete' element. (Matteo Di Giovinazzo)
-- Added possibility to check whether form was actually submitted (see also bug #185). (Alexey Borzov)
-- QuickForm now correctly handles 'file' elements with [] in name, 'file' elements inside groups. (Alexey Borzov)
-- 'date' element will display year select in reverse order if 'minYear' &gt; 'maxYear'. (Alexey Borzov)
-- Added possibility to set increment value for some 'date' element selects. (Alexey Borzov)
-- Added 'y' format to 'date' element. (Bertrand Mansion)
-
-* Migration to 3.2
-- Features that were marked deprecated in previous releases are REMOVED
-- 'emailorblank' rule was REMOVED, use 'email' rule (see also PEAR bug #34)
+* Additions and changes
+- The usage examples were significantly redone to better reflect current
+  package functionality.
+- Added Armenian translation for date element (Vahe Khachikyan)
+- validate() throws a PEAR error if rule added via addFormRule() returns junk
+  (see also bugs #243 and #338)
 
 * Bugfixes
-- Fixed PEAR bug #140 (empty label tags for checkboxes and radios)
-- Fixed PEAR bug #175 (error in 'date' element's German translation)
-- Fixed PEAR bug #70 (Flexy renderer didn't handle multiple labels for element)
-- Fixed PEAR bug #152 (JS function for 'hierselect' element not printed)
-- ArraySmarty renderer correctly processes groups with '_' in names (Ian Duggan)
+- Fixed bug #351 (incorrect values set for groups with weird names)
+- Required elements in groups are once again marked correctly
+- Fixed setValue() method of date element (thanks to Mike Carter, 
+  see also bug #388)
+- Fixed bug #403 (typo in Rule_Callback::getValidationScript())
+- Fixed bug #356 (javascript generation for groups with $appendName = false)
+- Fixed bug #328 (js values in hierselect not escaped properly)
+- Fixed bug #302 (better support for RFC 2821 and RFC 2822 in Rule_Email)
+- Fixed bug #253 (ArraySmarty renderer broken with radiobuttons)
+- Partial fix for bug #202 (ArraySmarty renderer broke on elements with
+  brackets in names)
     </notes>
     <filelist>
       <dir name="/" baseinstalldir="HTML">
@@ -144,13 +132,10 @@ completely preserved. (Bertrand Mansion)
           </dir>
         </dir>
         <dir name="docs">
-          <file role="doc">QuickForm_example.php</file>
-          <file role="doc">QuickForm_example2.php</file>
-          <file role="doc">QuickForm_example3.php</file>
-          <file role="doc">QuickForm_example4.php</file>
-          <file role="doc">QuickForm_example5.php</file>
-          <file role="doc">QuickForm_example6.php</file>
-          <file role="doc">QuickForm_example7.php</file>
+          <file role="doc">elements.php</file>
+          <file role="doc">filters.php</file>
+          <file role="doc">formrule.php</file>
+          <file role="doc">groups.php</file>
           <file role="doc">rules-builtin.php</file>
           <file role="doc">rules-custom.php</file>
           <dir name="renderers">
@@ -190,6 +175,44 @@ completely preserved. (Bertrand Mansion)
     </deps>
   </release>
   <changelog>
+  <release>
+    <version>3.2</version>
+    <date>2003-11-05</date>
+    <state>stable</state>
+    <notes>
+* Major changes in this release
+Refactored form validation using Strategy/Factory/Singleton patterns. Rules are now
+processed by subclasses of HTML_QuickForm_Rule class, HTML_QuickForm_RuleRegistry manages
+registering the rules and instantiating the rule classes. Backwards compatibility was
+completely preserved. (Bertrand Mansion)
+- Added ability to set a rule on several elements. Added 'compare' rule that compares the 
+  values of two form elements  to take advantage of this. (Alexey Borzov)
+- New 'callback' rule and an improved 'email' rule.
+- Function-based rules can now be used without registering.
+- Added 2 new examples for built-in and custom rules. (Alexey Borzov)
+- Javascript validation opportunities were enhanced, validation of groups, radios, checkboxes, 
+  selects now works correctly (see also PEAR bug #184) (Alexey Borzov, Hodicska Gergely)
+
+* Other additions and changes
+- Added 'autocomplete' element. (Matteo Di Giovinazzo)
+- Added possibility to check whether form was actually submitted (see also bug #185). (Alexey Borzov)
+- QuickForm now correctly handles 'file' elements with [] in name, 'file' elements inside groups. (Alexey Borzov)
+- 'date' element will display year select in reverse order if 'minYear' &gt; 'maxYear'. (Alexey Borzov)
+- Added possibility to set increment value for some 'date' element selects. (Alexey Borzov)
+- Added 'y' format to 'date' element. (Bertrand Mansion)
+
+* Migration to 3.2
+- Features that were marked deprecated in previous releases are REMOVED
+- 'emailorblank' rule was REMOVED, use 'email' rule (see also PEAR bug #34)
+
+* Bugfixes
+- Fixed PEAR bug #140 (empty label tags for checkboxes and radios)
+- Fixed PEAR bug #175 (error in 'date' element's German translation)
+- Fixed PEAR bug #70 (Flexy renderer didn't handle multiple labels for element)
+- Fixed PEAR bug #152 (JS function for 'hierselect' element not printed)
+- ArraySmarty renderer correctly processes groups with '_' in names (Ian Duggan)
+    </notes>
+  </release>
   <release>
     <version>3.1.1</version>
     <date>2003-09-09</date>
