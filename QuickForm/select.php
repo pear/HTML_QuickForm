@@ -19,7 +19,7 @@
 //
 // $Id$
 
-require_once('HTML/QuickForm/Elements/element.php');
+require_once('HTML/QuickForm/element.php');
 
 /**
  * Class to dynamically create an HTML SELECT
@@ -429,7 +429,7 @@ class HTML_QuickForm_select extends HTML_QuickForm_element {
     {
         $name = $this->getName();
         $value = $this->getValue();
-        $html = "<input type=\"hidden\" name=\"$name\" value=\"$value\">\n";
+        $html = "<input type=\"hidden\" name=\"$name\" value=\"$value\" \>\n";
         return $html;
     } //end func getHidden
 

@@ -18,7 +18,7 @@
 // +----------------------------------------------------------------------+
 //
 // $Id$
-require_once("HTML/QuickForm/Elements/input.php");
+require_once("HTML/QuickForm/input.php");
 
 /**
  * HTML class for a image type element
