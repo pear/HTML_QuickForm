@@ -59,24 +59,30 @@ Features:
   </maintainers>
   <release>
     <version>3.2</version>
-    <date>2003-09-?</date>
+    <date>2003-11-??</date>
     <state>stable</state>
     <notes>
-* New additions
-- Added flexy renderer examples (Ron McClain)
+Additions and changes:
+- Added 'autocomplete' element (Matteo Di Giovinazzo)
+- Added possibility to check whether form was actually submitted
+- QuickForm now correctly handles 'file' elements with [] in name,
+  'file' elements inside groups
+- 'date' element will display year select in reverse order if 'minYear' > 'maxYear'
+- Added possibility to set increment value for some 'date' element selects
 
-* Changes
+Migration to 3.2:
+- Features that were marked deprecated in previous releases are REMOVED
+- 'emailorblank' rule was REMOVED, use 'email' rule (see also PEAR bug #34)
 
-* Bugfixes
-- Fixed a bug in HTML_QuickForm_Select found by Pascal Thuet (Bertrand Mansion)
-
-* Deprecated
-     </notes>
+Bugfixes:
+- Fixed PEAR bug #140 (empty label tags for checkboxes and radios)
+    </notes>
     <filelist>
       <dir name="/" baseinstalldir="HTML">
         <file role="php">QuickForm.php</file>
         <dir name="QuickForm">
           <file role="php">advcheckbox.php</file>
+          <file role="php">autocomplete.php</file>
           <file role="php">button.php</file>
           <file role="php">checkbox.php</file>
           <file role="php">date.php</file>
@@ -100,6 +106,8 @@ Features:
           <file role="php">text.php</file>
           <file role="php">textarea.php</file>
           <file role="php">Renderer.php</file>
+          <file role="php">Rule.php</file>
+          <file role="php">RuleRegistry.php</file>
           <dir name="Renderer">
             <file role="php">Array.php</file>
             <file role="php">ArraySmarty.php</file>
@@ -108,6 +116,15 @@ Features:
             <file role="php">ITStatic.php</file>
             <file role="php">Object.php</file>
             <file role="php">ObjectFlexy.php</file>
+            <file role="php">QuickHtml.php</file>
+          </dir>
+          <dir name="Rule">
+            <file role="php">Callback.php</file>
+            <file role="php">Compare.php</file>
+            <file role="php">Email.php</file>
+            <file role="php">Range.php</file>
+            <file role="php">Regex.php</file>
+            <file role="php">Required.php</file>
           </dir>
         </dir>
         <dir name="docs">
@@ -118,12 +135,15 @@ Features:
           <file role="doc">QuickForm_example5.php</file>
           <file role="doc">QuickForm_example6.php</file>
           <file role="doc">QuickForm_example7.php</file>
+          <file role="doc">rules-builtin.php</file>
+          <file role="doc">rules-custom.php</file>
           <dir name="renderers">
             <file role="doc">FlexyDynamic_example.php</file>
             <file role="doc">FlexyStatic_example.php</file>
             <file role="doc">ITDynamic_example.php</file>
             <file role="doc">ITDynamic_example2.php</file>
             <file role="doc">ITStatic_example.php</file>
+            <file role="doc">QuickHtml_example.php</file>
             <file role="doc">SmartyDynamic_example.php</file>
             <file role="doc">SmartyStatic_example.php</file>
             <file role="doc">labels-default.php</file>
@@ -135,8 +155,8 @@ Features:
               <file role="doc">smarty-dynamic-green.tpl</file>
               <file role="doc">smarty-dynamic.tpl</file>
               <file role="doc">smarty-static.tpl</file>
-              <file role="doc">flexy_dynamic.html</file>
-              <file role="doc">flexy_static.html</file>
+              <file role="doc">flexy-dynamic.html</file>
+              <file role="doc">flexy-static.html</file>
               <file role="doc">html.html</file>
               <file role="doc">label.html</file>
                 <dir name="styles">
@@ -154,6 +174,27 @@ Features:
     </deps>
   </release>
   <changelog>
+  <release>
+    <version>3.1.1</version>
+    <date>2003-09-09</date>
+    <state>stable</state>
+    <notes>
+* New additions
+- Added Flexy renderer with examples (Ron McClain)
+- Added QuickHtml renderer with example (Jason Rust)
+- Added possibility to add customized empty options on top of date element selects (Jason Rust)
+- Added Czech translation for date element (Tomas Zavodny)
+
+* Bugfixes
+- Fixed a bug in select element found by Pascal Thuet (Bertrand Mansion)
+- Fixed setting hierselect's values, reported by Keith Edmunds (Bertrand Mansion)
+- Fixed validate() not checking for presence of _formRules, reported by Justin Hendrickson (Alexey Borzov)
+- Fixed javascript for advcheckbox element (Jason Rust)
+
+Deprecated methods will be kept for 3.1.x releases, but will be removed in the next
+major one. Please update your code!
+     </notes>
+  </release>
   <release>
     <version>3.1</version>
     <date>2003-07-19</date>
