@@ -211,9 +211,7 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
      */
     function setElements($elements)
     {
-        foreach ($elements as $element) {
-            $this->_elements[] = $element;
-        }
+        $this->_elements = array_values($elements);
     } // end func setElements
 
     // }}}
