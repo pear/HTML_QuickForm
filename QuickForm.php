@@ -1723,18 +1723,25 @@ class HTML_QuickForm extends HTML_Common {
     /**
      * Returns an HTML version of the form
      *
+     * @param string $in_data (optional) Any extra data to insert right
+     *               before form is rendered.  Useful when using templates.
+     *
      * @return   string     Html version of the form
      * @since     1.0
      * @access   public
      */
-    function toHtml ()
+    function toHtml ($in_data = null)
     {
-        $html = "";
+        if (!is_null($in_data)) {
+            $this->addData($in_data);
+        }
+
+        $html = '';
         reset($this->_elements);
         foreach ($this->_elements as $element) {
-            if (isset($element["header"])) {
+            if (isset($element['header'])) {
                 $html .= $this->_buildHeader($element);
-            } elseif (isset($element["data"])) {
+            } elseif (isset($element['data'])) {
                 $html .= $element['data'];
             } else {
                 $html .= $this->_buildElement($element);
