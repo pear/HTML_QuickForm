@@ -46,6 +46,25 @@ $GLOBALS['HTML_QUICKFORM_ELEMENT_TYPES'] =
             'html'          =>array('HTML/QuickForm/html.php', 'HTML_QuickForm_html')
         );
 
+$GLOBALS['_HTML_QuickForm_registered_rules'] = array(
+    'required'      =>array('regex', '/(\s|\S)/'),
+    'maxlength'     =>array('regex', '/^(\s|\S){0,%data%}$/'),
+    'minlength'     =>array('regex', '/^(\s|\S){%data%,}$/'),
+    'rangelength'   =>array('regex', '/^(\s|\S){%data%}$/'),
+    'regex'         =>array('regex', '%data%'),
+    'email'         =>array('regex', '/^[a-zA-Z0-9\._-]+\@(\[?)[a-zA-Z0-9\-\.]+\.([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/'),
+    'emailorblank'  =>array('regex', '/(^$)|(^[a-zA-Z0-9\._-]+\@(\[?)[a-zA-Z0-9\-\.]+\.([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$)/'),
+    'lettersonly'   =>array('regex', '/^[a-zA-Z]+$/'),
+    'alphanumeric'  =>array('regex', '/^[a-zA-Z0-9]+$/'),
+    'numeric'       =>array('regex', '/(^-?\d\d*\.\d*$)|(^-?\d\d*$)|(^-?\.\d\d*$)/'),
+    'nopunctuation' =>array('regex', '/^[^().\/\*\^\?#!@$%+=,\"\'><~\[\]{}]+$/'),
+    'nonzero'       =>array('regex', '/^[1-9][0-9]+/'),
+    'uploadedfile'  =>array('function', '_ruleIsUploadedFile'),
+    'maxfilesize'   =>array('function', '_ruleCheckMaxFileSize'),
+    'mimetype'      =>array('function', '_ruleCheckMimeType'),
+    'filename'      =>array('function', '_ruleCheckFileName')
+);
+
 // {{{ error codes
 
 /*
@@ -181,6 +200,13 @@ class HTML_QuickForm extends HTML_Common {
     var $_rules = array();
 
     /**
+     * Form rules, global variety
+     * @var     array
+     * @access  private
+     */
+    var $_formRules = array();
+
+    /**
      * Array containing the validation errors
      * @since     1.0
      * @var  array
@@ -195,40 +221,6 @@ class HTML_QuickForm extends HTML_Common {
      * @access    public
      */
     var $_requiredNote = '<span style="font-size:80%; color:#ff0000;">*</span><span style="font-size:80%;"> denotes required field</span>';
-
-    /**
-     * Array of registered element types
-     * @var       array
-     * @since     1.0
-     * @access    private
-     */
-    var $_registeredTypes = array();
-
-    /**
-     * Array of registered element types
-     * @var       array
-     * @since     1.0
-     * @access    private
-     */
-    var $_registeredRules = 
-        array(
-            'required'      =>array('regex', '/(\s|\S)/'),
-            'maxlength'     =>array('regex', '/^(\s|\S){0,%data%}$/'),
-            'minlength'     =>array('regex', '/^(\s|\S){%data%,}$/'),
-            'rangelength'   =>array('regex', '/^(\s|\S){%data%}$/'),
-            'regex'         =>array('regex', '%data%'),
-            'email'         =>array('regex', '/^[a-zA-Z0-9\._-]+\@(\[?)[a-zA-Z0-9\-\.]+\.([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/'),
-            'emailorblank'  =>array('regex', '/(^$)|(^[a-zA-Z0-9\._-]+\@(\[?)[a-zA-Z0-9\-\.]+\.([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$)/'),
-            'lettersonly'   =>array('regex', '/^[a-zA-Z]+$/'),
-            'alphanumeric'  =>array('regex', '/^[a-zA-Z0-9]+$/'),
-            'numeric'       =>array('regex', '/(^-?\d\d*\.\d*$)|(^-?\d\d*$)|(^-?\.\d\d*$)/'),
-            'nopunctuation' =>array('regex', '/^[^().\/\*\^\?#!@$%+=,\"\'><~\[\]{}]+$/'),
-            'nonzero'       =>array('regex', '/^[1-9][0-9]+/'),
-            'uploadedfile'  =>array('function', '_ruleIsUploadedFile'),
-            'maxfilesize'   =>array('function', '_ruleCheckMaxFileSize'),
-            'mimetype'      =>array('function', '_ruleCheckMimeType'),
-            'filename'      =>array('function', '_ruleCheckFileName')
-        );
 
     // }}}
     // {{{ constructor
@@ -250,7 +242,6 @@ class HTML_QuickForm extends HTML_Common {
         $target = (empty($target) || $target == '_self') ? array() : array('target' => $target);
         $attributes = array('action'=>$action, 'method'=>$method, 'name'=>$formName, 'id'=>$formName) + $target;
         $this->updateAttributes($attributes);
-        $this->_registeredTypes =& $GLOBALS['HTML_QUICKFORM_ELEMENT_TYPES'];
         $this->_submitValues = $GLOBALS['_' . strtoupper($method)];
         $this->_submitFiles =& $_FILES;
     } // end constructor
@@ -304,7 +295,7 @@ class HTML_QuickForm extends HTML_Common {
      */
     function registerRule($ruleName, $type, $data1, $data2=null)
     {
-        $this->_registeredRules[$ruleName] = array($type, $data1, $data2);
+        $GLOBALS['_HTML_QuickForm_registered_rules'] = array($type, $data1, $data2);
     } // end func registerRule
 
     // }}}
@@ -966,6 +957,29 @@ class HTML_QuickForm extends HTML_Common {
     } // end func addGroupRule
 
     // }}}
+    // {{{ addFormRule()
+
+   /**
+    * Adds a global validation rule 
+    * 
+    * This should be used when for a rule involving several fields or if
+    * you want to use some completely custom validation for your form.
+    * The rule function/method should return true in case of successful 
+    * validation and array('element name' => 'error') when there were errors.
+    * 
+    * @access   public
+    * @param    mixed   Callback, either function name or array(&$object, 'method')
+    * @throws   HTML_QuickForm_Error
+    */
+    function addFormRule($rule)
+    {
+        if (!$this->_callbackExists($rule)) {
+            return PEAR::raiseError(null, QUICKFORM_INVALID_RULE, null, E_USER_WARNING, 'Callback function does not exist in HTML_QuickForm::addFormRule()', 'HTML_QuickForm_Error', true);
+        }
+        $this->_formRules[] = $rule;
+    }
+    
+    // }}}
     // {{{ addData()
 
     /**
@@ -1106,7 +1120,7 @@ class HTML_QuickForm extends HTML_Common {
      */
     function isRuleRegistered($name)
     {
-        return isset($this->_registeredRules[$name]);
+        return isset($GLOBALS['_HTML_QuickForm_registered_rules'][$name]);
     } // end func isRuleRegistered
 
     // }}}
@@ -1121,7 +1135,7 @@ class HTML_QuickForm extends HTML_Common {
      */
     function getRegisteredRules()
     {
-        return array_keys($this->_registeredRules);
+        return array_keys($GLOBALS['_HTML_QuickForm_registered_rules']);
     } // end func getRegisteredRules
 
     // }}}
@@ -1371,7 +1385,7 @@ class HTML_QuickForm extends HTML_Common {
                 $type     = $rule['type'];
                 $message  = $rule['message'];
                 $format   = $rule['format'];
-                $ruleData = $this->_registeredRules[$type];
+                $ruleData = $GLOBALS['_HTML_QuickForm_registered_rules'][$type];
 
                 if ($elementType != 'group') {
                     if (!$this->_validateElement($target, $submitValue, $format, $ruleData)) {
@@ -1388,18 +1402,14 @@ class HTML_QuickForm extends HTML_Common {
             }
         }
 
-        if (count($this->_errors) > 0) {
-            if (is_array($files = $this->_submitFiles)) {
-                foreach ($files as $file) {
-                    if (isset($file['tmp_name']) && 
-                        $this->isUploadedFile($file['tmp_name'])) {
-                        @unlink($file['tmp_name']);
-                    }
-                }
+        // process the global rules now
+        foreach ($this->_formRules as $rule) {
+            if (true !== ($res = call_user_func($rule, $this->_submitValues, $this->_submitFiles))) {
+                $this->_errors += $res;
             }
-            return false;
         }
-        return true;
+
+        return (0 == count($this->_errors));
     } // end func validate
 
     // }}}
@@ -1766,7 +1776,7 @@ class HTML_QuickForm extends HTML_Common {
                 $message    = $rule['message'];
                 $format     = $rule['format'];
                 $reset      = (isset($rule['reset'])) ? $rule['reset'] : false;
-                $ruleData = $this->_registeredRules[$type];
+                $ruleData   = $GLOBALS['_HTML_QuickForm_registered_rules'][$type];
                 if ($validation == 'client') {
                     $index = $this->_elementIndex[$elementName];
                     if ($this->_elements[$index]->getType() == 'group' ||
