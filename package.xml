@@ -53,25 +53,18 @@ Features:
 * Major changes in this release
 
 - Renderers
-   QuickForm now uses external renderers in pair with ITX or Sigma.
-   BC is preserved with the Default renderer.
-   Renderers for other template engines are expected.
-- Filters
-   Filter functions do not have to be registered anymore.
+   QuickForm now uses external renderers to output the form. Currently 
+   available renderers are: Default - based on old toHtml() code, 
+   Array - based on old toArray() code, ITStatic and ITDynamic - these work
+   through an ITX/Sigma template engine. More renderers are expected to follow. 
 - Validation
-   Validation rules are tested in the order they are set.
-- Group validation
-   Groups can now be validated with custom functions.
+   Validation rules are tested in the order they are set. Groups can 
+   now be validated with custom functions. File validation only happens 
+   if a file is required. It is also tested if the file has been uploaded.
 - Static elements
-   Header and Static elements are treated like other form elements.
-- Process
-   Process will call a callback function to process the form.
-- Groups
-   Groups must have a name. Group name can be appended or not to its elements names.
-- File validation
-   File validation only happens if a file is required. It is also tested if the file has been uploaded.
-- Setting the elements value
-   Only one event is used to set the element value whether it is a default, a constant or a submitted value.
+   Headers and Data (html) elements are treated like other form elements. 
+   Headers can have a name, this makes it possible to use different templates
+   for different headers.
 - XHTML
    HTML_Common and QuickForm have been reworked to be more XHTML compliant.
 
@@ -79,49 +72,50 @@ Features:
 
 Incompatibilities:
 
-- Filters registration is not supported anymore. Just give applyFilter() the function name as a parameter.
+- Filters registration is not used anymore. Just give applyFilter() the function name as a parameter.
 - toArray() now returns a different structure and calls an external renderer: elements in groups are rendered as seperate elements, every element has a numeric index for key.
-- process() needs a callback function.
 - Validation rules are validated in the order they were set.
 - File validation happens only when the file is required.
-- Direct calls to onQuickFormEvent('set...') won't work anymore, these events have been replaced by a unique updateValue event.
+- Direct calls to onQuickFormEvent() with 'setDefault' and 'setConstant' events won't work anymore, these events have been replaced by an 'updateValue' event.
 - Grouped elements index is now a numeric key only. This can break some group rules if you used their associative key in addGroupRule().
+- Groups must have a name. If you don't want the name to be appended to the elements names, set the appendName parameter to false.
 
 Deprecated features:
-- addHeader() and addData(), while still there, are deprecated. Now use addElement('header') and addElement('static').
-- If you plan to use templates, it is encouraged to do so by using a renderer object. setElementTemplate() and the like are now considered as deprecated.
-- Groups must have a name. If you don't want the name to be appended to the elements names, set the appendName parameter to false.
+- addHeader() and addData(), while still there, are deprecated. Use addElement('header') and addElement('html').
+- If you want to customize form output, do so by using a renderer object. setElementTemplate() and the like are now deprecated.
 
 * Changes
 
-- Added support for external renderers (Alexey Borzov)
-- Got rid of registering filters, now only function existence is checked (Alexey Borzov)
-- First parameter to applyFilter can be an array (Alexey Borzov)
-- Removed method display(), exists in parent class (Alexey Borzov)
-- addHeader() and addData() now call addElement(), added a new header element (Alexey Borzov)
-- Added an array renderer (Alexey Borzov)
-- Added a default renderer (Alexey Borzov)
+- Added support for external renderers, added a default and an array renderer based on old QuickForm code (Alexey Borzov)
 - Added a dynamic ITX/Sigma renderer with examples (Alexey Borzov)
 - Added a static ITX/Sigma renderer with examples (Bertrand Mansion)
-- Automatically generates a name for group element when no name given (Alexey Borzov)
-- Added possibility to append the group name or not to grouped elements (Alexey Borzov)
-- Changed the way element values are set (Alexey Borzov)
-- Fix warning with uploaded files (Frederic Poeydomenge)
-- Changed _findElementValue to work with appendName (Bertrand Mansion)
-- Elements with value 0 are not considered empty when validating (Bertrand Mansion)
+
 - Added possibility to validate a group with a function using addRule() (Bertrand Mansion)
 - Added possibility to validate groups when appendName is false (Bertrand Mansion)
 - Rules are validated in the order they are set (Bertrand Mansion)
 - Fixed problems when validating a file not uploaded (Frederic Poeydomenge, Bertrand Mansion)
+
+- addHeader() and addData() now call addElement(), added new 'header' and 'html' elements (Alexey Borzov)
+- Got rid of registering filters, now only function existence is checked. First parameter to applyFilter can be an array (Alexey Borzov)
+- Automatically generate a name for group element when no name given. Added possibility to append the group name or not to grouped elements (Alexey Borzov)
+- process() now accepts a callback function to process the form (Bertrand Mansion)
+
+- Added XHTML compliant labels in radio and checkboxes (Alexey Borzov, Alexander Radivanovich)
+- XHTML for form tag (Bertrand Mansion)
+
 - Elements values are now set through a uniform 'updateValue' event (Alexey Borzov)
+- Elements with value 0 are not considered empty when validating (Bertrand Mansion)
+- Fix warning with uploaded files (Frederic Poeydomenge)
+- Changed _findElementValue to work with appendName (Bertrand Mansion)
+
 - Added Polish date names in date element (Robert Janeczek)
 - Added Hungarian date names in date element (Kovacs Gergely)
 - Added Russian date names in date element (Alexey Borzov)
-- Added XHTML compliant labels in radio and checkboxes (Alexey Borzov, Alexander Radivanovich)
+
 - Optimized select element addOption() and toHtml() methods (Alexey Borzov)
-- XHTML for form tag (Bertrand Mansion)
 - Added method getElementName() in group element (Bertrand Mansion)
 - Fix bug when setting attributes in date element (Bertrand Mansion)
+- Removed method display(), exists in parent class (Bertrand Mansion)
     </notes>
     <filelist>
       <dir name="/" baseinstalldir="HTML">
@@ -134,7 +128,9 @@ Deprecated features:
           <file role="php">date.php</file>
           <file role="php">file.php</file>
           <file role="php">group.php</file>
+          <file role="php">header.php</file>
           <file role="php">hidden.php</file>
+          <file role="php">html.php</file>
           <file role="php">hiddenselect.php</file>
           <file role="php">image.php</file>
           <file role="php">input.php</file>
