@@ -19,7 +19,7 @@
 //
 // $Id$
 
-require_once("HTML/QuickForm/Elements/element.php");
+require_once('HTML/QuickForm/Elements/element.php');
 
 /**
  * Class to dynamically create an HTML SELECT
@@ -65,8 +65,8 @@ class HTML_QuickForm_select extends HTML_QuickForm_element {
     function HTML_QuickForm_select ($elementName=null, $options=null, $attributes=null)
     {
         HTML_QuickForm_element::HTML_QuickForm_element('select', $elementName, null, $attributes);
-        if ($this->getAttribute("multiple") AND strpos($elementName,"]")<2)
-            $elementName = $elementName."[]";
+        if ($this->getAttribute('multiple') AND strpos($elementName,']')<2)
+            $elementName = $elementName.'[]';
         if (isset($options)) {
             $this->load($options);
         }
@@ -180,7 +180,7 @@ class HTML_QuickForm_select extends HTML_QuickForm_element {
      */
     function setSize($size)
     {
-        $this->updateAttributes(array("size"=>$size));
+        $this->updateAttributes(array('size'=>$size));
     } //end func setSize
     
     /**
@@ -193,7 +193,7 @@ class HTML_QuickForm_select extends HTML_QuickForm_element {
      */
     function getSize()
     {
-        return $this->getAttribute("size");
+        return $this->getAttribute('size');
     } //end func getSize
 
     /**
@@ -211,13 +211,13 @@ class HTML_QuickForm_select extends HTML_QuickForm_element {
     function addOption($text, $value, $attributes=null)
     {
         $attributes = $this->_parseAttributes($attributes);
-        if ($this->getAttribute("selected") && !in_array($value, $this->_values)) {
+        if ($this->getAttribute('selected') && !in_array($value, $this->_values)) {
             $this->_values[] = $value;
             array_unique($this->_values);
         }
-        $attr = array("value"=>$value);
+        $attr = array('value'=>$value);
         $this->_updateAttrArray($attributes, $attr);
-        $this->_options[] = array("text"=>$text, "attr"=>$attributes);
+        $this->_options[] = array('text'=>$text, 'attr'=>$attributes);
     } // end func addOption
     
     /**
@@ -305,10 +305,10 @@ class HTML_QuickForm_select extends HTML_QuickForm_element {
         if (is_string($conn)) {
             $dbConn = &DB::connect($conn, true);
             if (DB::isError($dbConn)) return $dbConn;
-        } elseif (is_subclass_of($conn, "db_common")) {
+        } elseif (is_subclass_of($conn, 'db_common')) {
             $dbConn = $conn;
         } else {
-            return new PEAR_Error("Argument 1 of HTML_Select::loadQuery is not a valid type");
+            return new PEAR_Error('Argument 1 of HTML_Select::loadQuery is not a valid type');
         }
         $result = $dbConn->query($sql);
         if (DB::isError($result)) return $result;
@@ -340,10 +340,10 @@ class HTML_QuickForm_select extends HTML_QuickForm_element {
             case is_array($options):
                 return $this->loadArray($options, $param1);
                 break;
-            case (get_class($options) == "db_result" || is_subclass_of($options, "db_result")):
+            case (get_class($options) == 'db_result' || is_subclass_of($options, 'db_result')):
                 return $this->loadDbResult($options, $param1, $param2, $param3);
                 break;
-            case (is_string($options) || is_subclass_of($options, "db_common")):
+            case (is_string($options) || is_subclass_of($options, 'db_common')):
                 return $this->loadQuery($options, $param1, $param2, $param3, $param4);
                 break;
         }
@@ -363,28 +363,22 @@ class HTML_QuickForm_select extends HTML_QuickForm_element {
             $strHtml = $this->getFrozenHtml();
         } else {
             $tabs = $this->_getTabs();
-            $name = isset($this->_attributes["name"]) ? $this->_attributes["name"] : '' ;
-            $strHtml =
-                "\n" . $tabs . "<!-- BEGIN SELECT $name -->\n";
+            $name = isset($this->_attributes['name']) ? $this->_attributes['name'] : '' ;
+            $strHtml = '';
             if ($this->_comment) {
                 $strHtml .= $tabs . "<!-- $this->_comment -->\n";
             }
-            $strHtml .=
-                $tabs . "<SELECT" . $this->_getAttrString($this->_attributes) . ">\n" .
-                $tabs . "\t<!-- BEGIN OPTIONS $name -->\n";
-            for ($counter=0; $counter < count($this->_options); $counter++) {
-                $value = $this->_options[$counter]["attr"]["value"];
-                $attrString = $this->_getAttrString($this->_options[$counter]["attr"]);
-                if (is_array($this->_values) && in_array($value, $this->_values)) {
-                    $attrString = " SELECTED" . $attrString;
-                }
-                $strHtml .=
-                    $tabs . "\t<OPTION" . $attrString . ">" .
-                    $this->_options[$counter]["text"] . "</OPTION>\n";
-            }
             $strHtml .= 
-                $tabs . "\t<!-- END OPTIONS $name -->\n" .
-                $tabs . "</SELECT><!-- END SELECT $name -->";
+                $tabs . "<select" . $this->_getAttrString($this->_attributes) . ">\n";
+            foreach ($this->_options as $option) {
+                if (in_array($option['attr']['value'], $this->_values)) {
+                 $option['attr']['selected'] = 'selected';
+                }
+                $attrString = $this->_getAttrString($option['attr']);
+                $strHtml .=
+                    '<option' . $attrString . '>' . $option['text'] . '</option>';
+            }
+            $strHtml .= $tabs . '</select>';
         }
         return $strHtml;
     } //end func toHtml
@@ -434,7 +428,7 @@ class HTML_QuickForm_select extends HTML_QuickForm_element {
     {
         $name = $this->getName();
         $value = $this->getValue();
-        $html = "<INPUT TYPE=\"hidden\" NAME=\"$name\" VALUE=\"$value\">\n";
+        $html = "<input type=\"hidden\" name=\"$name\" value=\"$value\">\n";
         return $html;
     } //end func getHidden
 
