@@ -128,58 +128,15 @@ $options = array(
 $template = new HTML_Template_Flexy($options);
 
 $renderer =& new HTML_QuickForm_Renderer_ObjectFlexy(&$template);
-
-/*
-$renderer->setRequiredTemplate(
-   'if($error) {
-        $tpl = "<font color=\"red\">{label}</font>";
-    } else {
-        $tpl = "{label}";
-        if($required) {
-            $tpl .= "<font color=\"red\" size=\"1\">*</font>";
-        } 
-    } 
-    return $tpl;'
-    );
-
-$renderer->setErrorTemplate(
-   'if($error) {
-        $tpl = "<font color=\"orange\" size=\"1\">{error}</font><br />";
-    }
-    $tpl .= "{html}";
-    return $tpl;'
-    );
-
-$renderer->setRequiredTemplate('
-{if:error}
-   <font color="red">{label}</font>
-{else:}
-    {if:required}
-        <font color="red" size="1">*</font>
-    {end:}
-{end:}
-');
-
-$renderer->setErrorTemplate('
-{if:error}
-    <font color="orange" size="1">{error}</font><br />
-{end:}
-{html}
-');
-
-*/
 $renderer->setLabelTemplate("label.html");
 $renderer->setHtmlTemplate("html.html");
 
 $form->accept($renderer);
 
-
-
 $view = new StdClass;
 $view->form = $renderer->toObject();
-$template->compile("test-template.html");
 
-
+$template->compile("flexy-static.html");
 // capture the array stucture
 ob_start();
 print_r($view->form);
