@@ -585,20 +585,39 @@ class HTML_QuickForm extends HTML_Common {
     } // end func addElement
     
     // }}}
-    // {{{ addElementGroup()
+    // {{{ addGroup()
 
     /**
      * Adds an element group
      * @param    array      $elements       array of elements composing the group
-     * @param    string     $label          (optional)group label
      * @param    string     $name           (optional)group name
+     * @param    string     $label          (optional)group label
      * @param    string     $separator      (optional)string to seperate elements
-     * @return   index of element 
-     * @since     1.0
+     * @return   reference to added group of elements
+     * @since    2.8
      * @access   public
      * @throws   PEAR_Error
      */
-    function addElementGroup($elements, $groupLabel='', $name=null, $separator=null)
+    function &addGroup($elements, $name=null, $groupLabel='', $separator=null)
+    {
+        return $this->addElement('group', $name, $groupLabel, $elements, $separator);
+    } // end func addGroup
+    
+    // }}}
+    // {{{ addElementGroup()
+
+    /**
+     * Adds an element group (DEPRECATED, use addGroup instead)
+     * @param    array      $elements       array of elements composing the group
+     * @param    string     $label          (optional)group label
+     * @param    string     $name           (optional)group name
+     * @param    string     $separator      (optional)string to seperate elements
+     * @return   reference to added group of elements
+     * @since    1.0
+     * @access   public
+     * @throws   PEAR_Error
+     */
+    function &addElementGroup($elements, $groupLabel='', $name=null, $separator=null)
     {
         return $this->addElement('group', $name, $groupLabel, $elements, $separator);
     } // end func addElementGroup
