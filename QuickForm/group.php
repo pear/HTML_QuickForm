@@ -169,7 +169,16 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
      */
     function setValue($value)
     {
-        $this->_value = $value;
+        if ($this->_appendName) {
+            $this->_value = $value;
+        } else {
+            foreach (array_keys($this->_elements) as $key) {
+                $v = $this->_elements[$key]->_findValue($value);
+                if (null !== $v) {
+                    $this->_elements[$key]->onQuickFormEvent('setGroupValue', $v, $this);
+                }
+            }
+        }
     } //end func setValue
     
     // }}}
@@ -398,9 +407,13 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
             $required = in_array($element->getName(), $this->_required);
 
             $element->accept($renderer, $required);
+
+            // restore the element's name
+            if ($this->_appendName) {
+                $element->setName($elementName);
+            }
         }
         $renderer->finishGroup($this);
-        $this->_appendName = false;
     } // end func accept
 
     // }}}
