@@ -221,11 +221,7 @@ class HTML_QuickForm_textarea extends HTML_QuickForm_element {
     function getFrozenHtml()
     {
         $tabs = $this->_getTabs();
-        if ($this->getAttribute('wrap') == 'off') {
-            $html = $this->_value;
-        } else {
-            $html = "$tabs<pre>".$this->_value."</pre>";
-        }
+        $html = "$tabs<pre>".$this->_value."</pre>";
         if ($this->_persistantFreeze) {
             $html .= '<input type="hidden" name="' . 
                 $this->getName() . '" value="' . htmlspecialchars($this->_value) . '" />';
