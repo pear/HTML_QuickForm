@@ -47,7 +47,7 @@ Features:
   </maintainers>
   <release>
     <version>3.1</version>
-    <date>2003-07-??</date>
+    <date>2003-07-19</date>
     <state>stable</state>
     <notes>
 * New additions
@@ -74,10 +74,14 @@ Features:
 - Fixed passing a 'selected' attribute to addOption() (Alexey Borzov, Wolfram Kriesing)
 
 * Deprecated
-- Date element is now deprecated. Use dategroup instead (Alexey Borzov)
+- setFormat(), setMinYear() and other accessors in date element are now deprecated. Set options and attributes in the constructor instead (Alexey Borzov)
 - Method getAttributesString() is deprecated (Alexey Borzov)
 - HTML_QuickForm's isUploadedFile(), moveUploadedFile(), getUploadeFile() are now deprecated (Alexey Borzov)
-    </notes>
+
+Deprecated methods will be removed from QuickForm in the next release.
+In this release, they throw PEAR errors but still finish the job.
+Use this to catch them with an error handler function, the global error code is QUICKFORM_DEPRECATED.
+     </notes>
     <filelist>
       <dir name="/" baseinstalldir="HTML">
         <file role="php">QuickForm.php</file>
@@ -86,7 +90,6 @@ Features:
           <file role="php">button.php</file>
           <file role="php">checkbox.php</file>
           <file role="php">date.php</file>
-          <file role="php">dategroup.php</file>
           <file role="php">element.php</file>
           <file role="php">file.php</file>
           <file role="php">group.php</file>
