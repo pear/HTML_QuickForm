@@ -1595,6 +1595,9 @@ class HTML_QuickForm extends HTML_Common {
                     if (empty($submitValue) && isset($this->_submitFiles[$elementName])) {
                         $submitValue = $this->_submitFiles[$elementName];
                     }
+                    if (empty($submitValue) && !$this->isElementRequired($elementName)) {
+                        continue 2;
+                    }
                     if (isset($ruleData[2])) {
                         if (!call_user_func(array($ruleData[2], $ruleData[1]), $submitValue, $format)) {
                             $this->_errors[$elementName] = $message;
@@ -1664,7 +1667,7 @@ class HTML_QuickForm extends HTML_Common {
                         case 'regex':
                             $regex = str_replace('%data%', $format, $ruleData[1]);
                             if (!preg_match($regex, $value)) {
-                                if ($value == '' && !$this->isElementRequired($groupName.'['.$elementIndex.']')) {
+                                if (empty($value) && !$this->isElementRequired($groupName.'['.$elementIndex.']')) {
                                     continue 2;
                                 } else {
                                     $this->_errors[$groupName] = $message;
