@@ -57,8 +57,145 @@ Features:
     </maintainer -->
   </maintainers>
   <release>
+    <version>3.2.4</version>
+    <date>2004-10-18</date>
+    <license>PHP License</license>
+    <state>stable</state>
+    <notes>
+* Additions and changes
+- Implemented HTML_QuickForm::insertElementBefore() method which 
+  allows adding elements into arbitrary places and reordering the 
+  existing form elements (thanks to Justin Patrin for initial
+  implementation and helpful comments, see request #1587)
+- Implemented HTML_QuickForm_element::unfreeze() method
+- HTML_QuickForm::removeElement() now returns reference to element
+  being removed
+- Array renderer outputs header name into the resultant array
+  (request #2276)
+- Added $staticLabels option to Array renderer's constructor, this
+  makes the renderer &quot;flatten&quot; the array of labels
+- Added Ukrainian translation for 'date' element (Andrey Kornilov)
+- Removed newline after &lt;script&gt; tags in 'autocomplete' and
+  'hierselect' elements (request #2373)
+
+* Bugfixes
+- HTML_QuickForm::getSubmitValue() now properly returns null for
+  groups if form was not yet submitted (bug #2517)
+- stripslashes() is used only on 'name' element of file upload
+  data (bug #1843)
+- HTML_QuickForm::addGroupRule() now works better with &lt;select 
+  multiple&gt; elements (bug #1810)
+- Fixed notice if empty string was passed to date::setValue() 
+  (bug #2530)
+- Calling HTML_QuickForm_group::getFrozenHtml() no longer freezes 
+  the group (bug #1836)
+- Groups now correctly handle setPersistantFreeze() call (bug #1836)
+- ITDynamic renderer does not replace empty separator with &amp;nbsp;
+  anymore (bug #2354)
+- 'maxfilesize' rule returns false in case of file upload errors
+  (bug #2203)
+- Fixed Javascript generation for 'hierselect' elements (bug #1984)
+- Fixed examples using 'rangelength' rule (bug #2421)
+    </notes>
+    <filelist>
+      <dir name="/" baseinstalldir="HTML">
+        <file role="php" name="QuickForm.php" />
+        <dir name="QuickForm">
+          <file role="php" name="advcheckbox.php" />
+          <file role="php" name="autocomplete.php" />
+          <file role="php" name="button.php" />
+          <file role="php" name="checkbox.php" />
+          <file role="php" name="date.php" />
+          <file role="php" name="element.php" />
+          <file role="php" name="file.php" />
+          <file role="php" name="group.php" />
+          <file role="php" name="header.php" />
+          <file role="php" name="hidden.php" />
+          <file role="php" name="hiddenselect.php" />
+          <file role="php" name="hierselect.php" />
+          <file role="php" name="html.php" />
+          <file role="php" name="image.php" />
+          <file role="php" name="input.php" />
+          <file role="php" name="link.php" />
+          <file role="php" name="password.php" />
+          <file role="php" name="radio.php" />
+          <file role="php" name="reset.php" />
+          <file role="php" name="select.php" />
+          <file role="php" name="static.php" />
+          <file role="php" name="submit.php" />
+          <file role="php" name="text.php" />
+          <file role="php" name="textarea.php" />
+          <file role="php" name="xbutton.php" />
+          <file role="php" name="Renderer.php" />
+          <file role="php" name="Rule.php" />
+          <file role="php" name="RuleRegistry.php" />
+          <dir name="Renderer">
+            <file role="php" name="Array.php" />
+            <file role="php" name="ArraySmarty.php" />
+            <file role="php" name="Default.php" />
+            <file role="php" name="ITDynamic.php" />
+            <file role="php" name="ITStatic.php" />
+            <file role="php" name="Object.php" />
+            <file role="php" name="ObjectFlexy.php" />
+            <file role="php" name="QuickHtml.php" />
+          </dir>
+          <dir name="Rule">
+            <file role="php" name="Callback.php" />
+            <file role="php" name="Compare.php" />
+            <file role="php" name="Email.php" />
+            <file role="php" name="Range.php" />
+            <file role="php" name="Regex.php" />
+            <file role="php" name="Required.php" />
+          </dir>
+        </dir>
+        <dir name="docs">
+          <file role="doc" name="elements.php" />
+          <file role="doc" name="filters.php" />
+          <file role="doc" name="formrule.php" />
+          <file role="doc" name="groups.php" />
+          <file role="doc" name="rules-builtin.php" />
+          <file role="doc" name="rules-custom.php" />
+          <dir name="renderers">
+            <file role="doc" name="FlexyDynamic_example.php" />
+            <file role="doc" name="FlexyStatic_example.php" />
+            <file role="doc" name="ITDynamic_example.php" />
+            <file role="doc" name="ITDynamic_example2.php" />
+            <file role="doc" name="ITStatic_example.php" />
+            <file role="doc" name="QuickHtml_example.php" />
+            <file role="doc" name="SmartyDynamic_example.php" />
+            <file role="doc" name="SmartyStatic_example.php" />
+            <file role="doc" name="multiple-labels.php" />
+            <dir name="templates">
+              <file role="doc" name="it-dynamic-2.html" />
+              <file role="doc" name="it-dynamic.html" />
+              <file role="doc" name="it-static.html" />
+              <file role="doc" name="smarty-dynamic-fancygroup.tpl" />
+              <file role="doc" name="smarty-dynamic-green.tpl" />
+              <file role="doc" name="smarty-dynamic.tpl" />
+              <file role="doc" name="smarty-static.tpl" />
+              <file role="doc" name="flexy-dynamic.html" />
+              <file role="doc" name="flexy-static.html" />
+              <file role="doc" name="html.html" />
+              <file role="doc" name="label.html" />
+                <dir name="styles">
+                  <file role="doc" name="green.html" />
+                  <file role="doc" name="fancygroup.html" />
+                </dir>
+            </dir>
+          </dir>
+        </dir>
+      </dir>
+    </filelist>
+    <deps>
+       <dep type="php" rel="ge" version="4.2"/>
+       <dep type="pkg" rel="ge" version="1.2.1">HTML_Common</dep>
+    </deps>
+  </release>
+  <changelog>
+  <release>
     <version>3.2.3</version>
     <date>2004-06-28</date>
+    <license>PHP License</license>
     <state>stable</state>
     <notes>
 * Additions and changes
@@ -91,104 +228,11 @@ Features:
 - Fixed #1694 (ITStatic renders hidden element with brackets correctly,
   patch provided by milamamu)
     </notes>
-    <filelist>
-      <dir name="/" baseinstalldir="HTML">
-        <file role="php">QuickForm.php</file>
-        <dir name="QuickForm">
-          <file role="php">advcheckbox.php</file>
-          <file role="php">autocomplete.php</file>
-          <file role="php">button.php</file>
-          <file role="php">checkbox.php</file>
-          <file role="php">date.php</file>
-          <file role="php">element.php</file>
-          <file role="php">file.php</file>
-          <file role="php">group.php</file>
-          <file role="php">header.php</file>
-          <file role="php">hidden.php</file>
-          <file role="php">hiddenselect.php</file>
-          <file role="php">hierselect.php</file>
-          <file role="php">html.php</file>
-          <file role="php">image.php</file>
-          <file role="php">input.php</file>
-          <file role="php">link.php</file>
-          <file role="php">password.php</file>
-          <file role="php">radio.php</file>
-          <file role="php">reset.php</file>
-          <file role="php">select.php</file>
-          <file role="php">static.php</file>
-          <file role="php">submit.php</file>
-          <file role="php">text.php</file>
-          <file role="php">textarea.php</file>
-          <file role="php">xbutton.php</file>
-          <file role="php">Renderer.php</file>
-          <file role="php">Rule.php</file>
-          <file role="php">RuleRegistry.php</file>
-          <dir name="Renderer">
-            <file role="php">Array.php</file>
-            <file role="php">ArraySmarty.php</file>
-            <file role="php">Default.php</file>
-            <file role="php">ITDynamic.php</file>
-            <file role="php">ITStatic.php</file>
-            <file role="php">Object.php</file>
-            <file role="php">ObjectFlexy.php</file>
-            <file role="php">QuickHtml.php</file>
-          </dir>
-          <dir name="Rule">
-            <file role="php">Callback.php</file>
-            <file role="php">Compare.php</file>
-            <file role="php">Email.php</file>
-            <file role="php">Range.php</file>
-            <file role="php">Regex.php</file>
-            <file role="php">Required.php</file>
-          </dir>
-        </dir>
-        <dir name="docs">
-          <file role="doc">elements.php</file>
-          <file role="doc">filters.php</file>
-          <file role="doc">formrule.php</file>
-          <file role="doc">groups.php</file>
-          <file role="doc">rules-builtin.php</file>
-          <file role="doc">rules-custom.php</file>
-          <dir name="renderers">
-            <file role="doc">FlexyDynamic_example.php</file>
-            <file role="doc">FlexyStatic_example.php</file>
-            <file role="doc">ITDynamic_example.php</file>
-            <file role="doc">ITDynamic_example2.php</file>
-            <file role="doc">ITStatic_example.php</file>
-            <file role="doc">QuickHtml_example.php</file>
-            <file role="doc">SmartyDynamic_example.php</file>
-            <file role="doc">SmartyStatic_example.php</file>
-            <file role="doc">multiple-labels.php</file>
-            <dir name="templates">
-              <file role="doc">it-dynamic-2.html</file>
-              <file role="doc">it-dynamic.html</file>
-              <file role="doc">it-static.html</file>
-              <file role="doc">smarty-dynamic-fancygroup.tpl</file>
-              <file role="doc">smarty-dynamic-green.tpl</file>
-              <file role="doc">smarty-dynamic.tpl</file>
-              <file role="doc">smarty-static.tpl</file>
-              <file role="doc">flexy-dynamic.html</file>
-              <file role="doc">flexy-static.html</file>
-              <file role="doc">html.html</file>
-              <file role="doc">label.html</file>
-                <dir name="styles">
-                  <file role="doc">green.html</file>
-                  <file role="doc">fancygroup.html</file>
-                </dir>
-            </dir>
-          </dir>
-        </dir>
-      </dir>
-    </filelist>
-    <deps>
-       <dep type="php" rel="ge" version="4.2"/>
-       <dep type="pkg" rel="ge" version="1.2.1">HTML_Common</dep>
-    </deps>
   </release>
-  <changelog>
   <release>
     <version>3.2.2</version>
     <date>2004-03-22</date>
+    <license>PHP License</license>
     <state>stable</state>
     <notes>
 * On XHTML compliance:
@@ -246,6 +290,7 @@ contact the package maintainers.
   <release>
     <version>3.2.1</version>
     <date>2004-01-03</date>
+    <license>PHP License</license>
     <state>stable</state>
     <notes>
 * Additions and changes
@@ -275,6 +320,7 @@ contact the package maintainers.
   <release>
     <version>3.2</version>
     <date>2003-11-05</date>
+    <license>PHP License</license>
     <state>stable</state>
     <notes>
 * Major changes in this release
@@ -313,6 +359,7 @@ completely preserved. (Bertrand Mansion)
   <release>
     <version>3.1.1</version>
     <date>2003-09-09</date>
+    <license>PHP License</license>
     <state>stable</state>
     <notes>
 * New additions
@@ -334,6 +381,7 @@ major one. Please update your code!
   <release>
     <version>3.1</version>
     <date>2003-07-19</date>
+    <license>PHP License</license>
     <state>stable</state>
     <notes>
 * New additions
@@ -373,6 +421,7 @@ Use this to catch them with an error handler function, the global error code is 
   <release>
     <version>3.0</version>
     <date>2003-06-04</date>
+    <license>PHP License</license>
     <state>stable</state>
     <notes>
 * Fixes
@@ -385,6 +434,7 @@ Use this to catch them with an error handler function, the global error code is 
   <release>
     <version>3.0RC1</version>
     <date>2003-05-28</date>
+    <license>PHP License</license>
     <state>beta</state>
     <notes>
 * Bugfixes
@@ -405,6 +455,7 @@ Use this to catch them with an error handler function, the global error code is 
   <release>
     <version>3.0Beta2</version>
     <date>2003-05-13</date>
+    <license>PHP License</license>
     <state>beta</state>
     <notes>
 - PHP 4.2+ is now required for file uploads
@@ -438,6 +489,7 @@ Use this to catch them with an error handler function, the global error code is 
   <release>
     <version>3.0Beta1</version>
     <date>2003-04-17</date>
+    <license>PHP License</license>
     <state>beta</state>
     <notes>
 * Major changes in this release
@@ -511,6 +563,7 @@ Deprecated features:
   <release>
     <version>2.10</version>
     <date>2003-03-07</date>
+    <license>PHP License</license>
     <state>stable</state>
     <notes>
 * Email validation regex accepts lower and uppercases (Derick Rethans).
@@ -533,6 +586,7 @@ The next release will have two BC breaks:
   <release>
     <version>2.9</version>
     <date>2003-02-20</date>
+    <license>PHP License</license>
     <state>stable</state>
     <notes>
 * Added htmlspecialchars() to frozen elements output in every case.
@@ -546,6 +600,7 @@ The next release will have two BC breaks:
   <release>
     <version>2.8</version>
     <date>2003-02-18</date>
+    <license>PHP License</license>
     <state>stable</state>
     <notes>
 * IMPORTANT: favour the use of addGroup() instead of addElementGroup().
@@ -558,6 +613,7 @@ The next release will have two BC breaks:
   <release>
     <version>2.7</version>
     <date>2003-02-12</date>
+    <license>PHP License</license>
     <state>stable</state>
     <notes>
 * Use moveUploadedFile() (PHP 4.1) for file uploads instead of copy() and unlink(). (Matthias Englert)
@@ -576,6 +632,7 @@ The next release will have two BC breaks:
   <release>
     <version>2.6</version>
     <date>2003-01-29</date>
+    <license>PHP License</license>
     <state>stable</state>
     <notes>
 * IMPORTANT: addElement now returns a reference to the added element.
@@ -590,6 +647,7 @@ The next release will have two BC breaks:
   <release>
     <version>2.5</version>
     <date>2002-11-20</date>
+    <license>PHP License</license>
     <state>stable</state>
     <notes>
 * Refine the use of setDefaults and setContants.
@@ -605,6 +663,7 @@ In all cases, values won't be overriden by the other method anymore.
   <release>
     <version>2.4</version>
     <date>2002-10-21</date>
+    <license>PHP License</license>
     <state>stable</state>
     <notes>
 * Use $_POST, $_GET and $_FILES instead of $HTTP_.
@@ -626,6 +685,7 @@ In all cases, values won't be overriden by the other method anymore.
   <release>
     <version>2.3</version>
     <date>2002-06-19</date>
+    <license>PHP License</license>
     <state>stable</state>
     <notes>
 * Important API change in the way select elements load arrays.
@@ -644,6 +704,7 @@ In all cases, values won't be overriden by the other method anymore.
     <release>
       <version>2.2</version>
       <date>2002-05-29</date>
+      <license>PHP License</license>
       <state>stable</state>
       <notes>
 * Some fixes for file uploads.
@@ -653,6 +714,7 @@ In all cases, values won't be overriden by the other method anymore.
     <release>
       <version>2.0</version>
       <date>2002-04-15</date>
+      <license>PHP License</license>
       <state>stable</state>
       <notes>
 New API for new version 2.0 !
@@ -687,6 +749,7 @@ Here is a list of what's new in this version:
     <release>
       <version>2.1</version>
       <date>2002-05-24</date>
+      <license>PHP License</license>
       <state>stable</state>
       <notes>
 * Fixes for many if not all E_ALL warnings.
@@ -698,6 +761,7 @@ Here is a list of what's new in this version:
     <release>
       <version>1.12</version>
       <date>2002-03-22</date>
+      <license>PHP License</license>
       <state>stable</state>
       <notes>
         Changed directory structure for package installation.
@@ -706,6 +770,8 @@ Here is a list of what's new in this version:
     <release>
       <version>1.0</version>
       <date>2001-09-06</date>
+      <license>PHP License</license>
+      <state>stable</state>
       <notes>
         This is the initial release of the HTML_QuickForm package.
       </notes>
