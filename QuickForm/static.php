@@ -102,6 +102,21 @@ class HTML_QuickForm_static extends HTML_QuickForm_element {
     } // end func setText
 
     // }}}
+    // {{{ setValue()
+
+    /**
+     * Sets the text (uses the standard setValue call to emulate a form element.
+     *
+     * @param     string    $text
+     * @access    public
+     * @return    void
+     */
+    function setValue($text)
+    {
+        $this->setText($text);
+    } // end func setValue
+
+    // }}}    
     // {{{ toHtml()
 
     /**
