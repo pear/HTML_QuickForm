@@ -73,9 +73,6 @@ class HTML_QuickForm_select extends HTML_QuickForm_element {
         HTML_QuickForm_element::HTML_QuickForm_element($elementName, $elementLabel, $attributes);
         $this->_persistantFreeze = true;
         $this->_type = 'select';
-        if ($this->getAttribute('multiple')) {
-            $this->setMultiple(true);
-        }
         if (isset($options)) {
             $this->load($options);
         }
@@ -461,6 +458,10 @@ class HTML_QuickForm_select extends HTML_QuickForm_element {
         if ($this->_flagFrozen) {
             $strHtml = $this->getFrozenHtml();
         } else {
+            // put this down here since it changes the name
+            if ($this->getAttribute('multiple')) {
+                $this->setMultiple(true);
+            }
             $tabs = $this->_getTabs();
             $name = isset($this->_attributes["name"]) ? $this->_attributes["name"] : '' ;
             $strHtml =
