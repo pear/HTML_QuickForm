@@ -60,6 +60,7 @@ Features:
           <file role="php">button.php</file>
           <file role="php">checkbox.php</file>
           <file role="php">date.php</file>
+          <file role="php">dategroup.php</file>
           <file role="php">element.php</file>
           <file role="php">file.php</file>
           <file role="php">group.php</file>
@@ -118,7 +119,7 @@ Features:
     </filelist>
     <deps>
        <dep type="php" rel="ge" version="4.2"/>
-       <dep type="pkg" rel="ge" version="1.1">HTML_Common</dep>
+       <dep type="pkg" rel="ge" version="1.2.1">HTML_Common</dep>
     </deps>
   </release>
   <changelog>
