@@ -3,7 +3,7 @@
 // +----------------------------------------------------------------------+
 // | PHP version 4.0                                                      |
 // +----------------------------------------------------------------------+
-// | Copyright (c) 1997, 1998, 1999, 2000, 2001 The PHP Group             |
+// | Copyright (c) 1997-2003 The PHP Group                                |
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the PHP license,       |
 // | that is bundled with this package in the file LICENSE, and is        |
@@ -147,7 +147,7 @@ class HTML_QuickForm_select extends HTML_QuickForm_element {
      */
     function setName($name)
     {
-        $this->updateAttributes(array('name'=>$name));
+        $this->updateAttributes(array('name' => $name));
     } //end func setName
     
     // }}}
@@ -165,6 +165,26 @@ class HTML_QuickForm_select extends HTML_QuickForm_element {
     {
         return $this->getAttribute('name');
     } //end func getName
+
+    // }}}
+    // {{{ getPrivateName()
+
+    /**
+     * Returns the element name
+     * 
+     * @since     1.0
+     * @access    public
+     * @return    string
+     * @throws    
+     */
+    function getPrivateName()
+    {
+        if ($this->getAttribute('multiple')) {
+            return $this->getName() . '[]';
+        } else {
+            return $this->getName();
+        }
+    } //end func getPrivateName
 
     // }}}
     // {{{ setValue()
@@ -247,14 +267,8 @@ class HTML_QuickForm_select extends HTML_QuickForm_element {
     function setMultiple($multiple)
     {
         if ($multiple) {
-            if (substr($this->getName(), -2) != '[]') {
-               $this->setName($this->getName() . '[]'); 
-            }
-            $this->updateAttributes(array("multiple"));
+            $this->updateAttributes(array("multiple" => "multiple"));
         } else {
-            if (substr($this->getName(), -2) == '[]') {
-               $this->setName(substr($this->getName(), 0, -2)); 
-            }
             $this->removeAttribute('multiple');
         }
     } //end func setMultiple
@@ -386,7 +400,7 @@ class HTML_QuickForm_select extends HTML_QuickForm_element {
     function loadQuery(&$conn, $sql, $textCol=null, $valueCol=null, $values=null)
     {
         if (is_string($conn)) {
-			require_once('DB.php');
+            require_once('DB.php');
             $dbConn = &DB::connect($conn, true);
             if (DB::isError($dbConn)) return $dbConn;
         } elseif (is_subclass_of($conn, "db_common")) {
@@ -456,13 +470,7 @@ class HTML_QuickForm_select extends HTML_QuickForm_element {
         if ($this->_flagFrozen) {
             $strHtml = $this->getFrozenHtml();
         } else {
-            // put this down here since it changes the name
-            if ($this->getAttribute('multiple')) {
-                $this->setMultiple(true);
-            }
-
             $tabs = $this->_getTabs();
-            $name = isset($this->_attributes['name']) ? $this->_attributes['name'] : '' ;
 
             $strHtml = '';
 
@@ -470,7 +478,12 @@ class HTML_QuickForm_select extends HTML_QuickForm_element {
                 $strHtml .= $tabs . '<!-- ' . $this->getComment() . " //-->\n";
             }
 
-            $strHtml .= $tabs . '<select' . $this->_getAttrString($this->_attributes) . ">\n";
+            if ($this->getMultiple()) {
+                $attrString = preg_replace('/name="([^"]*)"/', 'name="'.$this->getName().'[]"', $this->_getAttrString($this->_attributes));
+            } else {
+                $attrString = $this->_getAttrString($this->_attributes);
+            }
+            $strHtml .= $tabs . '<select' . $attrString . ">\n";
 
             for ($counter=0; $counter < count($this->_options); $counter++) {
                 $value = $this->_options[$counter]["attr"]["value"];
@@ -487,7 +500,6 @@ class HTML_QuickForm_select extends HTML_QuickForm_element {
 
             $strHtml .= $tabs . '</select>';
         }
-
         return $strHtml;
     } //end func toHtml
     
@@ -527,7 +539,7 @@ class HTML_QuickForm_select extends HTML_QuickForm_element {
         if (is_array($value)) {
             $html = join('<br />', $value);
             if ($this->_persistantFreeze) {
-                $name = $this->getName();
+                $name = $this->getPrivateName();
                 foreach ($value as $key => $item) {
                     $html .= '<input type="hidden" name="' . 
                         $name . '" value="' . $this->_values[$key] . '" />';
@@ -541,7 +553,7 @@ class HTML_QuickForm_select extends HTML_QuickForm_element {
             }
             if ($this->_persistantFreeze) {
                 $html .= '<input type="hidden" name="' . 
-                    $this->getName() . '" value="' . $value . '" />';
+                    $this->getPrivateName() . '" value="' . $value . '" />';
             }
         }
         return $html;
