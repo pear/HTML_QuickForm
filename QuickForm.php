@@ -47,21 +47,6 @@ $GLOBALS['HTML_QUICKFORM_ELEMENT_TYPES'] =
             'hierselect'    =>array('HTML/QuickForm/hierselect.php', 'HTML_QuickForm_hierselect')
         );
 
-$GLOBALS['_HTML_QuickForm_registered_rules'] = array(
-    'required'      =>array('regex', '/(\s|\S)/'),
-    'maxlength'     =>array('regex', '/^(\s|\S){0,%data%}$/'),
-    'minlength'     =>array('regex', '/^(\s|\S){%data%,}$/'),
-    'rangelength'   =>array('regex', '/^(\s|\S){%data%}$/'),
-    'regex'         =>array('regex', '%data%'),
-    'email'         =>array('regex', '/^[a-zA-Z0-9\._-]+\@(\[?)[a-zA-Z0-9\-\.]+\.([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/'),
-    'emailorblank'  =>array('regex', '/(^$)|(^[a-zA-Z0-9\._-]+\@(\[?)[a-zA-Z0-9\-\.]+\.([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$)/'),
-    'lettersonly'   =>array('regex', '/^[a-zA-Z]+$/'),
-    'alphanumeric'  =>array('regex', '/^[a-zA-Z0-9]+$/'),
-    'numeric'       =>array('regex', '/(^-?\d\d*\.\d*$)|(^-?\d\d*$)|(^-?\.\d\d*$)/'),
-    'nopunctuation' =>array('regex', '/^[^().\/\*\^\?#!@$%+=,\"\'><~\[\]{}]+$/'),
-    'nonzero'       =>array('regex', '/^-?[1-9][0-9]*/')
-);
-
 // {{{ error codes
 
 /*
@@ -288,16 +273,18 @@ class HTML_QuickForm extends HTML_Common {
      * Registers a new validation rule
      *
      * @param     string    $ruleName   Name of validation rule
-     * @param     string    $type       Either: 'regex' or 'function'
-     * @param     string    $data1      Name of function or regular expression
-     * @param     string    $data2      Object parent of above function
+     * @param     string    $type       Either: 'regex', 'function' or 'rule' for an HTML_QuickForm_Rule object
+     * @param     string    $data1      Name of function, regular expression or HTML_QuickForm_Rule classname
+     * @param     string    $data2      Object parent of above function or HTML_QuickForm_Rule file path
      * @since     1.0
      * @access    public
      * @return    void
      */
-    function registerRule($ruleName, $type, $data1, $data2=null)
+    function registerRule($ruleName, $type, $data1, $data2 = null)
     {
-        $GLOBALS['_HTML_QuickForm_registered_rules'][$ruleName] = array($type, $data1, $data2);
+        include_once('HTML/QuickForm/Validate.php');
+        $validate =& HTML_QuickForm_Validate::singleton();
+        $validate->registerRule($ruleName, $type, $data1, $data2);
     } // end func registerRule
 
     // }}}
@@ -876,7 +863,7 @@ class HTML_QuickForm extends HTML_Common {
      * @access   public
      * @throws   HTML_QuickForm_Error
      */
-    function addRule($element, $message, $type, $format='', $validation='server', $reset = false, $force = false)
+    function addRule($element, $message, $type, $format=null, $validation='server', $reset = false, $force = false)
     {
         if (!$force) {
             if (!$this->elementExists($element)) {
@@ -929,39 +916,37 @@ class HTML_QuickForm extends HTML_Common {
      * @access   public
      * @throws   HTML_QuickForm_Error
      */
-    function addGroupRule($group, $arg1, $type='', $format='', $howmany=0, $validation = 'server')
+    function addGroupRule($group, $arg1, $type='', $format=null, $howmany=0, $validation = 'server')
     {
         if (!$this->elementExists($group)) {
             return PEAR::raiseError(null, QUICKFORM_NONEXIST_ELEMENT, null, E_USER_WARNING, "Group '$group' does not exist in HTML_QuickForm::addGroupRule()", 'HTML_QuickForm_Error', true);
         }
-        if (!isset($this->_rules[$group])) {
-            $this->_rules[$group] = array();
-        }
+
         $groupObj =& $this->getElement($group);
         if (is_array($arg1)) {
             $required = 0;
             foreach ($arg1 as $elementIndex => $rules) {
-                $elementName = $groupObj->getElementName($elementIndex);
-                if ($elementName !== false) {
-                    foreach ($rules as $rule) {
-                        $format = (isset($rule[2])) ? $rule[2] : '';
-                        $type = $rule[1];
-                        if (!$this->isRuleRegistered($type)) {
-                            return PEAR::raiseError(null, QUICKFORM_INVALID_RULE, null, E_USER_WARNING, "Rule '$type' is not registered in HTML_QuickForm::addGroupRule()", 'HTML_QuickForm_Error', true);
-                        }
-                        $this->_rules[$group][] = array('type'        => $type,
+                foreach ($rules as $rule) {
+                    $format = (isset($rule[2])) ? $rule[2] : null;
+                    $type = $rule[1];
+                    if (!$this->isRuleRegistered($type)) {
+                        return PEAR::raiseError(null, QUICKFORM_INVALID_RULE, null, E_USER_WARNING, "Rule '$type' is not registered in HTML_QuickForm::addGroupRule()", 'HTML_QuickForm_Error', true);
+                    }
+
+                    $elementName = $groupObj->getElementName($elementIndex);
+                    $this->_rules[$elementName][] = array(
+                                                        'type'        => $type,
                                                         'format'      => $format, 
                                                         'message'     => $rule[0],
                                                         'validation'  => 'server',
-                                                        'elementName' => $elementName);
-                        if ($type == 'required') {
-                            $this->_required[] = $elementName;
-                            $groupObj->_required[] = $elementName;
-                            $required++;
-                        }
+                                                        'group'       => $group);
+
+                    if ($type == 'required') {
+                        $groupObj->_required[] = $elementIndex;
+                        $this->_required[] = $elementName;
+                        $required++;
                     }
-                } else {
-                    return PEAR::raiseError(null, QUICKFORM_NONEXIST_ELEMENT, null, E_USER_WARNING, "Element '$elementIndex' not found in group '$group' in HTML_QuickForm::addGroupRule()", 'HTML_QuickForm_Error', true);
+
                 }
             }
             if ($required > 0 && count($groupObj->getElements()) == $required) {
@@ -975,6 +960,8 @@ class HTML_QuickForm extends HTML_Common {
             // Radios need to be handled differently when required
             if ($type == 'required' && $groupObj->getGroupType() == 'radio') {
                 $howmany = ($howmany == 0) ? 1 : $howmany;
+            } else {
+                $howmany = ($howmany == 0) ? count($groupObj->getElements()) : $howmany;
             }
 
             $this->_rules[$group][] = array('type'       => $type,
@@ -1157,6 +1144,7 @@ class HTML_QuickForm extends HTML_Common {
      */
     function isRuleRegistered($name)
     {
+        include_once('HTML/QuickForm/Validate.php');
         return isset($GLOBALS['_HTML_QuickForm_registered_rules'][$name]);
     } // end func isRuleRegistered
 
@@ -1172,6 +1160,7 @@ class HTML_QuickForm extends HTML_Common {
      */
     function getRegisteredRules()
     {
+        include_once('HTML/QuickForm/Validate.php');
         return array_keys($GLOBALS['_HTML_QuickForm_registered_rules']);
     } // end func getRegisteredRules
 
@@ -1188,7 +1177,7 @@ class HTML_QuickForm extends HTML_Common {
      */
     function isElementRequired($element)
     {
-        return in_array($element, $this->_required);
+        return in_array($element, $this->_required, true);
     } // end func isElementRequired
 
     // }}}
@@ -1413,29 +1402,29 @@ class HTML_QuickForm extends HTML_Common {
             return false;
         }
 
+        include_once('HTML/QuickForm/Validate.php');
+        $validate =& HTML_QuickForm_Validate::singleton();
+
         foreach ($this->_rules as $target => $rules) {
-            $elementType = $this->getElementType($target);
-            $submitValue = $this->_findElementValue($target);
+            $submitValue = $this->getSubmitValue($target);
 
-            foreach ($rules as $rule) {
-                if (isset($this->_errors[$target])) {
-                    continue 2;                
+            foreach ($rules as $elementName => $rule) {
+                if ((isset($rule['group']) && isset($this->_errors[$rule['group']])) ||
+                     isset($this->_errors[$target])) {
+                    continue 2;
                 }
-                $type     = $rule['type'];
-                $message  = $rule['message'];
-                $format   = $rule['format'];
-                $ruleData = $GLOBALS['_HTML_QuickForm_registered_rules'][$type];
+                if ((!isset($submitValue) || $submitValue == '') && 
+                     !$this->isElementRequired($target)) {
+                    // Element is not required
+                    continue 2;
+                }
+                $result = $validate->validate($rule['type'], $submitValue, $rule['format']);
 
-                if ($elementType != 'group') {
-                    if (!$this->_validateElement($target, $submitValue, $format, $ruleData)) {
-                        $this->_errors[$target] = $message;
-                    }
-                } else {
-                    // Element is group
-                    $elementName = isset($rule['elementName']) ? $rule['elementName'] : null;
-                    $howmany     = isset($rule['howmany']) ? $rule['howmany'] : null;
-                    if (!$this->_validateGroup($target, $submitValue, $format, $ruleData, $elementName, $howmany)) {
-                        $this->_errors[$target] = $message;
+                if ($result === false || (!empty($rule['howmany']) && $rule['howmany'] > (int)$result)) {
+                    if (isset($rule['group'])) {
+                        $this->_errors[$rule['group']] = $rule['message'];
+                    } else {
+                        $this->_errors[$target] = $rule['message'];
                     }
                 }
             }
@@ -1450,109 +1439,6 @@ class HTML_QuickForm extends HTML_Common {
 
         return (0 == count($this->_errors));
     } // end func validate
-
-    // }}}
-    // {{{ _validateElement()
-
-    /**
-     * Performs the server side validation for an element
-     *
-     * If the element is in fact a group, it will be considered as a whole.
-     * To validate grouped elements as separated entities, 
-     * use addGroupRule instead of addRule.
-     *
-     * @param     string   $groupName   Group name
-     * @param     mixed    $submitValue Submitted values to be checked
-     * @param     string   $format      Optional rule parameter
-     * @param     array    $ruleData    Rule data found in _registeredRules
-     * @access    private
-     * @since     2.7
-     * @return    bool     True on success, false if error found
-     */
-    function _validateElement($elementName, $submitValue, $format, $ruleData)
-    {
-        if (is_array($submitValue)) {
-            if (count($submitValue) == 0) {
-                $submitValue = '';
-            } elseif ($ruleData[0] != 'function') {
-                // used when values are in an array, ex. select multiple
-                return $this->_validateGroup($elementName, $submitValue, $format, $ruleData, null, 1);
-            }
-        }
-        switch ($ruleData[0]) {
-            case 'regex':
-                if ((!isset($submitValue) || $submitValue == '') && 
-                    !$this->isElementRequired($elementName)) {
-                    // Element is not required
-                    return true;
-                }
-                $regex = str_replace('%data%', $format, $ruleData[1]);
-                if (!preg_match($regex, $submitValue)) {
-                    return false;
-                }
-                break;
-            case 'function':
-                if (isset($ruleData[2])) {
-                    return call_user_func(array($ruleData[2], $ruleData[1]), $submitValue, $format);
-                } elseif (method_exists($this, $ruleData[1])) {
-                    return $this->$ruleData[1]($elementName, $submitValue, $format);
-                } else {
-                    return $ruleData[1]($elementName, $submitValue, $format);
-                }
-                break;
-        }
-        return true;
-    } // end func _validateElement
-
-    // }}}
-    // {{{ _validateGroup()
-
-    /**
-     * Performs the server side validation for grouped elements
-     *
-     * @param     string   $groupName   Group name
-     * @param     mixed    $values      Submitted values to be checked
-     * @param     string   $format      Optional rule parameter
-     * @param     array    $ruleData    Rule data found in _registeredRules
-     * @param     string   $elementName Name of the element to validate in group
-     * @param     int      $howmany     How many valid elements should be in the group
-     * @access    private
-     * @since     2.7
-     * @return    bool     True on success, false if error found
-     */
-    function _validateGroup($groupName, $values, $format, $ruleData, $elementName = null, $howmany = null)
-    {
-        if (!is_null($elementName)) {
-            if (is_array($values)) {
-                $submitValue = $this->_findElementValue($elementName);
-            }
-            return $this->_validateElement($elementName, $submitValue, $format, $ruleData);
-
-        } elseif (!is_null($howmany) && $ruleData[0] != 'function') {
-            // the same rule is applied to every elements in the group
-            $total = 0;
-            if (!is_array($values)) {
-                $values = array($values);
-            }
-            foreach ( $values as $value ) {
-                if ($this->_validateElement($groupName, $value, $format, $ruleData)) {
-                    $total++;
-                }
-            }
-            if ($howmany == 0) {
-                 $group =& $this->getElement($groupName);
-                 $howmany = count($group->getElements());
-            }
-            if ($total < $howmany) {
-                return false;
-            } else {
-                return true;
-            }
-        } else {
-            // treat as a standard element (function validation set with addRule())
-            return $this->_validateElement($groupName, $values, $format, $ruleData);
-        }
-    } // end func _validateGroup
 
     // }}}
     // {{{ freeze()
@@ -1709,11 +1595,13 @@ class HTML_QuickForm extends HTML_Common {
      */
     function getValidationScript()
     {
-        if (empty($this->_rules) || $this->_freezeAll) {
+        if (empty($this->_rules) || $this->_freezeAll || empty($this->_attributes['onsubmit'])) {
             return '';
         }
+
+        include_once('HTML/QuickForm/Validate.php');
+        $validate =& HTML_QuickForm_Validate::singleton();
         $html = '';
-        $tabs = $this->_getTabs();
         $test = array();
         $js_escape = array(
             "\r"    => '\r',
@@ -1723,96 +1611,93 @@ class HTML_QuickForm extends HTML_Common {
             '"'     => '\"',
             '\\'    => '\\\\'
         );
-        for (reset($this->_rules); $elementName = key($this->_rules); next($this->_rules)) {
-            $rules = pos($this->_rules);
+
+        foreach ($this->_rules as $elementName => $rules) {
             foreach ($rules as $rule) {
-                $type       = $rule['type'];
-                $validation = $rule['validation'];
-                $message    = $rule['message'];
-                $format     = $rule['format'];
-                $reset      = (isset($rule['reset'])) ? $rule['reset'] : false;
-                $ruleData   = $GLOBALS['_HTML_QuickForm_registered_rules'][$type];
-                if ($validation == 'client') {
-                    $index = $this->_elementIndex[$elementName];
-                    if ($this->_elements[$index]->getType() == 'group' ||
-                        ($this->_elements[$index]->getType() == 'select' && $this->_elements[$index]->getMultiple())) {
+                if ($rule['validation'] == 'client') {
+                    $type       = $rule['type'];
+                    $message    = $rule['message'];
+                    $format     = $rule['format'];
+                    $reset      = (isset($rule['reset'])) ? $rule['reset'] : false;
+                    $tmp_reset  = '';
+
+                    if (isset($rule['group'])) {
+                        $group =& $this->getElement($rule['group']);
+                        $elements =& $group->getElements();
+                        $element =& $elements[$group->getElementName($elementName)];
+                    } else {
+                        $element =& $this->getElement($elementName);
+                    }
+
+                    if ($element->getType() == 'group' && $element->getGroupType() != 'radio' ||
+                       ($element->getType() == 'select' && $element->getMultiple())) {
                         $value =
-                            "$tabs\t\tvar value = '';\n" .
-                            "$tabs\t\tfor (var i = 0; i < frm.elements.length; i++) {\n" .
-                            "$tabs\t\t\tif (frm.elements[i].name.indexOf('$elementName') == 0) {\n" .
-                            "$tabs\t\t\t\tvalue += frm.elements[i].value;\n" .
-                            "$tabs\t\t\t}\n" .
-                            "$tabs\t\t}";
+                            "  var value = '';\n" .
+                            "  for (var i = 0; i < frm.elements.length; i++) {\n" .
+                            "    if (frm.elements[i].name.indexOf('$elementName') == 0) {\n" .
+                            "      value += frm.elements[i].value;\n" .
+                            "    }\n" .
+                            "  }";
                         if ($reset) {
                             $tmp_reset =
-                                "$tabs\t\t\tfor (var i = 0; i < frm.elements.length; i++) {\n" .
-                                "$tabs\t\t\t\tif (frm.elements[i].name.indexOf('$elementName') == 0) {\n" .
-                                "$tabs\t\t\t\t\tfrm.elements[i].value = frm.elements[i].defaultValue;\n" .
-                                "$tabs\t\t\t\t}\n" .
-                                "$tabs\t\t\t}\n";
-                        } else {
-                            $tmp_reset = '';
+                                "  for (var i = 0; i < frm.elements.length; i++) {\n" .
+                                "    if (frm.elements[i].name.indexOf('$elementName') == 0) {\n" .
+                                "      frm.elements[i].value = frm.elements[i].defaultValue;\n" .
+                                "    }\n" .
+                                "  }\n";
                         }
-                    } elseif ($this->_elements[$index]->getType() == 'checkbox') {
-                        $value = "$tabs\t\tif (frm.elements['$elementName'].checked) {\n" .
-                                 "$tabs\t\t\tvar value = 1;\n" .
-                                 "$tabs\t\t} else {\n" .
-                                 "$tabs\t\t\tvar value = '';\n" .
-                                 "$tabs\t\t}";
-                        $tmp_reset = ($reset) ? "$tabs\t\tfield.checked = field.defaultChecked;\n" : '';
+                    } elseif ($element->getType() == 'checkbox') {
+                        $value = "  if (frm.elements['$elementName'].checked) {\n" .
+                                 "    var value = '1';\n" .
+                                 "  } else {\n" .
+                                 "    var value = '';\n" .
+                                 "  }";
+                        $tmp_reset = ($reset) ? "  field.checked = field.defaultChecked;\n" : '';
+                    } elseif ($element->getType() == 'group' && $element->getGroupType() == 'radio') {
+                        $value = "  var value = '';\n" .
+                                 "  for (var i = 0; i < frm.elements['$elementName'].length; i++) {\n" .
+                                 "    if (frm.elements['$elementName'][i].checked) {\n" .
+                                 "      var value = frm.elements['$elementName'][i].value;\n" .
+                                 "    }\n" .
+                                 "  }";
+                        if ($reset) {
+                            $tmp_reset = "  for (var i = 0; i < field.length; i++) {\n" .
+                                         "    field[i].checked = field[i].defaultChecked;\n" .
+                                         "  }";
+                        }
                     } else {
-                        $value = "$tabs\t\tvar value = frm.elements['$elementName'].value;";
-                        $tmp_reset = ($reset) ? "$tabs\t\tfield.value = field.defaultValue;\n" : '';
+                        $value = "  var value = frm.elements['$elementName'].value;";
+                        $tmp_reset = ($reset) ? "  field.value = field.defaultValue;\n" : '';
                     }
-                    switch ($ruleData[0]) {
-                        case 'regex':
-                            $regex = str_replace('%data%', $format, $ruleData[1]);
-                            if (!$this->isElementRequired($elementName)) {
-                                // This regex will make the rule optional and preserve your delimiters
-                                $regex = preg_replace('/^(\/|.*[^\^])(.*)\1$/', '$1^$|$2$1', $regex);
-                            }
-                            $test[] =
-                                "$value\n" .
-                                "$tabs\t\tvar field = frm.elements['$elementName'];\n"  .
-                                "$tabs\t\tvar regex = $regex;\n"  .
-                                "$tabs\t\tif (!regex.test(value) && !errFlag['$elementName']) {\n" .
-                                "$tabs\t\t\terrFlag['$elementName'] = true;\n" .
-                                "$tabs\t\t\t_qfMsg = _qfMsg + '\\n - ".strtr($message, $js_escape)."';\n".
-                                $tmp_reset.
-                                "$tabs\t\t}";
-                            break;
-                        case 'function':
-                            $test[] =
-                                "$value\n" .
-                                "$tabs\t\tvar field = frm.elements['$elementName'];\n"  .
-                                "$tabs\t\tif (!" . $ruleData[1] . "('$elementName', value) && !errFlag['$elementName']) {\n" .
-                                "$tabs\t\t\terrFlag['$elementName'] = true;\n" .
-                                "$tabs\t\t\t_qfMsg = _qfMsg + '\\n - ".strtr($message, $js_escape)."';\n" .
-                                "$tabs\t\t}";
-                            break;
-                    }
+
+                    $test[] = $validate->getValidationScript($rule['type'],
+                                                             $value, 
+                                                             $elementName,
+                                                             strtr($message, $js_escape),
+                                                             $tmp_reset,
+                                                             $format);
                 }
             }
         }
         if (is_array($test) && count($test) > 0) {
             $html .=
-                "$tabs\tfunction validate_" . $this->_attributes['name'] . "() {\n" .
-                "$tabs\t\tvar errFlag = new Array();\n" .
-                "$tabs\t\t_qfMsg = '';\n" .
-                "$tabs\t\tvar frm = document.forms['" . $this->_attributes['name'] . "'];\n";
+                "function validate_" . $this->_attributes['name'] . "() {\n" .
+                "  var errFlag = new Array();\n" .
+                "  _qfMsg = '';\n" .
+                "  var frm = document.forms['" . $this->_attributes['name'] . "'];\n";
             $html .= join("\n", $test);
             $html .=
-                "$tabs\n\t\tif (_qfMsg != '') {\n" .
-                "$tabs\t\t\t_qfMsg = '$this->_jsPrefix' + _qfMsg;\n" .
-                "$tabs\t\t\t_qfMsg = _qfMsg + '\\n$this->_jsPostfix';\n" .
-                "$tabs\t\t\talert(_qfMsg);\n" .
-                "$tabs\t\t\treturn false;\n" .
-                "$tabs\t\t}\n" .
-                "$tabs\t\treturn true;\n" .
-                "$tabs }\n";
-            $html = "$tabs\n<script type=\"text/javascript\">\n" .
-                    "$tabs<!-- \n" . $html . "$tabs//-->\n" .
-                    "$tabs</script>";
+                "\n  if (_qfMsg != '') {\n" .
+                "    _qfMsg = '$this->_jsPrefix' + _qfMsg;\n" .
+                "    _qfMsg = _qfMsg + '\\n$this->_jsPostfix';\n" .
+                "    alert(_qfMsg);\n" .
+                "    return false;\n" .
+                "  }\n" .
+                "  return true;\n" .
+                "}\n";
+            $html = "\n<script type=\"text/javascript\">\n" .
+                    "<!-- \n" . $html . "//-->\n" .
+                    "</script>";
         }
         return $html;
     } // end func getValidationScript
