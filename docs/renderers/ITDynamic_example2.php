@@ -81,7 +81,7 @@ $form->addElement('static', null, null, 'second column');
 // Adds some validation rules
 $form->addRule('email', 'Email address is required', 'required');
 $form->addGroupRule('name', 'Name is required', 'required');
-$form->addRule('pass', 'Password must be between 8 to 10 characters', 'rangelength', '8,10');
+$form->addRule('pass', 'Password must be between 8 to 10 characters', 'rangelength', array(8, 10));
 $form->addRule('country', 'Country is a required field', 'required');
 $form->addGroupRule('destination', 'Please check at least two boxes', 'required', null, 2);
 $form->addGroupRule('phone', 'Please fill all phone fields', 'required');
