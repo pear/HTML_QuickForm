@@ -153,10 +153,26 @@ class HTML_QuickForm_Renderer_ITDynamic extends HTML_QuickForm_Renderer
                 $this->_tpl->touchBlock($blockName . '_required');
             }
         }
-        // render the element itself with its label
+        // Prepare multiple labels
+        $labels = $element->getLabel();
+        if (is_array($labels)) {
+            $mainLabel = array_shift($labels);
+        } else {
+            $mainLabel = $labels;
+        }
+        // render the element itself with its main label
         $this->_tpl->setVariable('qf_element', $element->toHtml());
         if ($this->_tpl->placeholderExists('qf_label', $blockName)) {
-            $this->_tpl->setVariable('qf_label', $element->getLabel());
+            $this->_tpl->setVariable('qf_label', $mainLabel);
+        }
+        // render extra labels, if any
+        if (is_array($labels)) {
+            foreach($labels as $key => $label) {
+                $key = is_int($key)? $key + 2: $key;
+                if ($this->_tpl->blockExists($blockName . '_label_' . $key)) {
+                    $this->_tpl->setVariable('qf_label_' . $key, $label);
+                }
+            }
         }
         $this->_tpl->parse($blockName);
         $this->_tpl->parseCurrentBlock();

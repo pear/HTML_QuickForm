@@ -1,6 +1,6 @@
 <?php
 /**
- * Example of usage for HTML_QuickForm with HTML_Template_ITX based renderer
+ * Example of usage for HTML_QuickForm with ITDynamic renderer
  *
  * @author Alexey Borzov <borz_off@cs.msu.su>
  *
@@ -9,9 +9,9 @@
 
 require_once 'HTML/QuickForm.php';
 require_once 'HTML/QuickForm/Renderer/ITDynamic.php';
+// can use either HTML_Template_Sigma or HTML_Template_ITX
 require_once 'HTML/Template/ITX.php';
-// can also use HTML_Template_Sigma instead of HTML_Template_ITX
-//require_once 'HTML/Template/Sigma.php';
+// require_once 'HTML/Template/Sigma.php';
 
 $form = new HTML_QuickForm('frmTest', 'post');
 
@@ -30,9 +30,9 @@ $form->addElement('hidden', 'ihidTest', 'hiddenField');
 // will be rendered in default qf_element block
 $form->addElement('text', 'itxtTest', 'Test Text:');
 // will be rendered in qf_textarea block, as it exists in template
-$form->addElement('textarea', 'itxaTest', 'Test TextArea:');
-// will be later assigned to qf_green
-$form->addElement('password', 'ipwdTest', 'Test Password:');
+$form->addElement('textarea', 'itxaTest', 'Test TextArea:', array('rows' => 5, 'cols' => 40));
+// will be later assigned to qf_green, note that an array of labels is passed
+$form->addElement('password', 'ipwdTest', array('Test Password:', 'The password is expected to be long enough.'));
 $select =& $form->addElement('select', 'iselTest', 'Test Select:', array('A'=>'A', 'B'=>'B','C'=>'C','D'=>'D'));
 $select->setSize(5);
 $select->setMultiple(true);
@@ -72,9 +72,10 @@ if ($form->validate()) {
 }
 
 // create a template object and load the template file
+// can use either HTML_Template_Sigma or HTML_Template_ITX
 $tpl =& new HTML_Template_ITX('.');
-// or else
-//$tpl =& new HTML_Template_Sigma('.');
+// $tpl =& new HTML_Template_Sigma('.');
+
 $tpl->loadTemplateFile('it-dynamic.html', true, true);
 
 // create a renderer

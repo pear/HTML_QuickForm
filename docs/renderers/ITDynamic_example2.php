@@ -1,6 +1,6 @@
 <?php
 /**
-* Example of usage for PEAR class HTML_QuickForm
+*Example of usage for HTML_QuickForm with ITDynamic renderer (2-column layout)
 *
 * @author      Adam Daniel <adaniel1@eesus.jnj.com>
 * @author      Bertrand Mansion <bmansion@mamasam.com>
@@ -9,8 +9,8 @@
 */
 require_once 'HTML/QuickForm.php';
 require_once 'HTML/QuickForm/Renderer/ITDynamic.php';
+// can use either HTML_Template_Sigma or HTML_Template_ITX
 require_once 'HTML/Template/ITX.php';
-// can also use HTML_Template_Sigma instead of HTML_Template_ITX
 //require_once 'HTML/Template/Sigma.php';
 
 $form = new HTML_QuickForm('frmTest', 'POST');
@@ -28,7 +28,7 @@ $form->addElement('hidden', 'timer', '12345');
 $form->addElement('hidden', 'ihidTest', 'hiddenField');
 
 // Personal information
-$form->addElement('header', 'personal', 'Personal Information');
+$form->addElement('header', 'personal_info', 'Personal Information');
 
 $name['last'] = &HTML_QuickForm::createElement('text', 'first', 'First', 'size=10');
 $name['first'] = &HTML_QuickForm::createElement('text', 'last', 'Last', 'size=10');
@@ -48,7 +48,7 @@ $form->addElement('static', null, null, 'first column');
 
 
 // Company information
-$form->addElement('header', 'company', 'Company Information');
+$form->addElement('header', 'company_info', 'Company Information');
 
 $form->addElement('text', 'company', 'Company:', 'size=20');
 
@@ -101,9 +101,10 @@ if ($form->validate()) {
 }
 
 
+// can use either HTML_Template_Sigma or HTML_Template_ITX
 $tpl =& new HTML_Template_ITX('.');
-// or else
-//$tpl =& new HTML_Template_Sigma('.');
+// $tpl =& new HTML_Template_Sigma('.');
+
 $tpl->loadTemplateFile('it-dynamic-2.html');
 
 $renderer =& new HTML_QuickForm_Renderer_ITDynamic($tpl);
