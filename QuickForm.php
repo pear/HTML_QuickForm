@@ -615,9 +615,10 @@ class HTML_QuickForm extends HTML_Common {
     * @since    3.2.4
     * @param    object  HTML_QuickForm_element  Element to insert
     * @param    string  Name of the element before which the new one is inserted
+    * @return   object  HTML_QuickForm_element  reference to inserted element
     * @throws   HTML_QuickForm_Error
     */
-    function insertElementBefore(&$element, $nameAfter)
+    function &insertElementBefore(&$element, $nameAfter)
     {
         if (!empty($this->_duplicateIndex[$nameAfter])) {
             return PEAR::raiseError(null, QUICKFORM_INVALID_ELEMENT_NAME, null, E_USER_WARNING, 'Several elements named "' . $nameAfter . '" exist in HTML_QuickForm::insertElementBefore().', 'HTML_QuickForm_Error', true);
@@ -658,6 +659,7 @@ class HTML_QuickForm extends HTML_Common {
         $element->onQuickFormEvent('updateValue', null, $this);
         // If not done, the elements will appear in reverse order
         ksort($this->_elements);
+        return $element;
     }
 
     // }}}
