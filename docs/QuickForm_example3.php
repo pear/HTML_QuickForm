@@ -1,4 +1,14 @@
 <?php
+/**
+* Example of usage for PEAR class HTML_QuickForm
+* This example shows a way to compare 2 values using a custom
+* validation rule in QuickForm.
+* 
+* @author      Bertrand Mansion <bmansion@mamasam.com>
+* @version     2.0
+*
+* $Id$ 
+*/
 
 require_once ('HTML/QuickForm.php');
 
