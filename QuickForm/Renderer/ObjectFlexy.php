@@ -138,16 +138,34 @@ class HTML_QuickForm_Renderer_ObjectFlexy extends HTML_QuickForm_Renderer_Object
         }
 
         // Create an element key from the name
-        $ret->key = $ret->name;
-        if(strstr($ret->key, '[')) {
-            preg_match('/\\[([^]]*)\\]/', $ret->key, $matches);
-            $ret->key = $matches[1];
-            if(empty($ret->key)) {
-                $ret->key = $this->_groupElementIdx++;
+        if (false !== ($pos = strpos($ret->name, '[')) || is_object($this->_currentGroup)) {
+            if (!$pos) {
+                $keys = '->{\'' . $ret->name . '\'}';
+            } else {
+                $keys = '->{\'' . str_replace(array('[', ']'), array('\'}->{\'', ''), $ret->name) . '\'}';
             }
-        } elseif (empty($ret->key)) {
-            $ret->key = 'element_' . $this->_elementIdx;
+            // special handling for elements in native groups
+            if (is_object($this->_currentGroup)) {
+                // skip unnamed group items unless radios: no name -> no static access
+                // identification: have the same key string as the parent group
+                if ($this->_currentGroup->keys == $keys && 'radio' != $ret->type) {
+                    return false;
+                }
+                // reduce string of keys by remove leading group keys
+                if (0 === strpos($keys, $this->_currentGroup->keys)) {
+                    $keys = substr_replace($keys, '', 0, strlen($this->_currentGroup->keys));
+                }
+            }
+        } elseif (0 == strlen($ret->name)) {
+            $keys = '->{\'element_' . $this->_elementIdx . '\'}';
+        } else {
+            $keys = '->{\'' . $ret->name . '\'}';
         }
+        // for radios: add extra key from value
+        if ('radio' == $ret->type && '[]' != substr($keys, -2)) {
+            $keys .= '->{\'' . $ret->value . '\'}';
+        }
+        $ret->keys = $keys;
         $this->_elementIdx++;
         return $ret;
     }
@@ -162,12 +180,15 @@ class HTML_QuickForm_Renderer_ObjectFlexy extends HTML_QuickForm_Renderer_Object
      */
     function _storeObject($elObj) 
     {
-        $key = $elObj->key;
-        unset($elObj->key);
-        if(is_object($this->_currentGroup) && ($elObj->type != 'group')) {
-            $this->_currentGroup->$key = $elObj;
-        } else {
-            $this->_obj->$key = $elObj;
+        if ($elObj) {
+            $keys = $elObj->keys;
+            unset($elObj->keys);
+            if(is_object($this->_currentGroup) && ('group' != $elObj->type)) {
+                $code = '$this->_currentGroup' . $keys . ' = $elObj;';
+            } else {
+                $code = '$this->_obj' . $keys . ' = $elObj;';
+            }
+            eval($code);
         }
     }
 
