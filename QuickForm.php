@@ -19,8 +19,8 @@
 //
 // $Id$
 
-require_once("PEAR.php");
-require_once("HTML/Common.php");
+require_once('PEAR.php');
+require_once('HTML/Common.php');
 
 $GLOBALS['HTML_QUICKFORM_ELEMENT_TYPES'] = 
         array(
@@ -50,12 +50,12 @@ $GLOBALS['HTML_QUICKFORM_ELEMENT_TYPES'] =
  * sure to add the textual messages to the QuickForm::errorMessage() function as well
  */
 
-define("QUICKFORM_OK",                      1);
-define("QUICKFORM_ERROR",                  -1);
-define("QUICKFORM_INVALID_RULE",           -2);
-define("QUICKFORM_NONEXIST_ELEMENT",       -3);
-define("QUICKFORM_INVALID_FILTER",         -4);
-define("QUICKFORM_UNREGISTERED_ELEMENT",   -5);
+define('QUICKFORM_OK',                      1);
+define('QUICKFORM_ERROR',                  -1);
+define('QUICKFORM_INVALID_RULE',           -2);
+define('QUICKFORM_NONEXIST_ELEMENT',       -3);
+define('QUICKFORM_INVALID_FILTER',         -4);
+define('QUICKFORM_UNREGISTERED_ELEMENT',   -5);
 
 // }}}
 
@@ -93,23 +93,23 @@ class HTML_QuickForm extends HTML_Common {
      * @access   private
      */ 
     var $_required = array();
-        
+
     /**
      * Prefix message in javascript alert if error
      * @since     1.0
      * @var  string
      * @access   public
      */ 
-    var $_jsPrefix = "Invalid information entered.";    
-    
+    var $_jsPrefix = 'Invalid information entered.';
+
     /**
      * Postfix message in javascript alert if error
      * @since     1.0
      * @var  string
      * @access   public
      */ 
-    var $_jsPostfix = "Please correct these fields.";   
-    
+    var $_jsPostfix = 'Please correct these fields.';
+
     /**
      * Array of default form values
      * @since     2.0
@@ -133,13 +133,13 @@ class HTML_QuickForm extends HTML_Common {
      * @access   private
      */
     var $_submitValues = array();
-    
+
     /**
      * Array of submitted form files
      * @since     1.0
      * @var  integer
      * @access   public
-     */     
+     */
     var $_submitFiles = array();
 
     /**
@@ -147,9 +147,9 @@ class HTML_QuickForm extends HTML_Common {
      * @since     1.0
      * @var  integer
      * @access   public
-     */     
+     */
     var $_maxFileSize = 1048576; // 1 Mb = 1048576
-            
+
     /**
      * Flag to know if all fields are frozen
      * @since     1.0
@@ -188,8 +188,8 @@ class HTML_QuickForm extends HTML_Common {
      * @since     1.0
      * @access    public
      */
-    var $_requiredNote = "<font size=\"1\" color=\"#FF0000\">*</font><font size=\"1\"> denotes required field</font>";
-    
+    var $_requiredNote = '<font size="1" color="#FF0000">*</font><font size="1"> denotes required field</font>';
+
     /**
      * Array of registered element types
      * @var       array
@@ -223,7 +223,7 @@ class HTML_QuickForm extends HTML_Common {
             'mimetype'      =>array('function', '_ruleCheckMimeType'),
             'filename'      =>array('function', '_ruleCheckFileName')
         );
-    
+
     /**
      * Array of registered filters types
      * @var       array
@@ -258,7 +258,7 @@ class HTML_QuickForm extends HTML_Common {
      */
     var $_elementTemplate = 
         "\n\t<tr>\n\t\t<td align=\"right\" valign=\"top\"><!-- BEGIN required --><font color=\"red\">*</font><!-- END required --><b>{label}</b></td>\n\t\t<td nowrap=\"nowrap\" valign=\"top\" align=\"left\"><!-- BEGIN error --><font color=\"#FF0000\">{error}</font><br><!-- END error -->\t{element}</td>\n\t</tr>";
-    
+
     /**
      * Form template string
      * @var       string
@@ -267,7 +267,7 @@ class HTML_QuickForm extends HTML_Common {
      */
     var $_formTemplate = 
         "\n<table border=\"0\">\n\t<form{attributes}>{content}\n\t</form>\n</table>";
-    
+
     /**
      * Required Note template string
      * @var       string
@@ -297,17 +297,17 @@ class HTML_QuickForm extends HTML_Common {
      * @param    array       $attributes        (optional)Associative array of form tag extra attributes
      * @access   public
      */
-    function HTML_QuickForm($formName="", $method="POST", $action="", $target="_self", $attributes=null)
+    function HTML_QuickForm($formName='', $method='POST', $action='', $target='_self', $attributes=null)
     {
         HTML_Common::HTML_Common($attributes);
-        $method = (strtoupper($method) == "GET") ? "GET" : "POST";
-        $action = ($action == "") ? $GLOBALS['HTTP_SERVER_VARS']['PHP_SELF'] : $action;
-        $this->updateAttributes(array("action"=>$action, "method"=>$method, "name"=>$formName, "target"=>$target));
+        $method = (strtoupper($method) == 'GET') ? 'GET' : 'POST';
+        $action = ($action == '') ? $_SERVER['PHP_SELF'] : $action;
+        $this->updateAttributes(array('action'=>$action, 'method'=>$method, 'name'=>$formName, 'target'=>$target));
         $this->_registeredTypes = &$GLOBALS['HTML_QUICKFORM_ELEMENT_TYPES'];
-        $this->_submitValues = $GLOBALS["HTTP_" . $method . "_VARS"];
-        $this->_submitFiles = $GLOBALS["HTTP_POST_FILES"];
+        $this->_submitValues = $_${$method};
+        $this->_submitFiles = $_FILES;
     } // end constructor
-    
+
     // }}}
     // {{{ apiVersion()
 
@@ -386,7 +386,7 @@ class HTML_QuickForm extends HTML_Common {
     /**
      * Returns true if element is in the form
      *
-     * @param     string   $element         form name of element to check   
+     * @param     string   $element         form name of element to check
      * @since     1.0
      * @access    public
      * @return    boolean
@@ -396,7 +396,7 @@ class HTML_QuickForm extends HTML_Common {
     {
         return isset($this->_elementIndex[$element]);
     } // end func elementExists
-    
+
     // }}}
     // {{{ setDefaults()
 
@@ -404,7 +404,7 @@ class HTML_QuickForm extends HTML_Common {
      * Initializes default form values
      *
      * @param     array    $defaultValues       values used to fill the form
-     * @param     mixed    $filter              (optional) filter(s) to apply to all default values    
+     * @param     mixed    $filter              (optional) filter(s) to apply to all default values
      * @since     1.0
      * @access    public
      * @return    void
@@ -594,7 +594,7 @@ class HTML_QuickForm extends HTML_Common {
      * @access   public
      * @throws   PEAR_Error
      */
-    function addElementGroup($elements, $groupLabel="", $name=null, $separator="&nbsp;")
+    function addElementGroup($elements, $groupLabel='', $name=null, $separator='&nbsp;')
     {
         return $this->addElement('group', $name, $groupLabel, $elements, $separator);
     } // end func addElementGroup
@@ -787,7 +787,7 @@ class HTML_QuickForm extends HTML_Common {
      */
     function addHeader($label)
     {
-        $this->_elements[] = array("header"=>$label);
+        $this->_elements[] = array('header'=>$label);
     } // end func addHeader
 
     // }}}
@@ -836,9 +836,9 @@ class HTML_QuickForm extends HTML_Common {
      */
     function addData($data)
     {
-        $this->_elements[] = array("data"=>$data);
+        $this->_elements[] = array('data'=>$data);
     }
-    
+
     // }}}
     // {{{ applyFilter()
 
@@ -975,7 +975,7 @@ class HTML_QuickForm extends HTML_Common {
      */
     function _wrapForm($content)
     {
-        $html = "";
+        $html = '';
         $html = str_replace('{attributes}', 
             $this->_getAttrString($this->_attributes), $this->_formTemplate);
         $tabs = $this->_getTabs();
@@ -998,7 +998,7 @@ class HTML_QuickForm extends HTML_Common {
      */
     function _wrapRequiredNote(&$formTable)
     {
-        $html = "";
+        $html = '';
         $html = str_replace('{requiredNote}', $this->_requiredNote, $this->_requiredNoteTemplate);
         return $html;
     } // end func setCaption
@@ -1046,7 +1046,7 @@ class HTML_QuickForm extends HTML_Common {
      */
     function _buildHeader($element)
     {
-        $header = $element["header"];
+        $header = $element['header'];
         return $this->_wrapHeader($header);
     } // end func _buildHeader
     
@@ -1715,15 +1715,15 @@ class HTML_QuickForm extends HTML_Common {
      */
     function process()
     {
-        echo "<pre>";
+        echo '<pre>';
         var_dump($this->_submitValues);
-        echo "</pre>";
-        echo "<pre>";
+        echo '</pre>';
+        echo '<pre>';
         var_dump($this->_submitFiles);
-        echo "</pre>";
+        echo '</pre>';
         return true;
     } // end func process
-        
+
     // }}}
     // {{{ toHtml ()
 
@@ -1762,14 +1762,14 @@ class HTML_QuickForm extends HTML_Common {
             $tabs = $this->_getTabs();
             $html =
                 "\n$tabs<script language=\"javascript\">\n" .
-                "$tabs<!-- \n" . $html = $this->_buildRules() . 
+                "$tabs<!-- \n" . $html = $this->_buildRules() .
                 "$tabs//-->\n" .
                 "$tabs</script>" .
                 $html;
         }
         return $html;
     } // end func toHtml
-    
+
     // }}}
     // {{{ display()
 
@@ -1786,7 +1786,7 @@ class HTML_QuickForm extends HTML_Common {
     {
         print $this->toHtml();
     } //end func display
-    
+
     // }}}
     // {{{ getValidationScript()
 
@@ -1796,7 +1796,7 @@ class HTML_QuickForm extends HTML_Common {
      * @since     2.0
      * @access    public
      * @return    string
-     * @throws    
+     * @throws
      */
     function getValidationScript()
     {
@@ -1804,7 +1804,7 @@ class HTML_QuickForm extends HTML_Common {
             return $this->_buildRules();
         }
     } // end func getValidationScript
-    
+
     // }}}
     // {{{ getAttributesString()
 
@@ -1814,7 +1814,7 @@ class HTML_QuickForm extends HTML_Common {
      * @since     2.0
      * @access    public
      * @return    void
-     * @throws    
+     * @throws
      */
     function getAttributesString()
     {
@@ -1830,7 +1830,7 @@ class HTML_QuickForm extends HTML_Common {
      * @since     2.0
      * @access    private
      * @return    void
-     * @throws    
+     * @throws
      */
     function getSubmitValues()
     {
@@ -1847,7 +1847,7 @@ class HTML_QuickForm extends HTML_Common {
      * @since     2.0
      * @access    public
      * @return    array of form contents
-     * @throws    
+     * @throws
      */
     function toArray()
     {
@@ -1867,7 +1867,7 @@ class HTML_QuickForm extends HTML_Common {
                 $name = $element->getName();
                 if (!isset($name) || $name == '') {
                     $name = 'element_' . $elementIndex;
-                } 
+                }
                 $elementIndex++;
                 if ($this->_freezeAll) {
                     $element->freeze();
@@ -1879,11 +1879,11 @@ class HTML_QuickForm extends HTML_Common {
                 }
                 if (isset($currentSection)) {
                     $returnVal['sections'][$currentSection]['elements'][$name] = 
-                        array_merge(array('required'=>$this->isElementRequired($name)), 
+                        array_merge(array('required'=>$this->isElementRequired($name)),
                             $element->toArray());
                 } else {
                     $returnVal['elements'][$name] = 
-                        array_merge(array('required'=>$this->isElementRequired($name)), 
+                        array_merge(array('required'=>$this->isElementRequired($name)),
                             $element->toArray());
                 }
             }
