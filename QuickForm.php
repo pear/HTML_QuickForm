@@ -571,9 +571,11 @@ class HTML_QuickForm extends HTML_Common {
         if (isset($this->_constantValues[$elementName])) {
             $elementObject->onQuickFormEvent('setConstant', $this->_constantValues[$elementName], $this);
         }
-        $index = count($this->_elements);
-        $this->_elementIndex[$elementName] = $index;
         $this->_elements[] = $elementObject;
+        end($this->_elements);
+        $index = key($this->_elements);
+        $this->_elementIndex[$elementName] = $index;
+
         return $index;
     } // end func addElement
     
