@@ -471,7 +471,7 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
             if ($this->_flagFrozen) {
                 $element->freeze();
             }
-            $required = in_array($element->getName(), $this->_required);
+            $required = !$this->_flagFrozen && in_array($element->getName(), $this->_required);
 
             $element->accept($renderer, $required);
 

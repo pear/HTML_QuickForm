@@ -88,7 +88,7 @@ $form->addGroupRule('id', $IDRules);
 if ($form->validate()) {
     // Form is validated, then processes the data
     $form->freeze();
-    $form->process();
+    $form->process('var_dump');
     echo "\n<HR>\n";
 }
 $form->display();
