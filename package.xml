@@ -50,6 +50,12 @@ Features:
       <email>ths@4bconsult.de</email>
       <role>developer</role>
     </maintainer>
+    <maintainer>
+      <user>mixtli</user>
+      <name>Ron McClain</name>
+      <email>ron@humaniq.com</email>
+      <role>developer</role>
+    </maintainer>
   </maintainers>
   <release>
     <version>3.1</version>
@@ -123,6 +129,8 @@ Use this to catch them with an error handler function, the global error code is 
             <file role="php">Default.php</file>
             <file role="php">ITDynamic.php</file>
             <file role="php">ITStatic.php</file>
+            <file role="php">Object.php</file>
+            <file role="php">ObjectFlexy.php</file>
           </dir>
         </dir>
         <dir name="docs">
@@ -139,6 +147,8 @@ Use this to catch them with an error handler function, the global error code is 
             <file role="doc">ITStatic_example.php</file>
             <file role="doc">SmartyDynamic_example.php</file>
             <file role="doc">SmartyStatic_example.php</file>
+            <file role="doc">FlexyStatic_example.html</file>
+            <file role="doc">FlexyDynamic_example.html</file>
             <file role="doc">it-dynamic-2.html</file>
             <file role="doc">it-dynamic.html</file>
             <file role="doc">it-static.html</file>
@@ -148,6 +158,14 @@ Use this to catch them with an error handler function, the global error code is 
               <file role="doc">smarty-dynamic-green.tpl</file>
               <file role="doc">smarty-dynamic.tpl</file>
               <file role="doc">smarty-static.tpl</file>
+              <file role="doc">flexy_dynamic.html</file>
+              <file role="doc">flexy_static.html</file>
+              <file role="doc">html.html</file>
+              <file role="doc">label.html</file>
+                <dir name="styles">
+                  <file role="doc">green.html</file>
+                  <file role="doc">fancygroup.html</file>
+                </dir>
             </dir>
           </dir>
         </dir>
