@@ -477,6 +477,11 @@ class HTML_QuickForm extends HTML_Common {
         $includeFile = $GLOBALS['HTML_QUICKFORM_ELEMENT_TYPES'][$type][0];
         include_once $includeFile;
         $elementObject = new $className();
+        foreach (range(0, 4) as $i) {
+        	if (!isset($args[$i])) {
+        		$args[$i] = null;
+        	}
+        }
         $err = $elementObject->onQuickFormEvent($event, $args, &$this);
         if ($err != true) {
             return $err;
