@@ -227,7 +227,7 @@ class HTML_QuickForm_element extends HTML_Common {
     function getFrozenHtml()
     {
         $value = $this->getValue();
-        if (!empty($value)) {
+        if ($value != '') {
             $html = $value;
         } else {
             $html = '&nbsp;';
