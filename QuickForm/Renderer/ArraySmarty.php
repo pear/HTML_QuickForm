@@ -261,10 +261,10 @@ class HTML_QuickForm_Renderer_ArraySmarty extends HTML_QuickForm_Renderer_Array
             'required' => $required,
             'error'    => $error
         ));
-        if (!empty($label) && strpos($this->_required, '{$label') !== false) {
+        if (!empty($label) && strpos($this->_required, $this->_tpl->left_delimiter . '$label') !== false) {
             $label = $this->_tplFetch($this->_required);
         }
-        if (!empty($html) && strpos($this->_required, '{$html') !== false) {
+        if (!empty($html) && strpos($this->_required, $this->_tpl->left_delimiter . '$html') !== false) {
             $html = $this->_tplFetch($this->_required);
         }
         $this->_tpl->clear_assign(array('label', 'html', 'required'));
@@ -290,9 +290,9 @@ class HTML_QuickForm_Renderer_ArraySmarty extends HTML_QuickForm_Renderer_Array
         $error = $this->_tplFetch($this->_error);
         $this->_tpl->assign(array('label' => $label, 'html'  => $html));
 
-        if (!empty($label) && strpos($this->_error, '{$label') !== false) {
+        if (!empty($label) && strpos($this->_error, $this->_tpl->left_delimiter . '$label') !== false) {
             $label = $this->_tplFetch($this->_error);
-        } elseif (!empty($html) && strpos($this->_error, '{$html') !== false) {
+        } elseif (!empty($html) && strpos($this->_error, $this->_tpl->left_delimiter . '$html') !== false) {
             $html = $this->_tplFetch($this->_error);
         }
         $this->_tpl->clear_assign(array('label', 'html', 'error'));
