@@ -215,9 +215,9 @@ class HTML_QuickForm extends HTML_Common {
             'alphanumeric'  =>array('regex', '/^[a-zA-Z0-9]*$/'),
             'numeric'       =>array('regex', '/(^-?\d\d*\.\d*$)|(^-?\d\d*$)|(^-?\.\d\d*$)/'),
             'uploadedfile'  =>array('function', '_ruleIsUploadedFile'),
-            'maxfilesize'   =>array('function', '_ruleCheckMaxFileSizeRule'),
-            'mimetype'      =>array('function', '_ruleCheckMimeTypeRule'),
-            'filename'      =>array('function', '_ruleCheckFileNameRule')
+            'maxfilesize'   =>array('function', '_ruleCheckMaxFileSize'),
+            'mimetype'      =>array('function', '_ruleCheckMimeType'),
+            'filename'      =>array('function', '_ruleCheckFileName')
         );
     
     /**
@@ -736,7 +736,7 @@ class HTML_QuickForm extends HTML_Common {
                 return PEAR::raiseError(null, QUICKFORM_UNREGISTERED_ELEMENT, null, E_USER_WARNING, "Element '$element' does not exist in HTML_QuickForm::addRule()", 'HTML_QuickForm_Error', true);
             }
         }
-        if ($type == 'required') {
+        if ($type == 'required' || $type == 'uploadedfile') {
             $this->_required[] = $element;
         }
         if (!isset($this->_rules[$element])) {
@@ -1378,7 +1378,7 @@ class HTML_QuickForm extends HTML_Common {
      */
     function _ruleCheckMaxFileSize($element, $value, $maxSize)
     {
-        return ($maxSize >= filesize($this->_submitFiles[$element]['tmp_name']));
+        return ($maxSize >= @filesize($this->_submitFiles[$element]['tmp_name']));
     } // end func _ruleCheckMaxFileSize
 
     // }}}
