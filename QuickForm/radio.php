@@ -143,6 +143,7 @@ class HTML_QuickForm_radio extends HTML_QuickForm_input {
         $html = '';
         if ($this->getChecked()) {
             $html .= '<tt>(x)</tt>';
+            $html .= '<input type="hidden" name="'.$this->getName().'" value="'.htmlspecialchars($this->getValue()).'" />';
         } else {
             $html .= '<tt>( )</tt>';
         }
