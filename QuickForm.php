@@ -1287,7 +1287,11 @@ class HTML_QuickForm extends HTML_Common {
         // process the global rules now
         foreach ($this->_formRules as $rule) {
             if (true !== ($res = call_user_func($rule, $this->_submitValues, $this->_submitFiles))) {
-                $this->_errors += $res;
+                if (is_array($res)) {
+                    $this->_errors += $res;
+                } else {
+                    return PEAR::raiseError(null, QUICKFORM_ERROR, null, E_USER_WARNING, 'Form rule callback returned invalid value in HTML_QuickForm::validate()', 'HTML_QuickForm_Error', true);
+                }
             }
         }
 
