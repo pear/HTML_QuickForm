@@ -72,7 +72,7 @@ Features:
 * Bugfixes
 - Fixed bug #351 (incorrect values set for groups with weird names)
 - Required elements in groups are once again marked correctly
-- Fixed setValue() method of date element (thanks to Mike Carter, 
+- Fixed setValue() method of date element (thanks to Orya and Mike Carter, 
   see also bug #388)
 - Fixed bug #403 (typo in Rule_Callback::getValidationScript())
 - Fixed bug #356 (javascript generation for groups with $appendName = false)
