@@ -79,6 +79,8 @@ contact the package maintainers.
   array keys. The new method is now used throughout the QuickForm
   instead of array_merge_recursive()
 - Added setDatasource() method
+- Implemented #552 (ITStatic renderer can group hidden fields in
+  output)
 - Added Estonian translation for date element (Ants Aasma)
 - Added Turkish translation for date element (Suat Imam-Oglu)
 - Added Norwegian translation for date element (Espen Carlsen)

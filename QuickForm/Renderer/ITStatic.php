@@ -88,6 +88,12 @@ class HTML_QuickForm_Renderer_ITStatic extends HTML_QuickForm_Renderer
     var $_error = '<font color="red">{error}</font><br />{html}';
 
    /**
+    * Collected HTML for hidden elements, if needed  
+    * @var string
+    */
+    var $_hidden = '';
+
+   /**
     * Constructor
     *
     * @param object     An HTML_Template_IT or other compatible Template object to use
@@ -107,7 +113,7 @@ class HTML_QuickForm_Renderer_ITStatic extends HTML_QuickForm_Renderer
     */
     function startForm(&$form)
     {
-        $this->_formName = $form->getAttribute('name');
+        $this->_formName = $form->getAttribute('id');
 
         if (count($form->_duplicateIndex) > 0) {
             // Take care of duplicate elements
@@ -136,6 +142,10 @@ class HTML_QuickForm_Renderer_ITStatic extends HTML_QuickForm_Renderer
         // show required note
         if ($this->_showRequired) {
             $this->_tpl->setVariable($this->_formName.'_required_note', $form->getRequiredNote());
+        }
+        // add hidden elements, if collected
+        if (!empty($this->_hidden)) {
+            $this->_tpl->setVariable($this->_formName . '_hidden', $this->_hidden);
         }
         // assign form attributes
         $this->_tpl->setVariable($this->_formName.'_attributes', $form->getAttributes(true));
@@ -246,7 +256,11 @@ class HTML_QuickForm_Renderer_ITStatic extends HTML_QuickForm_Renderer
     */
     function renderHidden(&$element)
     {
-        $this->_tpl->setVariable($this->_formName.'_'.$element->getName().'_html', $element->toHtml());
+        if ($this->_tpl->placeholderExists($this->_formName . '_hidden')) {
+            $this->_hidden .= $element->toHtml();
+        } else {
+            $this->_tpl->setVariable($this->_formName.'_'.$element->getName().'_html', $element->toHtml());
+        }
     } // end func renderHidden
 
    /**
