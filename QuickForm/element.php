@@ -226,7 +226,6 @@ class HTML_QuickForm_element extends HTML_Common {
      */
     function getFrozenHtml()
     {
-        $tabs = $this->_getTabs();
         $value = $this->getValue();
         if (!empty($value)) {
             $html = $value;
@@ -255,6 +254,24 @@ class HTML_QuickForm_element extends HTML_Common {
     {
         return $this->_flagFrozen;
     } // end func isFrozen
+
+    // }}}
+    // {{{ setPersistantFreeze()
+
+    /**
+     * Sets wether an element value should be kept in an hidden field
+     * when the element is frozen or not
+     * 
+     * @param     bool    $persistant   True if persistant value
+     * @since     2.0
+     * @access    public
+     * @return    void
+     * @throws    
+     */
+    function setPersistantFreeze($persistant=false)
+    {
+        $this->_persistantFreeze = $persistant;
+    } //end func setPersistantFreeze
 
     // }}}
     // {{{ toArray()
