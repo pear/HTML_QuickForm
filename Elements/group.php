@@ -38,7 +38,7 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
      * @since     1.0
      * @access    private
      */
-    var $_value = "";
+    var $_value = null;
         
     /**
      * Name of the element
