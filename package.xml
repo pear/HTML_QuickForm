@@ -152,20 +152,20 @@ Deprecated features:
           </dir>
         </dir>
         <dir name="docs">
-          <file>QuickForm_example.php</file>
-          <file>QuickForm_example2.php</file>
-          <file>QuickForm_example3.php</file>
-          <file>QuickForm_example4.php</file>
-          <file>QuickForm_example5.php</file>
-          <file>QuickForm_example6.php</file>
-          <file>QuickForm_example7.php</file>
+          <file role="doc">QuickForm_example.php</file>
+          <file role="doc">QuickForm_example2.php</file>
+          <file role="doc">QuickForm_example3.php</file>
+          <file role="doc">QuickForm_example4.php</file>
+          <file role="doc">QuickForm_example5.php</file>
+          <file role="doc">QuickForm_example6.php</file>
+          <file role="doc">QuickForm_example7.php</file>
           <dir name="renderers">
-            <file>ITDynamic_example.php</file>
-            <file>ITDynamic_example2.php</file>
-            <file>ITStatic_example.php</file>
-            <file>it-dynamic-2.html</file>
-            <file>it-dynamic.html</file>
-            <file>it-static.html</file>
+            <file role="doc">ITDynamic_example.php</file>
+            <file role="doc">ITDynamic_example2.php</file>
+            <file role="doc">ITStatic_example.php</file>
+            <file role="doc">it-dynamic-2.html</file>
+            <file role="doc">it-dynamic.html</file>
+            <file role="doc">it-static.html</file>
           </dir>
         </dir>
       </dir>
