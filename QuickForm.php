@@ -213,8 +213,8 @@ class HTML_QuickForm extends HTML_Common {
             'minlength'     =>array('regex', '/^(\s|\S){%data%,}$/'),
             'rangelength'   =>array('regex', '/^(\s|\S){%data%}$/'),
             'regex'         =>array('regex', '%data%'),
-            'email'         =>array('regex', '/^.+\@(\[?)[a-zA-Z0-9\-\.]+\.([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/'),
-            'emailorblank'  =>array('regex', '/(^$)|(^.+\@(\[?)[a-zA-Z0-9\-\.]+\.([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$)/'),
+            'email'         =>array('regex', '/^[a-z0-9\._-]+\@(\[?)[a-zA-Z0-9\-\.]+\.([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/'),
+            'emailorblank'  =>array('regex', '/(^$)|(^[a-z0-9\._-]+\@(\[?)[a-zA-Z0-9\-\.]+\.([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$)/'),
             'lettersonly'   =>array('regex', '/^[a-zA-Z]*$/'),
             'alphanumeric'  =>array('regex', '/^[a-zA-Z0-9]*$/'),
             'numeric'       =>array('regex', '/(^-?\d\d*\.\d*$)|(^-?\d\d*$)|(^-?\.\d\d*$)/'),
@@ -1154,14 +1154,45 @@ class HTML_QuickForm extends HTML_Common {
                 $reset      = (isset($rule['reset'])) ? $rule['reset'] : false;
                 $ruleData = $this->_registeredRules[$type];
                 if ($validation == 'client') {
-                    $tmp_reset = ($reset) ? "$tabs\t\tfield.value = field.defaultValue;\n" : '';
+                    $index = $this->_elementIndex[$elementName];
+                    if ($this->_elements[$index]->getType() == 'group' ||
+                        ($this->_elements[$index]->getType() == 'select' && $this->_elements[$index]->getMultiple())) {
+                        $value =
+                            "$tabs\t\tvar value = '';\n" .
+                            "$tabs\t\tfor (var i = 0; i < frm.elements.length; i++) {\n" .
+                            "$tabs\t\t\tif (frm.elements[i].name.indexOf('$elementName') == 0) {\n" .
+                            "$tabs\t\t\t\tvalue += frm.elements[i].value;\n" .
+                            "$tabs\t\t\t}\n" .
+                            "$tabs\t\t}";
+                        if ($reset) {
+                            $tmp_reset =
+                                "$tabs\t\t\tfor (var i = 0; i < frm.elements.length; i++) {\n" .
+                                "$tabs\t\t\t\tif (frm.elements[i].name.indexOf('$elementName') == 0) {\n" .
+                                "$tabs\t\t\t\t\tfrm.elements[i].value = frm.elements[i].defaultValue;\n" .
+                                "$tabs\t\t\t\t}\n" .
+                                "$tabs\t\t\t}\n";
+                        } else {
+                            $tmp_reset = '';
+                        }
+                    } elseif ($this->_elements[$index]->getType() == 'checkbox') {
+                        $value = "$tabs\t\tif (frm.elements['$elementName'].checked) {\n" .
+                                 "$tabs\t\t\tvar value = 1;\n" .
+                                 "$tabs\t\t} else {\n" .
+                                 "$tabs\t\t\tvar value = '';\n" .
+                                 "$tabs\t\t}";
+                        $tmp_reset = ($reset) ? "$tabs\t\tfield.checked = field.defaultChecked;\n" : '';
+                    } else {
+                        $value = "$tabs\t\tvar value = frm.elements['$elementName'].value;";
+                        $tmp_reset = ($reset) ? "$tabs\t\tfield.value = field.defaultValue;\n" : '';
+                    }
                     switch ($ruleData[0]) {
                         case 'regex':
                             $regex = str_replace('%data%', $format, $ruleData[1]);
                             $test[] =
+                                "$value\n" .
                                 "$tabs\t\tvar field = frm.elements['$elementName'];\n"  .
                                 "$tabs\t\tvar regex = $regex;\n"  .
-                                "$tabs\t\tif (!regex.test(field.value) && !errFlag['$elementName']) {\n" .
+                                "$tabs\t\tif (!regex.test(value) && !errFlag['$elementName']) {\n" .
                                 "$tabs\t\t\terrFlag['$elementName'] = true;\n" .
                                 "$tabs\t\t\t_qfMsg = unescape(_qfMsg + '\\n - ".rawurlencode($message)."');\n".
                                 $tmp_reset.
@@ -1169,8 +1200,9 @@ class HTML_QuickForm extends HTML_Common {
                             break;
                         case 'function':
                             $test[] =
+                                "$value\n" .
                                 "$tabs\t\tvar field = frm.elements['$elementName'];\n"  .
-                                "$tabs\t\tif (!" . $ruleData[1] . "('$elementName', field.value) && !errFlag['$elementName']) {\n" .
+                                "$tabs\t\tif (!" . $ruleData[1] . "('$elementName', value) && !errFlag['$elementName']) {\n" .
                                 "$tabs\t\t\terrFlag['$elementName'] = true;\n" .
                                 "$tabs\t\t\t_qfMsg = _qfMsg + '\\n - $message';\n" .
                                 "$tabs\t\t}";
@@ -1187,7 +1219,7 @@ class HTML_QuickForm extends HTML_Common {
                 "$tabs\t\tvar frm = document.forms['" . $this->_attributes['name'] . "'];\n";
             $html .= join("\n", $test);
             $html .=
-                "$tabs\t\tif (_qfMsg != '') {\n" .
+                "$tabs\n\t\tif (_qfMsg != '') {\n" .
                 "$tabs\t\t\t_qfMsg = '$this->_jsPrefix' + _qfMsg;\n" .
                 "$tabs\t\t\t_qfMsg = _qfMsg + '\\n$this->_jsPostfix';\n" .
                 "$tabs\t\t\talert(_qfMsg);\n" .
