@@ -104,10 +104,14 @@ class HTML_QuickForm_Renderer_ITX extends HTML_QuickForm_Renderer
     }
       
 
-    function renderHeader($header)
+    function renderHeader(&$header)
     {
-        $this->_tpl->setVariable('qf_header', $header);
-        $this->_tpl->parse(isset($this->_headerBlock)? $this->_headerBlock: 'qf_header');
+        $blockName = $this->_matchBlock($header);
+        if ('qf_header' == $blockName && isset($this->_headerBlock)) {
+            $blockName = $this->_headerBlock;
+        }
+        $this->_tpl->setVariable('qf_header', $header->toHtml());
+        $this->_tpl->parse($blockName);
         $this->_tpl->parse('qf_main_loop');
     }
 

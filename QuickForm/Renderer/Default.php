@@ -161,16 +161,20 @@ class HTML_QuickForm_Renderer_Default extends HTML_QuickForm_Renderer
     } // end func finishForm
       
    /**
-    * Called when visiting a header
-    * Might be changed soon to use static element instead
+    * Called when visiting a header element
     *
-    * @param    string     header text to output
+    * @param    object     An HTML_QuickForm_header element being visited
     * @access   public
     * @return   void
     */
-    function renderHeader($header)
+    function renderHeader(&$header)
     {
-        $this->_html .= str_replace('{header}', $header, $this->_headerTemplate);
+        $name = $header->getName();
+        if (!empty($name) && isset($this->_templates[$name])) {
+            $this->_html .= str_replace('{header}', $header->toHtml(), $this->_templates[$name]);
+        } else {
+            $this->_html .= str_replace('{header}', $header->toHtml(), $this->_headerTemplate);
+        }
     } // end func renderHeader
 
    /**
@@ -252,18 +256,16 @@ class HTML_QuickForm_Renderer_Default extends HTML_QuickForm_Renderer
     } // end func renderHidden
 
    /**
-    * Renders a data node
-    * Called when visiting a data node
-    * Might soon be replaced by a static element
+    * Called when visiting a raw HTML/text pseudo-element
     * 
-    * @param object     An HTML_QuickForm_hidden object being visited
+    * @param  object     An HTML_QuickForm_html element being visited
     * @access public
     * @return void
     */
-    function renderData($data)
+    function renderHtml(&$data)
     {
-        $this->_html .= $data;
-    } // end func renderData
+        $this->_html .= $data->toHtml();
+    } // end func renderHtml
 
    /**
     * Called when visiting a group, before processing any group elements
@@ -332,7 +334,6 @@ class HTML_QuickForm_Renderer_Default extends HTML_QuickForm_Renderer
 
     /**
      * Sets header template
-     * Might be changed soon in order to use a static element
      *
      * @param       string      The HTML surrounding the header 
      * @access      public

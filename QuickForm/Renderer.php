@@ -64,14 +64,14 @@ class HTML_QuickForm_Renderer
     } // end func finishForm
 
    /**
-    * Called when visiting a header
+    * Called when visiting a header element
     *
-    * @param    string     header text to output
+    * @param    object     An HTML_QuickForm_header element being visited
     * @access   public
     * @return   void 
     * @abstract
     */
-    function renderHeader($header)
+    function renderHeader(&$header)
     {
         return;
     } // end func renderHeader
@@ -105,19 +105,19 @@ class HTML_QuickForm_Renderer
     } // end func renderHidden
 
    /**
-    * Called when visiting a data node
+    * Called when visiting a raw HTML/text pseudo-element
     * 
     * Seems that this should not be used when using a template-based renderer
     *
-    * @param    string     Data to output
+    * @param    object     An HTML_QuickForm_html element being visited
     * @access   public
     * @return   void 
     * @abstract
     */
-    function renderData($data)
+    function renderHtml(&$data)
     {
         return;
-    } // end func renderData
+    } // end func renderHtml
 
    /**
     * Called when visiting a group, before processing any group elements

@@ -41,7 +41,9 @@ $GLOBALS['HTML_QUICKFORM_ELEMENT_TYPES'] =
             'link'          =>array('HTML/QuickForm/link.php','HTML_QuickForm_link'),
             'advcheckbox'   =>array('HTML/QuickForm/advcheckbox.php','HTML_QuickForm_advcheckbox'),
             'date'          =>array('HTML/QuickForm/date.php','HTML_QuickForm_date'),
-            'static'        =>array('HTML/QuickForm/static.php','HTML_QuickForm_static')
+            'static'        =>array('HTML/QuickForm/static.php','HTML_QuickForm_static'),
+            'header'        =>array('HTML/QuickForm/header.php', 'HTML_QuickForm_header'),
+            'html'          =>array('HTML/QuickForm/html.php', 'HTML_QuickForm_html')
         );
 
 // {{{ error codes
@@ -806,17 +808,18 @@ class HTML_QuickForm extends HTML_Common {
     // {{{ addHeader()
 
     /**
-     * Adds a header in the form
+     * Adds a header element to the form
      *
      * @param     string    $label      label of header
      * @since     1.0   
      * @access    public
-     * @return    void
-     * @throws    
+     * @deprecated deprecated since 3.0, use addElement('header', ...) instead
+     * @return    object A reference to a header element
+     * @throws    PEAR_Error
      */
-    function addHeader($label)
+    function &addHeader($label)
     {
-        $this->_elements[] = array('header'=>$label);
+        return $this->addElement('header', null, $label);
     } // end func addHeader
 
     // }}}
@@ -909,14 +912,17 @@ class HTML_QuickForm extends HTML_Common {
     // {{{ addData()
 
     /**
-     * Adds data to the form (i.e. html or text)
+     * Adds raw HTML (or text) data element to the form
      *
      * @param string $data The data to add to the form object
-     * @return void
+     * @access public
+     * @deprecated deprecated since 3.0, use addElement('html', ...) instead
+     * @return object reference to a new element
+     * @throws PEAR_Error
      */
-    function addData($data)
+    function &addData($data)
     {
-        $this->_elements[] = array('data'=>$data);
+        return $this->addElement('html', $data);
     }
 
     // }}}
@@ -1629,17 +1635,15 @@ class HTML_QuickForm extends HTML_Common {
     function accept(&$renderer)
     {
         $renderer->startForm($this);
-        foreach ($this->_elements as $element) {
-            if (isset($element['data'])) {
-                $renderer->renderData($element['data']);
-            } elseif (isset($element['header'])) {
-                $renderer->renderHeader($element['header']);
-            } else {
-                $elementName = $element->getName();
-                $required    = ($this->isElementRequired($elementName) && $this->_freezeAll == false);
-                $error       = $this->getElementError($elementName);
-                $element->accept($renderer, $required, $error);
+        foreach (array_keys($this->_elements) as $key) {
+            $element =& $this->_elements[$key];
+            if ($this->_freezeAll) {
+                $element->freeze();
             }
+            $elementName = $element->getName();
+            $required    = ($this->isElementRequired($elementName) && $this->_freezeAll == false);
+            $error       = $this->getElementError($elementName);
+            $element->accept($renderer, $required, $error);
         }
         $renderer->finishForm($this);
     } // end func accept
