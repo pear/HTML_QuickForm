@@ -19,8 +19,8 @@
 //
 // $Id$
 
-require_once("HTML/QuickForm/element.php");
-require_once("HTML/QuickForm/select.php");
+require_once('HTML/QuickForm/element.php');
+require_once('HTML/QuickForm/select.php');
 
 /**
  * Class to dynamically create HTML Select elements from a date
@@ -30,6 +30,8 @@ require_once("HTML/QuickForm/select.php");
  */
 class HTML_QuickForm_date extends HTML_QuickForm_element
 {   
+    // {{{ properties
+
     /**
      * Contains the select objects
      * @var       array
@@ -50,41 +52,41 @@ class HTML_QuickForm_date extends HTML_QuickForm_element
      * @access    private
      */
     var $_options = array(
-                        "en"    => array (
-                            "weekdays_short"=> array ("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"),
-                            "weekdays_long" => array ("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"),
-                            "months_short"  => array ("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"),
-                            "months_long"   => array ("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December")
+                        'en'    => array (
+                            'weekdays_short'=> array ('Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'),
+                            'weekdays_long' => array ('Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'),
+                            'months_short'  => array ('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'),
+                            'months_long'   => array ('January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December')
                         ),
-                        "de"    => array (
-                            "weekdays_short"=> array ("So", "Mon", "Di", "Mi", "Do", "Fr", "Sa"),
-                            "weekdays_long" => array ("Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"),
-                            "months_short"  => array ("Jan", "Feb", "Marz", "April", "Mai", "Juni", "Juli", "Aug", "Sept", "Okt", "Nov", "Dez"),
-                            "months_long"   => array ("Januar", "Februar", "Marz", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember")
+                        'de'    => array (
+                            'weekdays_short'=> array ('So', 'Mon', 'Di', 'Mi', 'Do', 'Fr', 'Sa'),
+                            'weekdays_long' => array ('Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'),
+                            'months_short'  => array ('Jan', 'Feb', 'Marz', 'April', 'Mai', 'Juni', 'Juli', 'Aug', 'Sept', 'Okt', 'Nov', 'Dez'),
+                            'months_long'   => array ('Januar', 'Februar', 'Marz', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember')
                         ),
-                        "fr"    => array (
-                            "weekdays_short"=> array ("Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"),
-                            "weekdays_long" => array ("Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"),
-                            "months_short"  => array ("Jan", "Fev", "Mar", "Avr", "Mai", "Jun", "Jul", "Aou", "Sep", "Oct", "Nov", "Dec"),
-                            "months_long"   => array ("Janvier", "Fevrier", "Mars", "Avril", "Mai", "Juin", "Juillet", "Aout", "Septembre", "Octobre", "Novembre", "Decembre")
+                        'fr'    => array (
+                            'weekdays_short'=> array ('Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'),
+                            'weekdays_long' => array ('Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'),
+                            'months_short'  => array ('Jan', 'Fev', 'Mar', 'Avr', 'Mai', 'Jun', 'Jul', 'Aou', 'Sep', 'Oct', 'Nov', 'Dec'),
+                            'months_long'   => array ('Janvier', 'Fevrier', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Aout', 'Septembre', 'Octobre', 'Novembre', 'Decembre')
                         ),
-                        "hu"    => array (
-                            "weekdays_short"=> array ("V", "H", "K", "Sze", "Cs", "P", "Szo"),
-                            "weekdays_long" => array ("vasárnap", "hétfõ", "kedd", "szerda", "csütörtök", "péntek", "szombat"),
-                            "months_short"  => array ("jan", "feb", "márc", "ápr", "máj", "jún", "júl", "aug", "szept", "okt", "nov", "dec"),
-                            "months_long"   => array ("január", "február", "március", "április", "május", "június", "július", "augusztus", "szeptember", "október", "november", "december")
+                        'hu'    => array (
+                            'weekdays_short'=> array ('V', 'H', 'K', 'Sze', 'Cs', 'P', 'Szo'),
+                            'weekdays_long' => array ('vasárnap', 'hétfõ', 'kedd', 'szerda', 'csütörtök', 'péntek', 'szombat'),
+                            'months_short'  => array ('jan', 'feb', 'márc', 'ápr', 'máj', 'jún', 'júl', 'aug', 'szept', 'okt', 'nov', 'dec'),
+                            'months_long'   => array ('január', 'február', 'március', 'április', 'május', 'június', 'július', 'augusztus', 'szeptember', 'október', 'november', 'december')
                         ),
-                        "pl"    => array (
-                            "weekdays_short"=> array ("Nie", "Pn", "Wt", "¦r", "Czw", "Pt", "Sob"),
-                            "weekdays_long" => array ("Niedziela", "Poniedzia³ek", "Wtorek", "¦roda", "Czwartek", "Pi±tek", "Sobota"),
-                            "months_short"  => array ("Sty", "Lut", "Mar", "Kwi", "Maj", "Cze", "Lip", "Sie", "Wrz", "Pa¼", "Lis", "Gru"),
-                            "months_long"   => array ("Styczeñ", "Luty", "Marzec", "Kwiecieñ", "Maj", "Czerwiec", "Lipiec", "Sierpieñ", "Wrzesieñ", "Pa¼dziernik", "Listopad", "Grudzieñ")
+                        'pl'    => array (
+                            'weekdays_short'=> array ('Nie', 'Pn', 'Wt', '¦r', 'Czw', 'Pt', 'Sob'),
+                            'weekdays_long' => array ('Niedziela', 'Poniedzia³ek', 'Wtorek', '¦roda', 'Czwartek', 'Pi±tek', 'Sobota'),
+                            'months_short'  => array ('Sty', 'Lut', 'Mar', 'Kwi', 'Maj', 'Cze', 'Lip', 'Sie', 'Wrz', 'Pa¼', 'Lis', 'Gru'),
+                            'months_long'   => array ('Styczeñ', 'Luty', 'Marzec', 'Kwiecieñ', 'Maj', 'Czerwiec', 'Lipiec', 'Sierpieñ', 'Wrzesieñ', 'Pa¼dziernik', 'Listopad', 'Grudzieñ')
                         ),
-                        "sl"    => array (
-                            "weekdays_short"=> array ("Ned", "Pon", "Tor", "Sre", "Cet", "Pet", "Sob"),
-                            "weekdays_long" => array ("Nedelja", "Ponedeljek", "Torek", "Sreda", "Cetrtek", "Petek", "Sobota"),
-                            "months_short"  => array ("Jan", "Feb", "Mar", "Apr", "Maj", "Jun", "Jul", "Avg", "Sep", "Okt", "Nov", "Dec"),
-                            "months_long"   => array ("Januar", "Februar", "Marec", "April", "Maj", "Junij", "Julij", "Avgust", "September", "Oktober", "November", "December")
+                        'sl'    => array (
+                            'weekdays_short'=> array ('Ned', 'Pon', 'Tor', 'Sre', 'Cet', 'Pet', 'Sob'),
+                            'weekdays_long' => array ('Nedelja', 'Ponedeljek', 'Torek', 'Sreda', 'Cetrtek', 'Petek', 'Sobota'),
+                            'months_short'  => array ('Jan', 'Feb', 'Mar', 'Apr', 'Maj', 'Jun', 'Jul', 'Avg', 'Sep', 'Okt', 'Nov', 'Dec'),
+                            'months_long'   => array ('Januar', 'Februar', 'Marec', 'April', 'Maj', 'Junij', 'Julij', 'Avgust', 'September', 'Oktober', 'November', 'December')
                         ),
                         'ru'    => array (
                             'weekdays_short'=> array ('Âñ', 'Ïí', 'Âò', 'Ñð', '×ò', 'Ïò', 'Ñá'),
@@ -98,11 +100,11 @@ class HTML_QuickForm_date extends HTML_QuickForm_element
                             'months_short'  => array ('Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'),
                             'months_long'   => array ('Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septimbre', 'Octubre', 'Noviembre', 'Diciembre')
                         ),
-                        "da"    => array (
-                            "weekdays_short"=> array ("Søn", "Man", "Tir", "Ons", "Tor", "Fre", "Lør"),
-                            "weekdays_long" => array ("Søndag", "Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag"),
-                            "months_short"  => array ("Jan", "Feb", "Mar", "Apr", "Maj", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dec"),
-                            "months_long"   => array ("Januar", "Februar", "Marts", "April", "Maj", "Juni", "Juli", "August", "September", "Oktober", "November", "December")
+                        'da'    => array (
+                            'weekdays_short'=> array ('Søn', 'Man', 'Tir', 'Ons', 'Tor', 'Fre', 'Lør'),
+                            'weekdays_long' => array ('Søndag', 'Mandag', 'Tirsdag', 'Onsdag', 'Torsdag', 'Fredag', 'Lørdag'),
+                            'months_short'  => array ('Jan', 'Feb', 'Mar', 'Apr', 'Maj', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dec'),
+                            'months_long'   => array ('Januar', 'Februar', 'Marts', 'April', 'Maj', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'December')
                         )
                     );
                     
@@ -141,6 +143,9 @@ class HTML_QuickForm_date extends HTML_QuickForm_element
      */
     var $_flagFrozen = false;
 
+    // }}}
+    // {{{ constructor
+
     /**
      * Class constructor
      * 
@@ -158,6 +163,9 @@ class HTML_QuickForm_date extends HTML_QuickForm_element
         $this->_type = 'date';
         $this->_setDefaults($options);
     } //end constructor
+
+    // }}}
+    // {{{ _setDefaults()
 
     /**
      * sets the defaults options
@@ -187,6 +195,9 @@ class HTML_QuickForm_date extends HTML_QuickForm_element
         }
     } // end func _setDefaults
 
+    // }}}
+    // {{{ setName()
+
     /**
      * Sets the input field name
      * @param     string    $name   Input field name attribute
@@ -198,6 +209,9 @@ class HTML_QuickForm_date extends HTML_QuickForm_element
         $this->name = $name;
     } //end func setName
 
+    // }}}
+    // {{{ getName()
+
     /**
      * Returns the element name
      * @access    public
@@ -208,8 +222,25 @@ class HTML_QuickForm_date extends HTML_QuickForm_element
         return $this->name;
     } //end func getName
 
+    // }}}
+    // {{{ setFormat()
+
     /**
-     * Sets the date element format
+     * Sets the date element format.  The available formats are:
+     * D => Short names of days
+     * l => Long names of days
+     * d => Day numbers
+     * M => Short names of months
+     * F => Long names of months
+     * m => Month numbers
+     * Y => Four digit year
+     * h => 12 hour format
+     * h => 23 hour  format
+     * i => Minutes
+     * s => Seconds
+     * a => am/pm
+     * A => AM/PM
+     *
      * @access    public
      * @return    void
      */
@@ -217,6 +248,9 @@ class HTML_QuickForm_date extends HTML_QuickForm_element
     {
         $this->format = $format;
     } // end func setFormat
+
+    // }}}
+    // {{{ setMinYear()
 
     /**
      * Sets the date element minimum year
@@ -228,6 +262,9 @@ class HTML_QuickForm_date extends HTML_QuickForm_element
         $this->minYear = $year;
     } // end func setMinYear
 
+    // }}}
+    // {{{ setMaxYear()
+
     /**
      * Sets the date element maximum year
      * @access    public
@@ -237,6 +274,9 @@ class HTML_QuickForm_date extends HTML_QuickForm_element
     {
         $this->maxYear = $year;
     } // end func setMaxYear
+
+    // }}}
+    // {{{ setLanguage()
 
     /**
      * Sets the default language for date
@@ -253,6 +293,9 @@ class HTML_QuickForm_date extends HTML_QuickForm_element
             $this->language = 'en';
         }
     } //end func setLanguage
+
+    // }}}
+    // {{{ _createSelects()
 
     /**
      * Creates the select objects
@@ -271,64 +314,95 @@ class HTML_QuickForm_date extends HTML_QuickForm_element
             unset($j);
 
             $sign = substr($this->format, $i, 1);
-
             $selectName = $elementName."[$sign]";
             $selectedValue = (isset($this->_selectedDate[$sign])) ? $this->_selectedDate[$sign] : null;
+            $loadSelect = true;
 
             switch ($sign) {
-                case "D" :
+                case 'D':
                     // Sunday is 0 like with 'w' in date()
-                    $options = $this->_options[$this->language]["weekdays_short"];
-                    $this->dateSelect[$sign] = &new HTML_QuickForm_select($selectName, null, null, $this->getAttributes());
-                    $this->dateSelect[$sign]->load($options, $selectedValue);
+                    $options = $this->_options[$this->language]['weekdays_short'];
                     break;
-                case "l" :
-                    $options = $this->_options[$this->language]["weekdays_long"];
-                    $this->dateSelect[$sign] = &new HTML_QuickForm_select($selectName, null, null, $this->getAttributes());
-                    $this->dateSelect[$sign]->load($options, $selectedValue);
+                case 'l':
+                    $options = $this->_options[$this->language]['weekdays_long'];
                     break;
-                case "d":
-                    for ($j = 1; $j <= 31; $j++) 
-                        $options[$j] = sprintf("%02d", $j);
-                    $this->dateSelect[$sign] = &new HTML_QuickForm_select($selectName, null, null, $this->getAttributes());
-                    $this->dateSelect[$sign]->load($options, $selectedValue);
+                case 'd':
+                    $options = $this->_createNumericOptionList(1, 31);
                     break;
-                case "M" :
-                    $options = $this->_options[$this->language]["months_short"];
+                case 'M':
+                    $options = $this->_options[$this->language]['months_short'];
                     array_unshift($options , '');
                     unset($options[0]);
-                    $this->dateSelect[$sign] = &new HTML_QuickForm_select($selectName, null, null, $this->getAttributes());
-                    $this->dateSelect[$sign]->load($options,$selectedValue);
                     break;
-                case "m" :
-                    for ($j = 1; $j <= 12; $j++)
-                        $options[$j] = sprintf("%02d", $j);
-                    $this->dateSelect[$sign] =  &new HTML_QuickForm_select($selectName, null, null, $this->getAttributes());
-                    $this->dateSelect[$sign]->load($options,$selectedValue);
+                case 'm':
+                    $options = $this->_createNumericOptionList(1, 12);
                     break;
-                case "F" :
-                    $options = $this->_options[$this->language]["months_long"];
+                case 'F':
+                    $options = $this->_options[$this->language]['months_long'];
                     array_unshift($options , '');
                     unset($options[0]);
-                    $this->dateSelect[$sign] = &new HTML_QuickForm_select($selectName, null, null, $this->getAttributes());
-                    $this->dateSelect[$sign]->load($options, $selectedValue);
                     break;
-                case "Y" :
+                case 'Y':
                     if ($minYear > $maxYear) {
-                        for ($j = $maxYear; $j <= $minYear; $j++)
-                            $options[$j] = $j;
+                        $options = $this->_createNumericOptionList($maxYear, $minYear);
                     } else {
-                        for ($j = $minYear; $j <= $maxYear; $j++)
-                            $options[$j] = $j;
-                    }   
-                    $this->dateSelect[$sign] = &new HTML_QuickForm_select($selectName, null, null, $this->getAttributes());
-                    $this->dateSelect[$sign]->load($options, $selectedValue);
+                        $options = $this->_createNumericOptionList($minYear, $maxYear);
+                    }
+                    break;
+                case 'h':
+                    $options = $this->_createNumericOptionList(1, 12);
+                    break;
+                case 'H':
+                    $options = $this->_createNumericOptionList(1, 23);
+                    break;
+                case 'i':
+                    $options = $this->_createNumericOptionList(1, 59);
+                    break;
+                case 's':
+                    $options = $this->_createNumericOptionList(1, 59);
+                    break;
+                case 'a':
+                    $options = array('am' => 'am', 'pm' => 'pm');
+                    break;
+                case 'A':
+                    $options = array('AM' => 'AM', 'PM' => 'PM');
                     break;
                 default:
                     $this->dateSelect[] = $sign;
+                    $loadSelect = false;
+            }
+
+            if ($loadSelect) {
+                $this->dateSelect[$sign] = &new HTML_QuickForm_select($selectName, null, null, $this->getAttributes());
+                $this->dateSelect[$sign]->load($options,$selectedValue);
             }
         }
     } // end func _createSelects
+
+    // }}}
+    // {{{ _createNumericOptionList()
+
+    /**
+     * Creates a numeric option list based on a start number and end number
+     *
+     * @param int $start The start number
+     * @param int $end The end number
+     *
+     * @access public
+     * @return array An array of numeric options.
+     */
+    function _createNumericOptionList($start, $end)
+    {
+        $options = array();
+        for ($i = $start; $i <= $end; $i++) {
+            $options[$i] = sprintf('%02d', $i);
+        }
+        return $options;
+        
+    } // end func _createNumericOptionList
+
+    // }}}
+    // {{{ setSelectedDate()
 
     /**
      * Sets the selected date
@@ -343,16 +417,25 @@ class HTML_QuickForm_date extends HTML_QuickForm_element
             $this->_selectedDate = $date;
         } else {
             // might be a unix epoch, then we fill all possible values
-            $arr = explode('-', date('w-d-n-Y', (int)$date));
+            $arr = explode('-', date('w-d-n-Y-h-H-i-s-a-A', (int)$date));
             $this->_selectedDate = array('D' => $arr[0],
                                          'l' => $arr[0],
                                          'd' => $arr[1],
                                          'M' => $arr[2],
                                          'm' => $arr[2],
                                          'F' => $arr[2],
-                                         'Y' => $arr[3]);
+                                         'Y' => $arr[3],
+                                         'h' => $arr[4],
+                                         'H' => $arr[5],
+                                         'i' => $arr[6],
+                                         's' => $arr[7],
+                                         'a' => $arr[8],
+                                         'A' => $arr[9]);
         }
     } // end func setSelectedDate
+
+    // }}}
+    // {{{ toHtml()
 
     /**
      * Returns the SELECT in HTML
@@ -381,6 +464,9 @@ class HTML_QuickForm_date extends HTML_QuickForm_element
         }
         return $strHtml;
     } // end func toHtml
+
+    // }}}
+    // {{{ onQuickFormEvent()
 
     /**
      * Called by HTML_QuickForm whenever form event is made on this element
@@ -418,5 +504,7 @@ class HTML_QuickForm_date extends HTML_QuickForm_element
         }
         return true;
     } // end func onQuickFormEvent
+
+    // }}}
 } // end class HTML_QuickForm_date
 ?>
