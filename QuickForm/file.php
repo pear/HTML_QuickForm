@@ -18,7 +18,16 @@
 // +----------------------------------------------------------------------+
 //
 // $Id$
+
 require_once("HTML/QuickForm/input.php");
+
+// register file-related rules
+if (class_exists('HTML_QuickForm')) {
+    HTML_QuickForm::registerRule('uploadedfile', 'function', '_ruleIsUploadedFile', 'HTML_QuickForm_file');
+    HTML_QuickForm::registerRule('maxfilesize', 'function', '_ruleCheckMaxFileSize', 'HTML_QuickForm_file');
+    HTML_QuickForm::registerRule('mimetype', 'function', '_ruleCheckMimeType', 'HTML_QuickForm_file');
+    HTML_QuickForm::registerRule('filename', 'function', '_ruleCheckFileName', 'HTML_QuickForm_file');
+}
 
 /**
  * HTML class for a file type element
@@ -45,14 +54,12 @@ class HTML_QuickForm_file extends HTML_QuickForm_input
     /**
      * Class constructor
      * 
-     * @param     string    $elementName    Input field name attribute
-     * @param     string    $elementLabel   Input field label
-     * @param     mixed     $attributes     (optional)Either a typical HTML attribute string 
-     *                                      or an associative array
+     * @param     string    Input field name attribute
+     * @param     string    Input field label
+     * @param     mixed     (optional)Either a typical HTML attribute string 
+     *                      or an associative array
      * @since     1.0
      * @access    public
-     * @return    void
-     * @throws    
      */
     function HTML_QuickForm_file($elementName=null, $elementLabel=null, $attributes=null)
     {
@@ -66,15 +73,13 @@ class HTML_QuickForm_file extends HTML_QuickForm_input
     /**
      * Sets size of file element
      * 
-     * @param     int    $size  Size of password field
+     * @param     int    Size of file element
      * @since     1.0
      * @access    public
-     * @return    void
-     * @throws    
      */
     function setSize($size)
     {
-        $this->updateAttributes(array("size"=>$size));
+        $this->updateAttributes(array('size' => $size));
     } //end func setSize
     
     // }}}
@@ -85,12 +90,11 @@ class HTML_QuickForm_file extends HTML_QuickForm_input
      * 
      * @since     1.0
      * @access    public
-     * @return    void
-     * @throws    
+     * @return    int
      */
     function getSize()
     {
-        return $this->getAttribute("size");
+        return $this->getAttribute('size');
     } //end func getSize
 
     // }}}
@@ -100,8 +104,7 @@ class HTML_QuickForm_file extends HTML_QuickForm_input
      * Freeze the element so that only its value is returned
      * 
      * @access    public
-     * @return    void
-     * @throws    
+     * @return    bool
      */
     function freeze()
     {
@@ -120,11 +123,9 @@ class HTML_QuickForm_file extends HTML_QuickForm_input
      * (because of security implications) we implement file's value as a 
      * read-only property with a special meaning.
      * 
-     * @param     mixed    $value  Value for file element
+     * @param     mixed    Value for file element
      * @since     3.0
      * @access    public
-     * @return    void
-     * @throws    
      */
     function setValue($value)
     {
@@ -140,7 +141,6 @@ class HTML_QuickForm_file extends HTML_QuickForm_input
      * @since     3.0
      * @access    public
      * @return    array
-     * @throws    
      */
     function getValue()
     {
@@ -153,20 +153,19 @@ class HTML_QuickForm_file extends HTML_QuickForm_input
     /**
      * Called by HTML_QuickForm whenever form event is made on this element
      *
-     * @param     string    $event  Name of event
-     * @param     mixed     $arg    event arguments
-     * @param     object    $caller calling object
+     * @param     string    Name of event
+     * @param     mixed     event arguments
+     * @param     object    calling object
      * @since     1.0
      * @access    public
-     * @return    void
-     * @throws    
+     * @return    bool
      */
     function onQuickFormEvent($event, $arg, &$caller)
     {
         switch ($event) {
             case 'updateValue':
                 if ($caller->getAttribute('method') == 'get') {
-                    $caller->_submitValues = $GLOBALS['_POST'];
+                    $caller->_submitValues = $_POST;
                 }
                 $this->_value = $this->_findValue($caller->_submitFiles);
                 $caller->updateAttributes(array('method' => 'post', 'enctype' => 'multipart/form-data'));
@@ -184,6 +183,123 @@ class HTML_QuickForm_file extends HTML_QuickForm_input
         return true;
     } // end func onQuickFormEvent
 
+    // }}}
+    // {{{ moveUploadedFile()
+
+    /**
+     * Moves an uploaded file into the destination 
+     * 
+     * @param    string  Destination directory path
+     * @param    string  New file name
+     * @access   public
+     */
+    function moveUploadedFile($dest, $fileName = '')
+    {
+        if ($dest != ''  && substr($dest, -1) != '/') {
+            $dest .= '/';
+        }
+        $fileName = ($fileName != '') ? $fileName : $this->_value['name'];
+        if (move_uploaded_file($this->_value['tmp_name'], $dest . $fileName)) {
+            return true;
+        } else {
+            return false;
+        }
+    } // end func moveUploadedFile
+    
+    // }}}
+    // {{{ isUploadedFile()
+
+    /**
+     * Checks if the element contains an uploaded file
+     *
+     * @access    public
+     * @return    bool      true if file has been uploaded, false otherwise
+     */
+    function isUploadedFile()
+    {
+        return $this->_ruleIsUploadedFile($this->_value);
+    } // end func isUploadedFile
+
+    // }}}
+    // {{{ _ruleIsUploadedFile()
+
+    /**
+     * Checks if the given element contains an uploaded file
+     *
+     * @param     array     Uploaded file info (from $_FILES)
+     * @access    private
+     * @return    bool      true if file has been uploaded, false otherwise
+     */
+    function _ruleIsUploadedFile($elementValue)
+    {
+        if ((isset($elementValue['error']) && $elementValue['error'] == 0) ||
+            (!empty($elementValue['tmp_name']) && $elementValue['tmp_name'] != 'none')) {
+            return is_uploaded_file($elementValue['tmp_name']);
+        } else {
+            return false;
+        }
+    } // end func _ruleIsUploadedFile
+    
+    // }}}
+    // {{{ _ruleCheckMaxFileSize()
+
+    /**
+     * Checks that the file does not exceed the max file size
+     *
+     * @param     array     Uploaded file info (from $_FILES)
+     * @param     int       Max file size
+     * @access    private
+     * @return    bool      true if filesize is lower than maxsize, false otherwise
+     */
+    function _ruleCheckMaxFileSize($elementValue, $maxSize)
+    {
+        if (!$this->_ruleIsUploadedFile($elementValue)) {
+            return true;
+        }
+        return ($maxSize >= @filesize($elementValue['tmp_name']));
+    } // end func _ruleCheckMaxFileSize
+
+    // }}}
+    // {{{ _ruleCheckMimeType()
+
+    /**
+     * Checks if the given element contains an uploaded file of the right mime type
+     *
+     * @param     array     Uploaded file info (from $_FILES)
+     * @param     mixed     Mime Type (can be an array of allowed types)
+     * @access    private
+     * @return    bool      true if mimetype is correct, false otherwise
+     */
+    function _ruleCheckMimeType($elementValue, $mimeType)
+    {
+        if (!$this->_ruleIsUploadedFile($elementValue)) {
+            return true;
+        }
+        if (is_array($mimeType)) {
+            return in_array($elementValue['type'], $mimeType);
+        }
+        return $elementValue['type'] == $mimeType;
+    } // end func _ruleCheckMimeType
+
+    // }}}
+    // {{{ _ruleCheckFileName()
+
+    /**
+     * Checks if the given element contains an uploaded file of the filename regex
+     *
+     * @param     array     Uploaded file info (from $_FILES)
+     * @param     string    Regular expression
+     * @access    private
+     * @return    bool      true if name matches regex, false otherwise
+     */
+    function _ruleCheckFileName($elementValue, $regex)
+    {
+        if (!$this->_ruleIsUploadedFile($elementValue)) {
+            return true;
+        }
+        return preg_match($regex, $elementValue['name']);
+    } // end func _ruleCheckFileName
+    
     // }}}
 
 } // end class HTML_QuickForm_file

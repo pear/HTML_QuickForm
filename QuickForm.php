@@ -58,11 +58,7 @@ $GLOBALS['_HTML_QuickForm_registered_rules'] = array(
     'alphanumeric'  =>array('regex', '/^[a-zA-Z0-9]+$/'),
     'numeric'       =>array('regex', '/(^-?\d\d*\.\d*$)|(^-?\d\d*$)|(^-?\.\d\d*$)/'),
     'nopunctuation' =>array('regex', '/^[^().\/\*\^\?#!@$%+=,\"\'><~\[\]{}]+$/'),
-    'nonzero'       =>array('regex', '/^[1-9][0-9]+/'),
-    'uploadedfile'  =>array('function', '_ruleIsUploadedFile'),
-    'maxfilesize'   =>array('function', '_ruleCheckMaxFileSize'),
-    'mimetype'      =>array('function', '_ruleCheckMimeType'),
-    'filename'      =>array('function', '_ruleCheckFileName')
+    'nonzero'       =>array('regex', '/^[1-9][0-9]+/')
 );
 
 // {{{ error codes
@@ -295,7 +291,7 @@ class HTML_QuickForm extends HTML_Common {
      */
     function registerRule($ruleName, $type, $data1, $data2=null)
     {
-        $GLOBALS['_HTML_QuickForm_registered_rules'] = array($type, $data1, $data2);
+        $GLOBALS['_HTML_QuickForm_registered_rules'][$ruleName] = array($type, $data1, $data2);
     } // end func registerRule
 
     // }}}
@@ -394,12 +390,13 @@ class HTML_QuickForm extends HTML_Common {
     // {{{ moveUploadedFile()
 
     /**
-     * Moves an uploaded file into the destination 
+     * Moves an uploaded file into the destination (DEPRECATED)
      * @param    string  $element       Element name
      * @param    string  $dest          Destination directory path
      * @param    string  $fileName      (optional) New file name
      * @since    1.0
      * @access   public
+     * @deprecated  Use HTML_QuickForm_file::moveUploadedFile() method
      */
     function moveUploadedFile($element, $dest, $fileName='')
     {
@@ -457,26 +454,33 @@ class HTML_QuickForm extends HTML_Common {
     // {{{ isUploadedFile()
 
     /**
-     * Checks if the given element contains an uploaded file
+     * Checks if the given element contains an uploaded file (DEPRECATED)
      *
      * @param     string    $element    Element name
      * @since     2.10
      * @access    public
      * @return    bool      true if file has been uploaded, false otherwise
+     * @deprecated  Use HTML_QuickForm_file::isUploadedFile() method
      */
     function isUploadedFile($element)
     {
-        return $this->_ruleIsUploadedFile($element);
+        if (!$this->elementExists($element) || 'file' != $this->getElementType($element)) {
+            return false;
+        } else {
+            $elementObject =& $this->getElement($element);
+            return $elementObject->isUploadedFile();
+        }
     } // end func isUploadedFile
 
     // }}}
     // {{{ getUploadedFile()
 
     /**
-     * Returns temporary filename of uploaded file
+     * Returns temporary filename of uploaded file (DEPRECATED)
      * @param    string  $element  
      * @since    2.10
      * @access   public
+     * @deprecated  Use either of HTML_QuickForm_file::getValue(), HTML_QuickForm::getElementValue(), HTML_QuickForm::getSubmitValue() methods to access this information
      */
     function getUploadedFile($element)
     {
@@ -1367,15 +1371,6 @@ class HTML_QuickForm extends HTML_Common {
         }
 
         foreach ($this->_rules as $target => $rules) {
-            $submitValue = null;
-            $elementType = $this->getElementType($target);
-            if ($elementType == 'file'&& 
-                !$this->isUploadedFile($target) &&
-                !$this->isElementRequired($target)) {
-                // File is not required so do not validate further
-                continue;
-            }
-
             $submitValue = $this->_findElementValue($target);
 
             foreach ($rules as $rule) {
@@ -1515,98 +1510,6 @@ class HTML_QuickForm extends HTML_Common {
         }
     } // end func _validateGroup
 
-    // }}}
-    // {{{ _ruleIsUploadedFile()
-
-    /**
-     * Checks if the given element contains an uploaded file
-     *
-     * @param     string    $element    Element name
-     * @since     1.1
-     * @access    private
-     * @return    bool      true if file has been uploaded, false otherwise
-     * @throws    
-     */
-    function _ruleIsUploadedFile($element)
-    {
-        $file =& $this->_submitFiles[$element];
-        if ((isset($file['error']) && $file['error'] == 0) ||
-            (!empty($file['tmp_name']) && $file['tmp_name'] != 'none')) {
-            return is_uploaded_file($file['tmp_name']);
-        } else {
-            return false;
-        }
-    } // end func _ruleIsUploadedFile
-    
-    // }}}
-    // {{{ _ruleCheckMaxFileSize()
-
-    /**
-     * Checks that the file does not exceed the max file size
-     *
-     * @param     string    $element    Element name
-     * @param     mixed     $value      Element value
-     * @param     int       $maxSize    Max file size
-     * @since     1.1
-     * @access    private
-     * @return    bool      true if filesize is lower than maxsize, false otherwise
-     * @throws    
-     */
-    function _ruleCheckMaxFileSize($element, $value, $maxSize)
-    {
-        if (empty($this->_submitFiles[$element]['tmp_name'])) {
-            return true;
-        }
-        return ($maxSize >= @filesize($this->_submitFiles[$element]['tmp_name']));
-    } // end func _ruleCheckMaxFileSize
-
-    // }}}
-    // {{{ _ruleCheckMimeType()
-
-    /**
-     * Checks if the given element contains an uploaded file of the right mime type
-     *
-     * @param     string    $element    Element name
-     * @param     mixed     $value      Element value
-     * @param     mixed     $mimeType   Mime Type (can be an array of allowed types)
-     * @since     1.1
-     * @access    private
-     * @return    bool      true if mimetype is correct, false otherwise
-     * @throws    
-     */
-    function _ruleCheckMimeType($element, $value, $mimeType)
-    {
-        if (empty($this->_submitFiles[$element]['tmp_name'])) {
-            return true;
-        }
-        if (is_array($mimeType)) {
-            return in_array($this->_submitFiles[$element]['type'], $mimeType);
-        }
-        return $this->_submitFiles[$element]['type'] == $mimeType;
-    } // end func _ruleCheckMimeType
-
-    // }}}
-    // {{{ _ruleCheckFileName()
-
-    /**
-     * Checks if the given element contains an uploaded file of the filename regex
-     *
-     * @param     string    $element    Element name
-     * @param     mixed     $value      Element value
-     * @param     string    $regex      Regular expression
-     * @since     1.1
-     * @access    private
-     * @return    bool      true if name matches regex, false otherwise
-     * @throws    
-     */
-    function _ruleCheckFileName($element, $value, $regex)
-    {
-        if (empty($this->_submitFiles[$element]['tmp_name'])) {
-            return true;
-        }
-        return preg_match($regex, $this->_submitFiles[$element]['name']);
-    } // end func _ruleCheckFileName
-    
     // }}}
     // {{{ freeze()
 
