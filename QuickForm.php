@@ -214,8 +214,9 @@ class HTML_QuickForm extends HTML_Common {
             'lettersonly'   =>array('regex', '/^[a-zA-Z]*$/'),
             'alphanumeric'  =>array('regex', '/^[a-zA-Z0-9]*$/'),
             'numeric'       =>array('regex', '/(^-?\d\d*\.\d*$)|(^-?\d\d*$)|(^-?\.\d\d*$)/'),
-            'uploadedfile'  =>array('function', '_ruleIsUploadedFile'),
             'nopunctuation' =>array('regex', '/^[^().\/\*\^\?#!@$%+=,\"\'><~\[\]{}]*$/'),
+            'nonzero'       =>array('regex', '/^[1-9][0-9]*/'),
+            'uploadedfile'  =>array('function', '_ruleIsUploadedFile'),
             'maxfilesize'   =>array('function', '_ruleCheckMaxFileSize'),
             'mimetype'      =>array('function', '_ruleCheckMimeType'),
             'filename'      =>array('function', '_ruleCheckFileName')
