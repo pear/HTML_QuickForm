@@ -46,36 +46,23 @@ Features:
     </maintainer>
   </maintainers>
   <release>
-    <version>3.0Beta2</version>
-    <date>2003-05-13</date>
+    <version>3.0RC1</version>
+    <date>2003-05-28</date>
     <state>beta</state>
     <notes>
-- PHP 4.2+ is now required for file uploads
-
 * Bugfixes
 
-- Fixed bug with selected values in select element
-- Fixed bug when form method was changed from get to post by adding a file element
-- addRule() and addGroupRule() now return a PEAR error when the rule is not registered
-- &lt;label&gt; tags are no more generated for frozen checkboxes and radios
+- setMaxfileSize() does not throw pear error anymore (Alexey Borzov)
+- Mass onQuickFormEvent 'updateValue' fixes (Alexey Borzov)
 
 * Changes
 
-- Added new Array-based renderer for Smarty, with examples (Thomas Schulz)
-- Array renderer generates more info on the form, possibility to set styles for elements (Thomas Schulz)
-- Example of usage for Array renderer with Smarty (Thomas Schulz)
-- Better XHTML compliance for Default renderer output (Klaus Guenther, Alexey Borzov)
-- Added possibility to have multiple labels for one element (Jon Wood)
-- Added support for multiple labels in ITStatic and ITDynamic renderers (Jon Wood, Alexey, Bertrand)
-
-- Added client-side validation parameter to addGroupRule() (Bertrand Mansion)
-
-- getSubmitValues() can now return uploaded files (Markus Wolff, Alexey Borzov)
-- Added new methods set/getMaxFileSize (Tommy Ipsen)
-
-- Removed unwanted linefeeds in frozen checkboxes (Thomas Schulz)
-- Added Spanish translation for date element (The PhP_KiD)
-- Added a setValue() method to static element (Jon Wood)
+- _loadElement() now returns a reference (Alexey Borzov)
+- Added time to the date element (Jason Rust)
+- Required groups now show the asterisk (Bertrand Mansion)
+- Optimizations in HTML_QuickForm_group's methods (Alexey Borzov)
+- ArraySmarty renderer now requires a Smarty object (Thomas Schulz)
+- Updated SmartyStatic and ITStatic examples (Thomas Schulz, Alexey Borzov)
     </notes>
     <filelist>
       <dir name="/" baseinstalldir="HTML">
@@ -146,6 +133,39 @@ Features:
     </deps>
   </release>
   <changelog>
+  <release>
+    <version>3.0Beta2</version>
+    <date>2003-05-13</date>
+    <state>beta</state>
+    <notes>
+- PHP 4.2+ is now required for file uploads
+
+* Bugfixes
+
+- Fixed bug with selected values in select element
+- Fixed bug when form method was changed from get to post by adding a file element
+- addRule() and addGroupRule() now return a PEAR error when the rule is not registered
+- &lt;label&gt; tags are no more generated for frozen checkboxes and radios
+
+* Changes
+
+- Added new Array-based renderer for Smarty, with examples (Thomas Schulz)
+- Array renderer generates more info on the form, possibility to set styles for elements (Thomas Schulz)
+- Example of usage for Array renderer with Smarty (Thomas Schulz)
+- Better XHTML compliance for Default renderer output (Klaus Guenther, Alexey Borzov)
+- Added possibility to have multiple labels for one element (Jon Wood)
+- Added support for multiple labels in ITStatic and ITDynamic renderers (Jon Wood, Alexey, Bertrand)
+
+- Added client-side validation parameter to addGroupRule() (Bertrand Mansion)
+
+- getSubmitValues() can now return uploaded files (Markus Wolff, Alexey Borzov)
+- Added new methods set/getMaxFileSize (Tommy Ipsen)
+
+- Removed unwanted linefeeds in frozen checkboxes (Thomas Schulz)
+- Added Spanish translation for date element (The PhP_KiD)
+- Added a setValue() method to static element (Jon Wood)
+    </notes>
+  </release>
   <release>
     <version>3.0Beta1</version>
     <date>2003-04-17</date>
