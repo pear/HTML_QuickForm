@@ -5,7 +5,7 @@
  * @author Thomas Schulz <ths@4bconsult.de>
  * @author Alexey Borzov <borz_off@cs.msu.su>
  *
- * $Id$ 
+ * $Id$
  */
 
 require_once 'HTML/QuickForm.php';
@@ -28,14 +28,19 @@ $form->addElement('header', '', 'Normal Elements');
 
 $form->addElement('hidden', 'ihidTest', 'hiddenField');
 
-$form->addElement('text', 'itxtTest', 'Test Text');
+$form->addElement('text', 'itxtTest', array('Test Text', 'note' => 'Note for Testtext element.'));
 
-$form->addElement('textarea', 'itxaTest', 'Test TextArea');
+$form->addElement('textarea', 'itxaTest', 'Test TextArea', 'cols="40" rows="2"');
 
 // will be later assigned to style green
 $form->addElement('password', 'ipwdTest', 'Test Password');
-$select =& $form->addElement('select', 'iselTest', 'Test Select', array('A'=>'A', 'B'=>'B','C'=>'C','D'=>'D'));
-$select->setSize(5);
+$select =& $form->addElement(
+    'select',
+    'iselTest',
+    array('Test Select', 'note' => 'We recommend to check at least two categories!'),
+    array('A'=>'A * * * * (luxory)', 'B'=>'B * * *','C'=>'C * *','D'=>'D * (simple)')
+ );
+$select->setSize(4);
 $select->setMultiple(true);
 
 $form->addElement('submit', 'isubTest', 'Test Submit');
@@ -90,7 +95,7 @@ $tpl->compile_dir  = './templates';
 // assign array with form data
 $tpl->assign('form', $renderer->toArray());
 
-// capture the array stucture 
+// capture the array stucture
 // (only for showing in sample template)
 ob_start();
 print_r($renderer->toArray());

@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<!--  $Id: smarty-dynamic.tpl,v 1.4 2004-06-25 19:39:55 ths Exp $ -->
+<!--  $Id: smarty-dynamic.tpl,v 1.5 2004-08-10 10:06:42 ths Exp $ -->
 <html>
 <head>
     <title>Smarty template for Array renderer</title>
@@ -7,25 +7,25 @@
     {literal}
     body, td, th {
        font-family: sans-serif;
-       color : Navy;
+       color: Navy;
        background-color : #EEE;
-       font-size : smaller;
+       font-size: smaller;
        white-space: nowrap;
     }
     
     .maintable {
-       border : thin dashed #D0D0D0;
-       background-color : #EEE;
+       border: thin dashed #D0D0D0;
+       background-color: #EEE;
     }
     
     .header {
-       color : #FFF;
-       background-color : #999;
+       color: #FFF;
+       background-color: #999;
     }
     
     .green {
-       background-color : #CFC;
-       color : black;
+       background-color: #CFC;
+       color: black;
     }
     {/literal}
     </style>
@@ -88,6 +88,7 @@
                     {else}
                         {$element.html}
                     {/if}
+                    <div style="font-size: 80%;">{$element.label_note}</div>
                     </td>
                 </tr>
             

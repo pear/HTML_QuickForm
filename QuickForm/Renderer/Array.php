@@ -233,10 +233,24 @@ class HTML_QuickForm_Renderer_Array extends HTML_QuickForm_Renderer
             'value'     => $element->getValue(),
             'type'      => $element->getType(),
             'frozen'    => $element->isFrozen(),
-            'label'     => $element->getLabel(),
             'required'  => $required,
             'error'     => $error
         );
+        // render label(s)
+        $labels = $element->getLabel();
+        if (is_array($labels)) {
+            foreach($labels as $key => $label) {
+                $key = is_int($key)? $key + 1: $key;
+                if (1 === $key) {
+                    $ret['label'] = $label;
+                } else {
+                    $ret['label_' . $key] = $label;
+                }
+            }
+        } else {
+            $ret['label'] = $labels;
+        }
+        
         // set the style for the element
         if (isset($this->_elementStyles[$ret['name']])) {
             $ret['style'] = $this->_elementStyles[$ret['name']];
