@@ -1616,6 +1616,9 @@ class HTML_QuickForm extends HTML_Common {
                     // the same rule is applied to every elements in the group
                     $howmany = $rule['howmany']; // how many elements should be valid at least
                     $total = 0;                  // counter of valid elements
+                    if (!is_array($values)) {
+                        $values = array($values);
+                    }
                     foreach ($values as $value) {
                         switch ($ruleData[0]) {
                             case 'regex':
