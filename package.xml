@@ -116,7 +116,7 @@ Deprecated features:
 - Elements values are now set through a uniform 'updateValue' event (Alexey Borzov)
 - Added Polish date names in date element (Robert Janeczek)
 - Added Hungarian date names in date element (Kovacs Gergely)
-- Added Russion date names in date element (Alexey Borzov)
+- Added Russian date names in date element (Alexey Borzov)
 - Added XHTML compliant labels in radio and checkboxes (Alexey Borzov, Alexander Radivanovich)
 - Optimized select element addOption() and toHtml() methods (Alexey Borzov)
 - XHTML for form tag (Bertrand Mansion)
