@@ -62,6 +62,7 @@ class HTML_QuickForm_date extends HTML_QuickForm_group
     *     each select box?
     * 'emptyOptionVal': The value passed by the empty option.
     * 'emptyOptionText': The text displayed for the empty option.
+    * 'optionIncrement': Step to increase the option values by (works for 'i' and 's')
     * 
     * @access   private
     * @var      array
@@ -74,6 +75,7 @@ class HTML_QuickForm_date extends HTML_QuickForm_group
         'addEmptyOption'   => false,
         'emptyOptionValue' => '',
         'emptyOptionText'  => '&nbsp;',
+        'optionIncrement'  => array('i' => 1, 's' => 1)
     );
 
    /**
@@ -193,7 +195,11 @@ class HTML_QuickForm_date extends HTML_QuickForm_group
                 if ('language' == $name) {
                     $this->_options['language'] = isset($this->_locale[$value])? $value: 'en';
                 } elseif (isset($this->_options[$name])) {
-                    $this->_options[$name] = $value;
+                    if (is_array($value)) {
+                        $this->_options[$name] = @array_merge($this->_options[$name], $value);
+                    } else {
+                        $this->_options[$name] = $value;
+                    }
                 }
             }
         }
@@ -240,11 +246,11 @@ class HTML_QuickForm_date extends HTML_QuickForm_group
                         unset($options[0]);
                         break;
                     case 'Y':
-                        if ($this->_options['minYear'] > $this->_options['maxYear']) {
-                            $options = $this->_createOptionList($this->_options['maxYear'], $this->_options['minYear']);
-                        } else {
-                            $options = $this->_createOptionList($this->_options['minYear'], $this->_options['maxYear']);
-                        }
+                        $options = $this->_createOptionList(
+                            $this->_options['minYear'],
+                            $this->_options['maxYear'], 
+                            $this->_options['minYear'] > $this->_options['maxYear']? -1: 1
+                        );
                         break;
                     case 'h':
                         $options = $this->_createOptionList(1, 12);
@@ -253,10 +259,10 @@ class HTML_QuickForm_date extends HTML_QuickForm_group
                         $options = $this->_createOptionList(0, 23);
                         break;
                     case 'i':
-                        $options = $this->_createOptionList(0, 59);
+                        $options = $this->_createOptionList(0, 59, $this->_options['optionIncrement']['i']);
                         break;
                     case 's':
-                        $options = $this->_createOptionList(0, 59);
+                        $options = $this->_createOptionList(0, 59, $this->_options['optionIncrement']['s']);
                         break;
                     case 'a':
                         $options = array('am' => 'am', 'pm' => 'pm');
@@ -300,12 +306,13 @@ class HTML_QuickForm_date extends HTML_QuickForm_group
     *
     * @param    int     The start number
     * @param    int     The end number
+    * @param    int     Increment by this value
     * @access   private
     * @return   array   An array of numeric options.
     */
-    function _createOptionList($start, $end)
+    function _createOptionList($start, $end, $step = 1)
     {
-        for ($i = $start, $options = array(); $i <= $end; $i++) {
+        for ($i = $start, $options = array(); $start > $end? $i >= $end: $i <= $end; $i += $step) {
             $options[$i] = sprintf('%02d', $i);
         }
         return $options;
