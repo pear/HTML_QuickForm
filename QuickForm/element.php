@@ -234,7 +234,7 @@ class HTML_QuickForm_element extends HTML_Common {
         }
         if ($this->_persistantFreeze) {
             $html .= '<input type="hidden" name="' . 
-                $this->getName() . '" value="' . $value . '" />';
+                $this->getName() . '" value="' . htmlspecialchars($value) . '" />';
         }
         return $html;
     } //end func getFrozenHtml
