@@ -1060,12 +1060,14 @@ class HTML_QuickForm extends HTML_Common {
                 $element = array($element);
             }
             foreach ($element as $elName) {
-                if ($this->elementExists($elName)) {
-                    if (isset($this->_submitValues[$elName])) {
-                        $this->_submitValues[$elName] = $this->_recursiveFilter($filter, $this->_submitValues[$elName]);
+                $value = $this->getSubmitValue($elName);
+                if (null !== $value) {
+                    if (false === strpos($elName, '[')) {
+                        $this->_submitValues[$elName] = $this->_recursiveFilter($filter, $value);
+                    } else {
+                        $idx  = "['" . str_replace(array(']', '['), array('', "']['"), $elName) . "']";
+                        eval("\$this->_submitValues{$idx} = \$this->_recursiveFilter(\$filter, \$value);");
                     }
-                } else {
-                    return PEAR::raiseError(null, QUICKFORM_NONEXIST_ELEMENT, null, E_USER_WARNING, "Element '$elName' does not exist in HTML_QuickForm::applyFilter()", 'HTML_QuickForm_Error', true);
                 }
             }
         }
