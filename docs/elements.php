@@ -73,13 +73,24 @@ $form->addElement('date', 'dateTest1', 'Date1:', array('format'=>'dmY', 'minYear
 $form->addElement('date', 'dateTest2', 'Date2:', array('format'=>'d-F-Y H:i', 'language'=>'de', 'optionIncrement' => array('i' => 5)));
 $form->addElement('date', 'dateTest3', 'Today is:', array('format'=>'l d M Y'));
 
+$main[0] = "Pop";
+$main[1] = "Rock";
+$main[2] = "Classical";
+
+$secondary[0][0] = "Belle & Sebastian";
+$secondary[0][1] = "Elliot Smith";
+$secondary[0][2] = "Beck";
+$secondary[1][3] = "Noir Desir";
+$secondary[1][4] = "Violent Femmes";
+$secondary[2][5] = "Wagner";
+$secondary[2][6] = "Mozart";
+$secondary[2][7] = "Beethoven";
+
+$opts[] = $main;
+$opts[] = $secondary;
+
 $hs =& $form->addElement('hierselect', 'ihsTest', 'Hierarchical select:', array('style' => 'width: 20em;'), '<br />');
-$hs->setMainOptions(array('Pop', 'Classical', 'Funeral doom'));
-$hs->setSecOptions(array(
-    array(1 => 'Red Hot Chili Peppers', 2 => 'The Pixies'),
-    array(3 => 'Wagner', 4 => 'Strauss'),
-    array(5 => 'Pantheist', 6 => 'Skepticism')
-));
+$hs->setOptions($opts);
 
 $form->addElement('advcheckbox', 'iadvChk', array('Advanced checkbox:', 'Unlike standard checkbox, this element <b>has</b> a value<br />when it is not checked.'), 'Check the box', null, array('off', 'on'));
 
