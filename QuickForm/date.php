@@ -75,7 +75,7 @@ class HTML_QuickForm_date extends HTML_QuickForm_element
                             "months_long"   => array ("január", "február", "március", "április", "május", "június", "július", "augusztus", "szeptember", "október", "november", "december")
                         ),
                         "pl"    => array (
-                            "weekdays_short"=> array ("Nie", "Pon", "Wto", "¦ro", "Czw", "Pi±", "Sob"),
+                            "weekdays_short"=> array ("Nie", "Pn", "Wt", "¦r", "Czw", "Pt", "Sob"),
                             "weekdays_long" => array ("Niedziela", "Poniedzia³ek", "Wtorek", "¦roda", "Czwartek", "Pi±tek", "Sobota"),
                             "months_short"  => array ("Sty", "Lut", "Mar", "Kwi", "Maj", "Cze", "Lip", "Sie", "Wrz", "Pa¼", "Lis", "Gru"),
                             "months_long"   => array ("Styczeñ", "Luty", "Marzec", "Kwiecieñ", "Maj", "Czerwiec", "Lipiec", "Sierpieñ", "Wrzesieñ", "Pa¼dziernik", "Listopad", "Grudzieñ")
