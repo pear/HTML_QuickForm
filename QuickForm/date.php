@@ -61,7 +61,7 @@ class HTML_QuickForm_date extends HTML_QuickForm_group
     * 'maxYear': Maximum year in year select
     * 'addEmptyOption': Should an empty option be added to the top of
     *     each select box?
-    * 'emptyOptionVal': The value passed by the empty option.
+    * 'emptyOptionValue': The value passed by the empty option.
     * 'emptyOptionText': The text displayed for the empty option.
     * 'optionIncrement': Step to increase the option values by (works for 'i' and 's')
     * 
@@ -344,7 +344,9 @@ class HTML_QuickForm_date extends HTML_QuickForm_group
 
     function setValue($value)
     {
-        if (!is_array($value)) {
+        if ($this->_options['addEmptyOption'] && empty($value)) {
+            $value = array();
+        } else  if (!is_array($value)) {
             // might be a unix epoch, then we fill all possible values
             $arr = explode('-', date('w-d-n-Y-h-H-i-s-a-A', (int)$value));
             $value = array(
