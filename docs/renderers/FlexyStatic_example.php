@@ -94,7 +94,7 @@ $form->addElement('submit', 'submit', 'Register');
 $form->addRule('email', 'Email address is required', 'required');
 $form->addGroupRule('name', 'Name is required', 'required');
 $form->addRule('pass', 'Password must be between 8 to 10 characters',
-'rangelength', '8,10','client');
+'rangelength', array(8, 10),'client');
 $form->addRule('country', 'Country is a required field', 'required');
 $form->addGroupRule('destination', 'Please check at least two boxes',
 'required', null, 2);
@@ -118,8 +118,8 @@ if ($form->validate()) {
 // setup a template object
 $options = &PEAR::getStaticProperty('HTML_Template_Flexy','options');
 $options = array(
-	'templateDir' => '/home/mixtli/public_html/QuickFormsFlexy/templates',
-	'compileDir' => '/home/mixtli/public_html/QuickFormsFlexy/templates/build',
+	'templateDir' => './templates',
+	'compileDir' => './templates/build',
 	'forceCompile' => 1,
 	'debug' => 0,
 	'local' => 'en'

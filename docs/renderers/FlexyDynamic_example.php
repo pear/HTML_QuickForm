@@ -32,7 +32,7 @@ $form->addElement('text', 'itxtTest', 'Test Text');
 $form->addElement('textarea', 'itxaTest', 'Test TextArea');
 
 // will be later assigned to style green
-$form->addElement('password', 'ipwdTest', 'Test Password');
+$form->addElement('password', 'ipwdTest', array('Test Password', 'Please choose a password which is hard to guess'));
 $select =& $form->addElement('select', 'iselTest', 'Test Select', array('A'=>'A', 'B'=>'B','C'=>'C','D'=>'D'));
 $select->setSize(5);
 $select->setMultiple(true);
@@ -45,7 +45,7 @@ $checkbox[] = &HTML_QuickForm::createElement('checkbox', 'A', null, 'A');
 $checkbox[] = &HTML_QuickForm::createElement('checkbox', 'B', null, 'B');
 $checkbox[] = &HTML_QuickForm::createElement('checkbox', 'C', null, 'C');
 $checkbox[] = &HTML_QuickForm::createElement('checkbox', 'D', null, 'D');
-$form->addGroup($checkbox, 'ichkABCD', 'ABCD', array('&nbsp;', '<br />'));
+$form->addGroup($checkbox, 'ichkABCD', 'ABCD', '<br />');
 
 // will be later assigned to style fancygroup
 $radio[] = &HTML_QuickForm::createElement('radio', null, null, 'Yes', 'Y');
@@ -84,8 +84,8 @@ $form->accept($renderer);
 
 $options = &PEAR::getStaticProperty('HTML_Template_Flexy','options');
 $options = array(
-	'templateDir' => '/home/mixtli/public_html/QuickFormsFlexy/templates',
-	'compileDir' => '/home/mixtli/public_html/QuickFormsFlexy/templates/build',
+	'templateDir' => './templates',
+	'compileDir' => './templates/build',
 	'debug' => 0
 );
 $tpl =& new HTML_Template_Flexy($options);
@@ -102,6 +102,8 @@ $view->form = $renderer->toObject();
 ob_start();
 print_r($renderer->toObject());
 $view->dynamic_object =  ob_get_contents();
+// XXX: dunno how to make Flexy ignore the placeholder
+$view->formdata = '{formdata}';
 ob_end_clean();
 
 // render and display the template

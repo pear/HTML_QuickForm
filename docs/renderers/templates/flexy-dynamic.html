@@ -77,9 +77,7 @@
                         {foreach:elem.elements,gitem} 
                             {gitem.label:h} 
                             {gitem.html:h}{if:gitem.required}<font color="red">*</font>{end:}
-                            {if:elem.separator}
-                                 cycle values=elem.separator
-                            {end:}
+                            {if:elem.separator}{elem.separator:h}{end:}
                         {end:} 
                     {else:} 
                         {elem.html:h} 
@@ -110,16 +108,16 @@
 &nbsp; 
 <p><strong>Best Practice: </strong><br /> 
 Use only one dynamic form template like this for your <br /> 
-Smarty driven project. You include this where <br /> 
-to place a form with the formdata-Array rendered by <br /> 
-SmartyDynamic QuickForm Renderer as option:</p> 
+Flexy driven project. You include this where <br /> 
+to place a form with the formdata object rendered by <br /> 
+Object QuickForm Renderer as option:</p> 
  
 <pre style="font-size: 12px;"> 
 <strong>&lt;include file=form-dynamic.tpl form={formdata}&gt;</strong> 
 </pre> 
  
 &nbsp; 
-<p><strong>The used "Dynamic" Array </strong></p> 
+<p><strong>The used &quot;Dynamic&quot; Object </strong></p> 
 <pre style="font-size: 12px;"> 
 {dynamic_object} 
 </pre> 
