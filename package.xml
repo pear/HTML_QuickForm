@@ -47,7 +47,7 @@ Features:
   </maintainers>
   <release>
     <version>3.0</version>
-    <date>2003-06-??</date>
+    <date>2003-06-04</date>
     <state>stable</state>
     <notes>
 * Fixes
@@ -55,7 +55,6 @@ Features:
 - do not use submit values for 'submit' elements also (reported by Thomas Schulz, Mike Carter)
 - assorted small fixes to HTML_QuickForm's methods and PHPDoc documentation
 - HTML_QuickForm::apiVersion() returns 3.0 now
-
     </notes>
     <filelist>
       <dir name="/" baseinstalldir="HTML">
