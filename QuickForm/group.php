@@ -367,10 +367,11 @@ class HTML_QuickForm_group extends HTML_QuickForm_element
                 $elementName = $this->_elements[$key]->getName();
                 if ($index == $elementName) {
                     if ($this->_appendName) {
-                        return $this->getName().'['.$elementName.']';
+                        $elementName = $this->getName().'['.$elementName.']';
                     }
+                    break;
                 } elseif ($this->_appendName && $this->getName().'['.$elementName.']' == $index) {
-                    return $elementName;
+                    break;
                 }
             }
         }
