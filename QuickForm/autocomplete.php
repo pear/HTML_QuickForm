@@ -112,7 +112,7 @@ class HTML_QuickForm_autocomplete extends HTML_QuickForm_text
         if ($this->_flagFrozen) {
             $js = '';
         } else {
-            $js = "<script language=\"JavaScript\" type=\"text/javascript\">\n<!--\n";
+            $js = "<script type=\"text/javascript\">\n<!--\n";
             if (!defined('HTML_QUICKFORM_AUTOCOMPLETE_EXISTS')) {
                 $js .= <<<EOS
 
