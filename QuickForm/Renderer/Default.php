@@ -32,75 +32,75 @@ class HTML_QuickForm_Renderer_Default extends HTML_QuickForm_Renderer
 {
    /**
     * The HTML of the form  
-    * @var string
-    * @access    private
+    * @var      string
+    * @access   private
     */
     var $_html;
 
    /**
     * Header Template string
-    * @var       string
-    * @access    private
+    * @var      string
+    * @access   private
     */
     var $_headerTemplate = 
         "\n\t<tr>\n\t\t<td nowrap=\"nowrap\" align=\"left\" valign=\"top\" colspan=\"2\" bgcolor=\"#CCCCCC\"><b>{header}</b></td>\n\t</tr>";
 
    /**
     * Element template string
-    * @var       string
-    * @access    private
+    * @var      string
+    * @access   private
     */
     var $_elementTemplate = 
         "\n\t<tr>\n\t\t<td align=\"right\" valign=\"top\"><!-- BEGIN required --><font color=\"red\">*</font><!-- END required --><b>{label}</b></td>\n\t\t<td nowrap=\"nowrap\" valign=\"top\" align=\"left\"><!-- BEGIN error --><font color=\"#FF0000\">{error}</font><br><!-- END error -->\t{element}</td>\n\t</tr>";
 
    /**
     * Form template string
-    * @var       string
-    * @access    private
+    * @var      string
+    * @access   private
     */
     var $_formTemplate = 
         "\n<table border=\"0\">\n\t<form{attributes}>{content}\n\t</form>\n</table>";
 
    /**
     * Required Note template string
-    * @var       string
-    * @access    private
+    * @var      string
+    * @access   private
     */
     var $_requiredNoteTemplate = 
         "\n\t<tr>\n\t\t<td></td>\n\t<td align=\"left\" valign=\"top\">{requiredNote}</td>\n\t</tr>";
 
    /**
     * Array containing the templates for customised elements
-    * @var       array
-    * @access    private
+    * @var      array
+    * @access   private
     */
     var $_templates = array();
 
    /**
     * True if we are inside a group 
-    * @var bool
-    * @access private
+    * @var      bool
+    * @access   private
     */
     var $_inGroup = false;
 
    /**
     * Array with HTML generated for group elements
-    * @var array
-    * @access private
+    * @var      array
+    * @access   private
     */
     var $_groupElements = array();
 
    /**
     * Template for an element inside a group
-    * @var string
-    * @access private
+    * @var      string
+    * @access   private
     */
     var $_groupElementTemplate = '';
 
    /**
     * HTML that wraps around the group elements
-    * @var string
-    * @access private
+    * @var      string
+    * @access   private
     */
     var $_groupWrap = '';
     
@@ -128,9 +128,9 @@ class HTML_QuickForm_Renderer_Default extends HTML_QuickForm_Renderer
    /**
     * Called when visiting a form, before processing any form elements
     *
-    * @param object    An HTML_QuickForm object being visited
-    * @access public
-    * @return void
+    * @param    object      An HTML_QuickForm object being visited
+    * @access   public
+    * @return   void
     */
     function startForm(&$form)
     {
@@ -141,9 +141,9 @@ class HTML_QuickForm_Renderer_Default extends HTML_QuickForm_Renderer
     * Called when visiting a form, after processing all form elements
     * Adds required note, form attributes, validation javascript and form content.
     * 
-    * @param object     An HTML_QuickForm object being visited
-    * @access public
-    * @return void
+    * @param    object      An HTML_QuickForm object being visited
+    * @access   public
+    * @return   void
     */
     function finishForm(&$form)
     {
@@ -164,9 +164,9 @@ class HTML_QuickForm_Renderer_Default extends HTML_QuickForm_Renderer
     * Called when visiting a header
     * Might be changed soon to use static element instead
     *
-    * @param string     header text to output
-    * @access public
-    * @return void
+    * @param    string     header text to output
+    * @access   public
+    * @return   void
     */
     function renderHeader($header)
     {
@@ -176,13 +176,13 @@ class HTML_QuickForm_Renderer_Default extends HTML_QuickForm_Renderer
    /**
     * Helper method for renderElement
     *
-    * @param string     Element name
-    * @param string     Element label
-    * @param bool       Whether an element is required
-    * @param string     Error message associated with the element
-    * @access private
-    * @see   renderElement()
-    * @return string 	Html for element
+    * @param    string      Element name
+    * @param    string      Element label
+    * @param    bool        Whether an element is required
+    * @param    string      Error message associated with the element
+    * @access   private
+    * @see      renderElement()
+    * @return   string      Html for element
     */
     function _prepareTemplate($name, $label, $required, $error)
     {
@@ -285,9 +285,9 @@ class HTML_QuickForm_Renderer_Default extends HTML_QuickForm_Renderer
    /**
     * Called when visiting a group, after processing all group elements
     *
-    * @param object     An HTML_QuickForm_group object being visited
-    * @access public
-    * @return void
+    * @param    object      An HTML_QuickForm_group object being visited
+    * @access   public
+    * @return   void
     */
     function finishGroup(&$group)
     {
@@ -316,10 +316,10 @@ class HTML_QuickForm_Renderer_Default extends HTML_QuickForm_Renderer
     /**
      * Sets element template 
      *
-     * @param     string	The HTML surrounding an element 
-     * @param     string	(optional) Name of the element to apply template for
-     * @access    public
-     * @return    void
+     * @param       string      The HTML surrounding an element 
+     * @param       string      (optional) Name of the element to apply template for
+     * @access      public
+     * @return      void
      */
     function setElementTemplate($html, $element = null)
     {
@@ -334,9 +334,9 @@ class HTML_QuickForm_Renderer_Default extends HTML_QuickForm_Renderer
      * Sets header template
      * Might be changed soon in order to use a static element
      *
-     * @param     string   The HTML surrounding the header 
-     * @access    public
-     * @return    void
+     * @param       string      The HTML surrounding the header 
+     * @access      public
+     * @return      void
      */
     function setHeaderTemplate($html)
     {
@@ -346,7 +346,7 @@ class HTML_QuickForm_Renderer_Default extends HTML_QuickForm_Renderer
     /**
      * Sets form template 
      *
-     * @param     string	The HTML surrounding the form tags 
+     * @param     string    The HTML surrounding the form tags 
      * @access    public
      * @return    void
      */
@@ -358,9 +358,9 @@ class HTML_QuickForm_Renderer_Default extends HTML_QuickForm_Renderer
     /**
      * Sets the note indicating required fields template
      *
-     * @param     string	The HTML surrounding the required note 
-     * @access    public
-     * @return    void
+     * @param       string      The HTML surrounding the required note 
+     * @access      public
+     * @return      void
      */
     function setRequiredNoteTemplate($html)
     {
@@ -372,7 +372,7 @@ class HTML_QuickForm_Renderer_Default extends HTML_QuickForm_Renderer
      * Useful when you want to use addData() to create a completely custom form look
      *
      * @access  public
-     * @return void
+     * @return  void
      */
     function clearAllTemplates()
     {
