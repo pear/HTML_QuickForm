@@ -178,5 +178,16 @@ class HTML_QuickForm_static extends HTML_QuickForm_element {
     } // end func onQuickFormEvent
 
     // }}}
+    // {{{ exportValue()
+
+   /**
+    * We override this here because we don't want any values from static elements
+    */
+    function exportValue(&$submitValues, $assoc = false)
+    {
+        return null;
+    }
+    
+    // }}}
 } //end class HTML_QuickForm_static
 ?>

@@ -238,7 +238,11 @@ class HTML_QuickForm extends HTML_Common {
         $target = (empty($target) || $target == '_self') ? array() : array('target' => $target);
         $attributes = array('action'=>$action, 'method'=>$method, 'name'=>$formName, 'id'=>$formName) + $target;
         $this->updateAttributes($attributes);
-        $this->_submitValues = $GLOBALS['_' . strtoupper($method)];
+        if (1 == get_magic_quotes_gpc()) {
+            $this->_submitValues = $this->_recursiveFilter('stripslashes', 'get' == $method? $_GET: $_POST);
+        } else {
+            $this->_submitValues = 'get' == $method? $_GET: $_POST;
+        }
         $this->_submitFiles =& $_FILES;
     } // end constructor
 
@@ -1815,6 +1819,70 @@ class HTML_QuickForm extends HTML_Common {
         $this->accept($renderer);
         return $renderer->toArray();
      } // end func toArray
+
+    // }}}
+    // {{{ exportValue()
+
+    /**
+     * Returns a 'safe' element's value
+     * 
+     * This method first tries to find a cleaned-up submitted value,
+     * it will return a value set by setValue()/setDefaults()/setConstants()
+     * if submitted value does not exist for the given element.
+     *
+     * @access public
+     * @return mixed
+     */
+    function exportValue($elementName)
+    {
+        // XXX: do _duplicateIndex processing
+        if (isset($this->_elementIndex[$element])) {
+            return $this->_elements[$this->_elementIndex[$element]]->exportValue($this->_submitValues, false);
+        } else {
+            return PEAR::raiseError(null, QUICKFORM_NONEXIST_ELEMENT, null, E_USER_WARNING, "Element '$element' does not exist in HTML_QuickForm::getElementValue()", 'HTML_QuickForm_Error', true);
+        }
+    }
+
+    // }}}
+    // {{{ exportValues()
+
+    /**
+     * Returns 'safe' elements' values
+     *
+     * Unlike getSubmitValues(), this will return only the values 
+     * corresponding to the elements present in the form.
+     * 
+     * @param   mixed   Array/string of element names, whose values we want. If not set then return all elements.
+     * @access  public
+     * @return  array   An assoc array of elements' values
+     * @throws  HTML_QuickForm_Error
+     */
+    function exportValues($elementList = null)
+    {
+        $values = array();
+        if (null === $elementList) {
+            // iterate over all elements, calling their exportValue() methods
+            foreach (array_keys($this->_elements) as $key) {
+                $value = $this->_elements[$key]->exportValue($this->_submitValues, true);
+                if (is_array($value)) {
+                    // This shit throws a bogus warning in PHP 4.3.x
+                    $values = @array_merge_recursive($values, $value);
+                }
+            }
+        } else {
+            if (!is_array($elementList)) {
+                $elementList = array_map('trim', explode(',', $elementList));
+            }
+            foreach ($elementList as $elementName) {
+                $value = $this->exportValue($elementName);
+                if (PEAR::isError($value)) {
+                    return $value;
+                }
+                $values[$elementName] = $value;
+            }
+        }
+        return $values;
+    }
 
     // }}}
     // {{{ isError()

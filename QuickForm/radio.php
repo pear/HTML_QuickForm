@@ -233,5 +233,22 @@ class HTML_QuickForm_radio extends HTML_QuickForm_input {
     } // end func onQuickFormLoad
 
     // }}}
+    // {{{ exportValue()
+
+   /**
+    * Returns the value attribute if the radio is checked
+    */
+    function exportValue(&$submitValues, $assoc = false)
+    {
+        $value = $this->_findValue($submitValues);
+        if (null === $value) {
+            $value = $this->getChecked()? $this->getValue(): null;
+        } elseif ($value != $this->getValue()) {
+            $value = null;
+        }
+        return $this->_prepareValue($value, $assoc);
+    }
+    
+    // }}}
 } //end class HTML_QuickForm_radio
 ?>

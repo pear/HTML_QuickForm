@@ -190,5 +190,21 @@ class HTML_QuickForm_input extends HTML_QuickForm_element {
     } // end func onQuickFormEvent
 
     // }}}
+    // {{{ exportValue()
+
+   /**
+    * We don't need values from button-type elements (except submit) and files
+    */
+    function exportValue(&$submitValues, $assoc = false)
+    {
+        $type = $this->getType();
+        if ('reset' == $type || 'image' == $type || 'button' == $type || 'file' == $type) {
+            return null;
+        } else {
+            return parent::exportValue($submitValues, $assoc);
+        }
+    }
+    
+    // }}}
 } // end class HTML_QuickForm_element
 ?>

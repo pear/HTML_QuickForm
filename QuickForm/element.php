@@ -315,19 +315,13 @@ class HTML_QuickForm_element extends HTML_Common {
         }
         $elementName = $this->getName();
         if (isset($values[$elementName])) {
-            $value = $values[$elementName];
-            if (is_string($value) && get_magic_quotes_gpc() == 1) {
-                $value = stripslashes($value);
-            }
-            return $value;
+            return $values[$elementName];
+        } elseif (strpos($elementName, '[')) {
+            $myVar = "['" . str_replace(array(']', '['), array('', "']['"), $elementName) . "']";
+            return eval("return (isset(\$values$myVar)) ? \$values$myVar : null;");
+        } else {
+            return null;
         }
-        $myVar = str_replace(array(']', '['), array('', "']['"), $elementName);
-        $myVar = "['".$myVar."']";
-        $value = eval("return (isset(\$values$myVar)) ? \$values$myVar : null;");
-        if (is_string($value) && get_magic_quotes_gpc() == 1) {
-            $value = stripslashes($value);
-        }
-        return $value;
     } //end func _findValue
 
     // }}}
@@ -414,6 +408,55 @@ class HTML_QuickForm_element extends HTML_Common {
     } // end func _generateId
 
     // }}}
+    // {{{ exportValue()
 
+   /**
+    * Returns a 'safe' element's value
+    *
+    * @param  array   array of submitted values to search
+    * @param  bool    whether to return the value as associative array
+    * @access public
+    * @return mixed
+    */
+    function exportValue(&$submitValues, $assoc = false)
+    {
+        $value = $this->_findValue($submitValues);
+        if (null === $value) {
+            $value = $this->getValue();
+        }
+        return $this->_prepareValue($value, $assoc);
+    }
+    
+    // }}}
+    // {{{ _prepareValue()
+
+   /**
+    * Used by exportValue() to prepare the value for returning
+    *
+    * @param  mixed   the value found in exportValue()
+    * @param  bool    whether to return the value as associative array
+    * @access private
+    * @return mixed
+    */
+    function _prepareValue($value, $assoc)
+    {
+        if (null === $value) {
+            return null;
+        } elseif (!$assoc) {
+            return $value;
+        } else {
+            $name = $this->getName();
+            if (!strpos($name, '[')) {
+                return array($name => $value);
+            } else {
+                $valueAry = array();
+                $myIndex  = "['" . str_replace(array(']', '['), array('', "']['"), $elementName) . "']";
+                eval("\$valueAry$myIndex = \$value;");
+                return $valueAry;
+            }
+        }
+    }
+    
+    // }}}
 } // end class HTML_QuickForm_element
 ?>

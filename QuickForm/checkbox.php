@@ -158,7 +158,7 @@ class HTML_QuickForm_checkbox extends HTML_QuickForm_input {
      */
     function setText($text)
     {
-            $this->_text = $text;
+        $this->_text = $text;
     } //end func setText
 
     // }}}
@@ -278,6 +278,21 @@ class HTML_QuickForm_checkbox extends HTML_QuickForm_input {
         return true;
     } // end func onQuickFormEvent
 
+    // }}}
+    // {{{ exportValue()
+
+   /**
+    * Return true if the checkbox is checked, null if it is not checked (getValue() returns false)
+    */
+    function exportValue(&$submitValues, $assoc = false)
+    {
+        $value = $this->_findValue($submitValues);
+        if (null === $value) {
+            $value = $this->getChecked()? true: null;
+        }
+        return $this->_prepareValue($value, $assoc);
+    }
+    
     // }}}
 } //end class HTML_QuickForm_checkbox
 ?>
