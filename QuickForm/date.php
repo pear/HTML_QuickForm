@@ -353,7 +353,7 @@ class HTML_QuickForm_date extends HTML_QuickForm_element
                     $options = $this->_createNumericOptionList(1, 12);
                     break;
                 case 'H':
-                    $options = $this->_createNumericOptionList(1, 23);
+                    $options = $this->_createNumericOptionList(0, 23);
                     break;
                 case 'i':
                     $options = $this->_createNumericOptionList(1, 59);
