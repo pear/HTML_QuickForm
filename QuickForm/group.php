@@ -33,14 +33,6 @@ require_once("HTML/QuickForm/element.php");
 class HTML_QuickForm_group extends HTML_QuickForm_element {
 
     // {{{ properties
-
-    /**
-     * Value of the element
-     * @var       mixed
-     * @since     1.0
-     * @access    private
-     */
-    var $_value = null;
         
     /**
      * Name of the element
@@ -159,9 +151,9 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
     // {{{ setValue()
 
     /**
-     * Sets value for textarea element
+     * Sets values for group's elements
      * 
-     * @param     string    $value  Value for password element
+     * @param     mixed    Values for group's elements
      * @since     1.0
      * @access    public
      * @return    void
@@ -169,13 +161,22 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
      */
     function setValue($value)
     {
-        if ($this->_appendName) {
-            $this->_value = $value;
-        } else {
-            foreach (array_keys($this->_elements) as $key) {
+        foreach (array_keys($this->_elements) as $key) {
+            if (!$this->_appendName) {
                 $v = $this->_elements[$key]->_findValue($value);
                 if (null !== $v) {
                     $this->_elements[$key]->onQuickFormEvent('setGroupValue', $v, $this);
+                }
+
+            } else {
+                $elementName = $this->_elements[$key]->getName();
+                $index       = (!empty($elementName)) ? $elementName : $key;
+                if (is_array($value)) {
+                    if (isset($value[$index])) {
+                        $this->_elements[$key]->onQuickFormEvent('setGroupValue', $value[$index], $this);
+                    }
+                } elseif (isset($value)) {
+                    $this->_elements[$key]->onQuickFormEvent('setGroupValue', $value, $this);
                 }
             }
         }
@@ -194,7 +195,31 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
      */
     function getValue()
     {
-        return $this->_value;
+        $value = null;
+        foreach (array_keys($this->_elements) as $key) {
+            $element =& $this->_elements[$key];
+            switch ($element->getType()) {
+                case 'radio': 
+                    $v = $element->getChecked()? $element->getValue(): null;
+                    break;
+                case 'checkbox': 
+                    $v = $element->getChecked()? true: null;
+                    break;
+                default:
+                    $v = $element->getValue();
+            }
+            if (null !== $v) {
+                $elementName = $element->getName();
+                if (is_null($elementName)) {
+                    $value = $v;
+                } elseif ('' == $elementName) {
+                    $value[] = $v;
+                } else {
+                    $value[$elementName] = $v;
+                }
+            }
+        }
+        return $value;
     } // end func getValue
 
     // }}}
@@ -323,27 +348,28 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
     function getElementName($index)
     {
         $elementName = false;
-        foreach (array_keys($this->_elements) as $key) {
-            $element =& $this->_elements[$key];
-            $elementName = $element->getName();
-            if (is_int($index) && $index == $key) {
-                if (isset($elementName) && $elementName == '') {
-                    $elementName = $key;
-                }
-                if ($this->_appendName) {
-                    if (is_null($elementName)) {
-                        $elementName = $this->getName();
-                    } else {
-                        $elementName = $this->getName().'['.$elementName.']';
-                    }
-                }
-                return $elementName;
+        if (is_int($index) && isset($this->_elements[$index])) {
+            $elementName = $this->_elements[$index]->getName();
+            if (isset($elementName) && $elementName == '') {
+                $elementName = $index;
             }
-            if (is_string($index) && $elementName == $index) {
-                if ($this->_appendName) {
+            if ($this->_appendName) {
+                if (is_null($elementName)) {
+                    $elementName = $this->getName();
+                } else {
                     $elementName = $this->getName().'['.$elementName.']';
                 }
-                return $elementName;        
+            }
+
+        } elseif (is_string($index)) {
+            foreach (array_keys($this->_elements) as $key) {
+                $elementName = $this->_elements[$key]->getName();
+                if ($index == $elementName) {
+                    if ($this->_appendName) {
+                        $elementName = $this->getName().'['.$elementName.']';
+                    }
+                    break;
+                }
             }
         }
         return $elementName;
@@ -387,29 +413,24 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
     {
         switch ($event) {
             case 'updateValue':
-                if ($this->_appendName) {
-                    if ('checkbox' != $this->getGroupType()) {
-                        parent::onQuickFormEvent('updateValue', $arg, $caller);
-                    } else {
-                        // apply the same logic we use for a single checkbox
-                        $value = $this->_findValue($caller->_constantValues);
-                        if (null === $value) {
-                            if (isset($caller->_submitValues) && 0 < count($caller->_submitValues)) {
-                                $value = $this->_findValue($caller->_submitValues);
-                            } else {
-                                $value = $this->_findValue($caller->_defaultValues);
-                            }
-                        }
-                        if (null !== $value) {
-                            $this->setValue($value);
+                foreach (array_keys($this->_elements) as $key) {
+                    if ($this->_appendName) {
+                        $elementName = $this->_elements[$key]->getName();
+                        if (is_null($elementName)) {
+                            $this->_elements[$key]->setName($this->getName());
+                        } elseif ('' == $elementName) {
+                            $this->_elements[$key]->setName($this->getName() . '[' . $key . ']');
+                        } else {
+                            $this->_elements[$key]->setName($this->getName() . '[' . $elementName . ']');
                         }
                     }
-                } else {
-                    foreach (array_keys($this->_elements) as $key) {
-                        $this->_elements[$key]->onQuickFormEvent('updateValue', $arg, $caller);
+                    $this->_elements[$key]->onQuickFormEvent('updateValue', $arg, $caller);
+                    if ($this->_appendName) {
+                        $this->_elements[$key]->setName($elementName);
                     }
                 }
                 break;
+
             default:
                 parent::onQuickFormEvent($event, $arg, $caller);
         }
@@ -431,8 +452,7 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
     function accept(&$renderer, $required = false, $error = null)
     {
         $renderer->startGroup($this, $required, $error);
-        $name  = $this->getName();
-        $value = $this->getValue();
+        $name = $this->getName();
         foreach (array_keys($this->_elements) as $key) {
             $element =& $this->_elements[$key];
             if (PEAR::isError($element)) {
@@ -441,18 +461,10 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
             
             if ($this->_appendName) {
                 $elementName = $element->getName();
-                $index       = (!empty($elementName)) ? $elementName : $key;
                 if (isset($elementName)) {
                     $element->setName($name . '['.$elementName.']');
                 } else {
                     $element->setName($name);
-                }
-                if (is_array($value)) {
-                    if (isset($value[$index])) {
-                        $element->onQuickFormEvent('setGroupValue', $value[$index], $this);
-                    }
-                } elseif (isset($value)) {
-                    $element->onQuickFormEvent('setGroupValue', $value, $this);
                 }
             }
 

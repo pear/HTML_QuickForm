@@ -188,11 +188,6 @@ class HTML_QuickForm_input extends HTML_QuickForm_element {
                         $this->setValue($value);
                     }
                     break;
-                case 'setGroupValue':
-                    if ($this->getName() != $caller->getName()) {
-                        $this->setValue($arg);
-                    }
-                    break;
                 default:
                     parent::onQuickFormEvent($event, $arg, $caller);
             }
