@@ -252,50 +252,6 @@ class HTML_QuickForm extends HTML_Common {
             'addslashes'    =>'_filterAddslashes'
         );
 
-    /**
-     * Header Template string
-     * @var       string
-     * @since     2.0
-     * @access    private
-     */
-    var $_headerTemplate = 
-        "\n\t<tr>\n\t\t<td nowrap=\"nowrap\" align=\"left\" valign=\"top\" colspan=\"2\" bgcolor=\"#CCCCCC\"><b>{header}</b></td>\n\t</tr>";
-
-    /**
-     * Element template string
-     * @var       string
-     * @since     2.0
-     * @access    private
-     */
-    var $_elementTemplate = 
-        "\n\t<tr>\n\t\t<td align=\"right\" valign=\"top\"><!-- BEGIN required --><font color=\"red\">*</font><!-- END required --><b>{label}</b></td>\n\t\t<td nowrap=\"nowrap\" valign=\"top\" align=\"left\"><!-- BEGIN error --><font color=\"#FF0000\">{error}</font><br><!-- END error -->\t{element}</td>\n\t</tr>";
-
-    /**
-     * Form template string
-     * @var       string
-     * @since     2.0
-     * @access    private
-     */
-    var $_formTemplate = 
-        "\n<table border=\"0\">\n\t<form{attributes}>{content}\n\t</form>\n</table>";
-
-    /**
-     * Required Note template string
-     * @var       string
-     * @since     2.0
-     * @access    private
-     */
-    var $_requiredNoteTemplate = 
-        "\n\t<tr>\n\t\t<td></td>\n\t<td align=\"left\" valign=\"top\">{requiredNote}</td>\n\t</tr>";
-
-    /**
-     * Array containing the templates for customised elements
-     * @since     2.3
-     * @var       array
-     * @access    private
-     */
-    var $_templates = array();
-
     // }}}
     // {{{ constructor
 
@@ -940,6 +896,9 @@ class HTML_QuickForm extends HTML_Common {
                 return PEAR::raiseError(null, QUICKFORM_UNREGISTERED_ELEMENT, null, E_USER_WARNING, "Element '$element' does not exist in HTML_QuickForm::addRule()", 'HTML_QuickForm_Error', true);
             }
         }
+        if (!$this->isRuleRegistered($type)) {
+            PEAR::raiseError(null, QUICKFORM_INVALID_RULE, null, E_USER_WARNING, "Rule '$type' is not registered in HTML_QuickForm::addRule()", 'HTML_QuickForm_Error', true);
+        }
         if ($type == 'required' || $type == 'uploadedfile') {
             $this->_required[] = $element;
         }
@@ -1081,258 +1040,6 @@ class HTML_QuickForm extends HTML_Common {
     } // end func _recursiveFilter
 
     // }}}
-    // {{{ _wrapElement()
-
-    /**
-     * Html Wrapper method for form elements (inputs...)
-     *
-     * @param     object    $element    Element to be wrapped
-     * @since     1.0
-     * @access    private
-     * @return    void
-     * @throws    
-     */
-    function _wrapElement(&$element, $label=null, $required=false, $error=null)
-    {
-        $tabs = $this->_getTabs();
-        $html = '';
-        if (isset($this->_templates[$element->getName()])) {
-            $html = str_replace('{label}', $label, $this->_templates[$element->getName()]);
-        } else {
-            $html = str_replace('{label}', $label, $this->_elementTemplate);
-        }
-        if ($required) {
-            $html = str_replace('<!-- BEGIN required -->', '', $html);
-            $html = str_replace('<!-- END required -->', '', $html);
-        } else {
-            $html = preg_replace("/([ \t\n\r]*)?<!-- BEGIN required -->(\s|\S)*<!-- END required -->([ \t\n\r]*)?/i", '', $html);
-        }
-        if (isset($error)) {
-            $html = str_replace('{error}', $error, $html);
-            $html = str_replace('<!-- BEGIN error -->', '', $html);
-            $html = str_replace('<!-- END error -->', '', $html);
-        } else {
-            $html = preg_replace("/([ \t\n\r]*)?<!-- BEGIN error -->(\s|\S)*<!-- END error -->([ \t\n\r]*)?/i", '', $html);
-        }
-        $html = str_replace('{element}', $element->toHtml(), $html);
-        return $html;
-    } // end func _wrapElement
-    
-    // }}}
-    // {{{ _wrapHeader ()
-
-    /**
-     * Html Wrapper method for form headers
-     *
-     * @param     string    $header header to be wrapped
-     * @since     1.0
-     * @access    private
-     * @return    void
-     * @throws    
-     */
-    function _wrapHeader ($header)
-    {
-        $tabs = $this->_getTabs();
-        $html = "";
-        $html = str_replace('{header}', $header, $this->_headerTemplate);
-        return $html;
-    } // end func _wrapHeader
-        
-    // }}}
-    // {{{ _wrapForm()
-
-    /**
-     * Puts the form in a HTML decoration (should be overriden)
-     *
-     * @param    mixed     $content     can be a string with html or a HTML_Table object
-     * @since     1.0   
-     * @access    private
-     * @return    string    Html string of the wrapped form
-     * @throws    
-     */
-    function _wrapForm($content)
-    {
-        $html = '';
-        $html = str_replace('{attributes}', 
-            $this->_getAttrString($this->_attributes), $this->_formTemplate);
-        $html = str_replace('{content}', $content, $html);
-        return $html;
-    } // end func _wrapForm
-
-    // }}}
-    // {{{ _wrapRequiredNote()
-
-    /**
-     * Wrap footnote for required fields
-     *
-     * @param    object     $formTable      HTML_Table object
-     * @since     1.0   
-     * @access    private
-     * @return    void
-     * @throws    
-     */
-    function _wrapRequiredNote(&$formTable)
-    {
-        $html = '';
-        $html = str_replace('{requiredNote}', $this->_requiredNote, $this->_requiredNoteTemplate);
-        return $html;
-    } // end func setCaption
-
-    // }}}
-    // {{{ _buildElement()
-
-    /**
-     * Builds the element as part of the form
-     *
-     * @param     array     $element    Array of element information
-     * @since     1.0       
-     * @access    private
-     * @return    void
-     * @throws    
-     */
-    function _buildElement(&$element)
-    {
-        $label       = $element->getLabel();
-        $elementName = $element->getName();
-        $required    = ($this->isElementRequired($elementName) && $this->_freezeAll == false);
-        $error       = $this->getElementError($elementName);
-        if ($element->getType() != 'hidden') {
-            return $this->_wrapElement($element, $label, $required, $error);
-        } else {
-            return "\n" . $this->_getTabs() . "\t" . $element->toHtml();
-        }
-    } // end func _buildElement
-    
-    // }}}
-    // {{{ _buildHeader()
-
-    /**
-     * Builds a form header
-     *
-     * @param     string    $element    header to be built
-     * @since     1.0    
-     * @access    private
-     * @return    void
-     * @throws    
-     */
-    function _buildHeader($element)
-    {
-        $header = $element['header'];
-        return $this->_wrapHeader($header);
-    } // end func _buildHeader
-    
-    // }}}
-    // {{{ _buildRules()
-
-    /**
-     * Adds javascript needed for clientside validation
-     *
-     * @since     1.0
-     * @access    private
-     * @return    string    javascript for clientside validation
-     * @throws    
-     */
-    function _buildRules()
-    {
-        $html = '';
-        $tabs = $this->_getTabs();
-        $test = array();
-        for (reset($this->_rules); $elementName = key($this->_rules); next($this->_rules)) {
-            $rules = pos($this->_rules);
-            foreach ($rules as $rule) {
-                $type       = $rule['type'];
-                // error out if the rule is not registered
-                if (!$this->isRuleRegistered($type)) {
-                    return PEAR::raiseError(null, QUICKFORM_INVALID_RULE, null, E_USER_WARNING, "Rule '$type' is not registered in HTML_QuickForm::addRule()", 'HTML_QuickForm_Error', true);
-                }
-                $validation = $rule['validation'];
-                $message    = $rule['message'];
-                $format     = $rule['format'];
-                $reset      = (isset($rule['reset'])) ? $rule['reset'] : false;
-                $ruleData = $this->_registeredRules[$type];
-                if ($validation == 'client') {
-                    $index = $this->_elementIndex[$elementName];
-                    if ($this->_elements[$index]->getType() == 'group' ||
-                        ($this->_elements[$index]->getType() == 'select' && $this->_elements[$index]->getMultiple())) {
-                        $value =
-                            "$tabs\t\tvar value = '';\n" .
-                            "$tabs\t\tfor (var i = 0; i < frm.elements.length; i++) {\n" .
-                            "$tabs\t\t\tif (frm.elements[i].name.indexOf('$elementName') == 0) {\n" .
-                            "$tabs\t\t\t\tvalue += frm.elements[i].value;\n" .
-                            "$tabs\t\t\t}\n" .
-                            "$tabs\t\t}";
-                        if ($reset) {
-                            $tmp_reset =
-                                "$tabs\t\t\tfor (var i = 0; i < frm.elements.length; i++) {\n" .
-                                "$tabs\t\t\t\tif (frm.elements[i].name.indexOf('$elementName') == 0) {\n" .
-                                "$tabs\t\t\t\t\tfrm.elements[i].value = frm.elements[i].defaultValue;\n" .
-                                "$tabs\t\t\t\t}\n" .
-                                "$tabs\t\t\t}\n";
-                        } else {
-                            $tmp_reset = '';
-                        }
-                    } elseif ($this->_elements[$index]->getType() == 'checkbox') {
-                        $value = "$tabs\t\tif (frm.elements['$elementName'].checked) {\n" .
-                                 "$tabs\t\t\tvar value = 1;\n" .
-                                 "$tabs\t\t} else {\n" .
-                                 "$tabs\t\t\tvar value = '';\n" .
-                                 "$tabs\t\t}";
-                        $tmp_reset = ($reset) ? "$tabs\t\tfield.checked = field.defaultChecked;\n" : '';
-                    } else {
-                        $value = "$tabs\t\tvar value = frm.elements['$elementName'].value;";
-                        $tmp_reset = ($reset) ? "$tabs\t\tfield.value = field.defaultValue;\n" : '';
-                    }
-                    switch ($ruleData[0]) {
-                        case 'regex':
-                            $regex = str_replace('%data%', $format, $ruleData[1]);
-                            if (!$this->isElementRequired($elementName)) {
-                                // This regex will make the rule optional and preserve your delimiters
-                                $regex = preg_replace('/^(\/|.*[^\^])(.*)\1$/', '$1^$|$2$1', $regex);
-                            }
-                            $test[] =
-                                "$value\n" .
-                                "$tabs\t\tvar field = frm.elements['$elementName'];\n"  .
-                                "$tabs\t\tvar regex = $regex;\n"  .
-                                "$tabs\t\tif (!regex.test(value) && !errFlag['$elementName']) {\n" .
-                                "$tabs\t\t\terrFlag['$elementName'] = true;\n" .
-                                "$tabs\t\t\t_qfMsg = unescape(_qfMsg + '\\n - ".rawurlencode($message)."');\n".
-                                $tmp_reset.
-                                "$tabs\t\t}";
-                            break;
-                        case 'function':
-                            $test[] =
-                                "$value\n" .
-                                "$tabs\t\tvar field = frm.elements['$elementName'];\n"  .
-                                "$tabs\t\tif (!" . $ruleData[1] . "('$elementName', value) && !errFlag['$elementName']) {\n" .
-                                "$tabs\t\t\terrFlag['$elementName'] = true;\n" .
-                                "$tabs\t\t\t_qfMsg = _qfMsg + '\\n - $message';\n" .
-                                "$tabs\t\t}";
-                            break;
-                    }
-                }
-            }
-        }
-        if (is_array($test) && count($test) > 0) {
-            $html .=
-                "$tabs\tfunction validate_" . $this->_attributes['name'] . "() {\n" .
-                "$tabs\t\tvar errFlag = new Array();\n" .
-                "$tabs\t\t_qfMsg = '';\n" .
-                "$tabs\t\tvar frm = document.forms['" . $this->_attributes['name'] . "'];\n";
-            $html .= join("\n", $test);
-            $html .=
-                "$tabs\n\t\tif (_qfMsg != '') {\n" .
-                "$tabs\t\t\t_qfMsg = '$this->_jsPrefix' + _qfMsg;\n" .
-                "$tabs\t\t\t_qfMsg = _qfMsg + '\\n$this->_jsPostfix';\n" .
-                "$tabs\t\t\talert(_qfMsg);\n" .
-                "$tabs\t\t\treturn false;\n" .
-                "$tabs\t\t}\n" .
-                "$tabs\t\treturn true;\n" .
-                "$tabs }\n";
-        }
-        return $html; 
-    } // end func _buildRules
-
-    // }}}
     // {{{ isTypeRegistered()
 
     /**
@@ -1462,19 +1169,14 @@ class HTML_QuickForm extends HTML_Common {
      * @param     string   $html        The HTML surrounding an element 
      * @param     string   $element     (optional) Name of the element to apply template for
      * @since     2.0
+     * @deprecated deprecated since 3.0, use renderers for controlling the presentation
      * @access    public
      * @return    void
      */
     function setElementTemplate($html, $element = null)
     {
-        if (is_null($element)) {
-            $this->_elementTemplate = $html;
-        } else {
-            if (!$this->elementExists($element)) {
-                return PEAR::raiseError(null, QUICKFORM_UNREGISTERED_ELEMENT, null, E_USER_WARNING, "Element '$element' does not exist in HTML_QuickForm::setElementTemplate()", 'HTML_QuickForm_Error', true);
-            }
-            $this->_templates[$element] = $html;
-        }
+        $renderer =& $this->defaultRenderer();
+        return $renderer->setElementTemplate($html, $element);
     } // end func setElementTemplate
 
     // }}}
@@ -1485,12 +1187,14 @@ class HTML_QuickForm extends HTML_Common {
      *
      * @param     string   $html    The HTML surrounding the header 
      * @since     2.0
+     * @deprecated deprecated since 3.0, use renderers for controlling the presentation
      * @access    public
      * @return    void
      */
     function setHeaderTemplate($html)
     {
-        $this->_headerTemplate = $html;
+        $renderer =& $this->defaultRenderer();
+        return $renderer->setHeaderTemplate($html);
     } // end func setHeaderTemplate
 
     // }}}
@@ -1501,12 +1205,14 @@ class HTML_QuickForm extends HTML_Common {
      *
      * @param     string   $html    The HTML surrounding the form tags 
      * @since     2.0
+     * @deprecated deprecated since 3.0, use renderers for controlling the presentation
      * @access    public
      * @return    void
      */
     function setFormTemplate($html)
     {
-        $this->_formTemplate = $html;
+        $renderer =& $this->defaultRenderer();
+        return $renderer->setFormTemplate($html);
     } // end func setFormTemplate
 
     // }}}
@@ -1517,12 +1223,14 @@ class HTML_QuickForm extends HTML_Common {
      *
      * @param     string   $html    The HTML surrounding the required note 
      * @since     2.0
+     * @deprecated deprecated since 3.0, use renderers for controlling the presentation
      * @access    public
      * @return    void
      */
     function setRequiredNoteTemplate($html)
     {
-        $this->_requiredNoteTemplate = $html;
+        $renderer =& $this->defaultRenderer();
+        return $renderer->setRequiredNoteTemplate($html);
     } // end func setElementTemplate
 
     // }}}
@@ -1533,15 +1241,14 @@ class HTML_QuickForm extends HTML_Common {
      * Useful when you want to use addData() to create a completely custom form look
      *
      * @since   2.0
+     * @deprecated deprecated since 3.0, use renderers for controlling the presentation
      * @access  public
-     * @returns void
+     * @return void
      */
     function clearAllTemplates()
     {
-        $this->setElementTemplate('{element}');
-        $this->setFormTemplate("\n\t<form{attributes}>{content}\n\t</form>\n");
-        $this->setRequiredNoteTemplate('');
-        $this->_templates = array();
+        $renderer =& $this->defaultRenderer();
+        return $renderer->clearAllTemplates();
     }
 
     // }}}
@@ -1662,10 +1369,6 @@ class HTML_QuickForm extends HTML_Common {
         foreach ($rules as $rule) {
             $type = $format = $message = null;
             $type = $rule['type'];
-            // error out if the rule is not registered
-            if (!$this->isRuleRegistered($type)) {
-                PEAR::raiseError(null, QUICKFORM_INVALID_RULE, null, E_USER_WARNING, "Rule '$type' is not registered in HTML_QuickForm::validate()", 'HTML_QuickForm_Error', true);
-            }
             $format = $rule['format'];
             $message = $rule['message'];
             $validation = $rule['validation'];
@@ -1744,10 +1447,6 @@ class HTML_QuickForm extends HTML_Common {
                 
             } else {
                 $type = $rule['type'];
-                // error out if the rule is not registered
-                if (!$this->isRuleRegistered($type)) {
-                    return PEAR::raiseError(null, QUICKFORM_INVALID_RULE, null, E_USER_WARNING, "Rule '$type' is not registered in HTML_QuickForm::validate()", 'HTML_QuickForm_Error', true);
-                }
                 $format = $rule['format'];
                 $message = $rule['message'];
                 $ruleData = $this->_registeredRules[$type];
@@ -2108,6 +1807,54 @@ class HTML_QuickForm extends HTML_Common {
     } // end func process
 
     // }}}
+    // {{{ accept()
+
+   /**
+    * Accepts a renderer
+    *
+    * @param object     An HTML_QuickForm_Renderer object
+    * @since 3.0
+    * @access public
+    * @return void
+    */
+    function accept(&$renderer)
+    {
+        $renderer->startForm($this);
+        foreach ($this->_elements as $element) {
+            if (isset($element['data'])) {
+                $renderer->renderData($element['data']);
+            } elseif (isset($element['header'])) {
+                $renderer->renderHeader($element['header']);
+            } else {
+                $elementName = $element->getName();
+                $required    = ($this->isElementRequired($elementName) && $this->_freezeAll == false);
+                $error       = $this->getElementError($elementName);
+                $element->accept($renderer, $required, $error);
+            }
+        }
+        $renderer->finishForm($this);
+    } // end func accept
+
+    // }}}
+    // {{{ defaultRenderer()
+
+   /**
+    * Returns a reference to default renderer object
+    *
+    * @access public
+    * @since 3.0
+    * @return object a default renderer object
+    */
+    function &defaultRenderer()
+    {
+        if (!isset($GLOBALS['_HTML_QuickForm_default_renderer'])) {
+            include_once('HTML/QuickForm/Renderer/Default.php');
+            $GLOBALS['_HTML_QuickForm_default_renderer'] =& new HTML_QuickForm_Renderer_Default();
+        }
+        return $GLOBALS['_HTML_QuickForm_default_renderer'];
+    } // end func defaultRenderer
+
+    // }}}
     // {{{ toHtml ()
 
     /**
@@ -2125,32 +1872,9 @@ class HTML_QuickForm extends HTML_Common {
         if (!is_null($in_data)) {
             $this->addData($in_data);
         }
-
-        $html = '';
-        reset($this->_elements);
-        foreach ($this->_elements as $element) {
-            if (isset($element['header'])) {
-                $html .= $this->_buildHeader($element);
-            } elseif (isset($element['data'])) {
-                $html .= $element['data'];
-            } else {
-                $html .= $this->_buildElement($element);
-            }
-        }
-        if (!empty($this->_required) && $this->_freezeAll == false) {
-            $html .= $this->_wrapRequiredNote($formTable);
-        }
-        $html = $this->_wrapForm($html);
-        if (!empty($this->_rules) && $this->_freezeAll == false) {
-            $tabs = $this->_getTabs();
-            $html =
-                "\n$tabs<script language=\"javascript\">\n" .
-                "$tabs<!-- \n" . $html = $this->_buildRules() .
-                "$tabs//-->\n" .
-                "$tabs</script>" .
-                $html;
-        }
-        return $html;
+        $renderer =& $this->defaultRenderer();
+        $this->accept($renderer);
+        return $renderer->toHtml();
     } // end func toHtml
 
     // }}}
@@ -2183,9 +1907,108 @@ class HTML_QuickForm extends HTML_Common {
      */
     function getValidationScript()
     {
-        if (!empty($this->_rules)) {
-            return $this->_buildRules();
+        if (empty($this->_rules) || $this->_freezeAll) {
+            return '';
         }
+        $html = '';
+        $tabs = $this->_getTabs();
+        $test = array();
+        for (reset($this->_rules); $elementName = key($this->_rules); next($this->_rules)) {
+            $rules = pos($this->_rules);
+            foreach ($rules as $rule) {
+                $type       = $rule['type'];
+                // error out if the rule is not registered
+                if (!$this->isRuleRegistered($type)) {
+                    return PEAR::raiseError(null, QUICKFORM_INVALID_RULE, null, E_USER_WARNING, "Rule '$type' is not registered in HTML_QuickForm::addRule()", 'HTML_QuickForm_Error', true);
+                }
+                $validation = $rule['validation'];
+                $message    = $rule['message'];
+                $format     = $rule['format'];
+                $reset      = (isset($rule['reset'])) ? $rule['reset'] : false;
+                $ruleData = $this->_registeredRules[$type];
+                if ($validation == 'client') {
+                    $index = $this->_elementIndex[$elementName];
+                    if ($this->_elements[$index]->getType() == 'group' ||
+                        ($this->_elements[$index]->getType() == 'select' && $this->_elements[$index]->getMultiple())) {
+                        $value =
+                            "$tabs\t\tvar value = '';\n" .
+                            "$tabs\t\tfor (var i = 0; i < frm.elements.length; i++) {\n" .
+                            "$tabs\t\t\tif (frm.elements[i].name.indexOf('$elementName') == 0) {\n" .
+                            "$tabs\t\t\t\tvalue += frm.elements[i].value;\n" .
+                            "$tabs\t\t\t}\n" .
+                            "$tabs\t\t}";
+                        if ($reset) {
+                            $tmp_reset =
+                                "$tabs\t\t\tfor (var i = 0; i < frm.elements.length; i++) {\n" .
+                                "$tabs\t\t\t\tif (frm.elements[i].name.indexOf('$elementName') == 0) {\n" .
+                                "$tabs\t\t\t\t\tfrm.elements[i].value = frm.elements[i].defaultValue;\n" .
+                                "$tabs\t\t\t\t}\n" .
+                                "$tabs\t\t\t}\n";
+                        } else {
+                            $tmp_reset = '';
+                        }
+                    } elseif ($this->_elements[$index]->getType() == 'checkbox') {
+                        $value = "$tabs\t\tif (frm.elements['$elementName'].checked) {\n" .
+                                 "$tabs\t\t\tvar value = 1;\n" .
+                                 "$tabs\t\t} else {\n" .
+                                 "$tabs\t\t\tvar value = '';\n" .
+                                 "$tabs\t\t}";
+                        $tmp_reset = ($reset) ? "$tabs\t\tfield.checked = field.defaultChecked;\n" : '';
+                    } else {
+                        $value = "$tabs\t\tvar value = frm.elements['$elementName'].value;";
+                        $tmp_reset = ($reset) ? "$tabs\t\tfield.value = field.defaultValue;\n" : '';
+                    }
+                    switch ($ruleData[0]) {
+                        case 'regex':
+                            $regex = str_replace('%data%', $format, $ruleData[1]);
+                            if (!$this->isElementRequired($elementName)) {
+                                // This regex will make the rule optional and preserve your delimiters
+                                $regex = preg_replace('/^(\/|.*[^\^])(.*)\1$/', '$1^$|$2$1', $regex);
+                            }
+                            $test[] =
+                                "$value\n" .
+                                "$tabs\t\tvar field = frm.elements['$elementName'];\n"  .
+                                "$tabs\t\tvar regex = $regex;\n"  .
+                                "$tabs\t\tif (!regex.test(value) && !errFlag['$elementName']) {\n" .
+                                "$tabs\t\t\terrFlag['$elementName'] = true;\n" .
+                                "$tabs\t\t\t_qfMsg = unescape(_qfMsg + '\\n - ".rawurlencode($message)."');\n".
+                                $tmp_reset.
+                                "$tabs\t\t}";
+                            break;
+                        case 'function':
+                            $test[] =
+                                "$value\n" .
+                                "$tabs\t\tvar field = frm.elements['$elementName'];\n"  .
+                                "$tabs\t\tif (!" . $ruleData[1] . "('$elementName', value) && !errFlag['$elementName']) {\n" .
+                                "$tabs\t\t\terrFlag['$elementName'] = true;\n" .
+                                "$tabs\t\t\t_qfMsg = _qfMsg + '\\n - $message';\n" .
+                                "$tabs\t\t}";
+                            break;
+                    }
+                }
+            }
+        }
+        if (is_array($test) && count($test) > 0) {
+            $html .=
+                "$tabs\tfunction validate_" . $this->_attributes['name'] . "() {\n" .
+                "$tabs\t\tvar errFlag = new Array();\n" .
+                "$tabs\t\t_qfMsg = '';\n" .
+                "$tabs\t\tvar frm = document.forms['" . $this->_attributes['name'] . "'];\n";
+            $html .= join("\n", $test);
+            $html .=
+                "$tabs\n\t\tif (_qfMsg != '') {\n" .
+                "$tabs\t\t\t_qfMsg = '$this->_jsPrefix' + _qfMsg;\n" .
+                "$tabs\t\t\t_qfMsg = _qfMsg + '\\n$this->_jsPostfix';\n" .
+                "$tabs\t\t\talert(_qfMsg);\n" .
+                "$tabs\t\t\treturn false;\n" .
+                "$tabs\t\t}\n" .
+                "$tabs\t\treturn true;\n" .
+                "$tabs }\n";
+            $html = "$tabs\n<script language=\"javascript\" type=\"text/javascript\">\n" .
+                    "$tabs<!-- \n" . $html . "$tabs//-->\n" .
+                    "$tabs</script>";
+        }
+        return $html;
     } // end func getValidationScript
 
     // }}}
@@ -2300,7 +2123,7 @@ class HTML_QuickForm extends HTML_Common {
     function isError($value)
     {
         return (is_object($value) && (get_class($value) == 'html_quickform_error' || is_subclass_of($value, 'html_quickform_error')));
-    }
+    } // end func isError
 
     // }}}
     // {{{ errorMessage()
@@ -2338,16 +2161,19 @@ class HTML_QuickForm extends HTML_Common {
 
         // return the textual error message corresponding to the code
         return isset($errorMessages[$value]) ? $errorMessages[$value] : $errorMessages[QUICKFORM_ERROR];
-    }
+    } // end func errorMessage
 
     // }}}
 } // end class HTML_QuickForm
 
 class HTML_QuickForm_Error extends PEAR_Error {
 
-    // {{{ properties
+	// {{{ properties
 
-    /** @var string prefix of all error messages */
+    /**
+    * Prefix for all error messages
+    * @var string
+    */
     var $error_message_prefix = 'QuickForm Error: ';
 
     // }}}
