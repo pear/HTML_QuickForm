@@ -585,13 +585,13 @@ class HTML_QuickForm extends HTML_Common {
             if ($this->_elements[$this->_elementIndex[$elementName]]->getType() ==
                 $elementObject->getType()) {
                 $this->_elements[] =& $elementObject;
-                $this->_duplicateIndex[$elementName][] = count($this->_elements) - 1;
+                $this->_duplicateIndex[$elementName][] = end(array_keys($this->_elements));
             } else {
                 return PEAR::raiseError(null, QUICKFORM_INVALID_ELEMENT_NAME, null, E_USER_WARNING, "Element '$elementName' already exists in HTML_QuickForm::addElement()", 'HTML_QuickForm_Error', true);
             }
         } else {
             $this->_elements[] =& $elementObject;
-            $this->_elementIndex[$elementName] = count($this->_elements) - 1;
+            $this->_elementIndex[$elementName] = end(array_keys($this->_elements));
         }
 
         return $elementObject;
