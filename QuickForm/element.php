@@ -219,7 +219,7 @@ class HTML_QuickForm_element extends HTML_Common {
     {
         $value = $this->getValue();
         if ($value != '') {
-            $html = $value;
+            $html = htmlspecialchars($value);
         } else {
             $html = '&nbsp;';
         }
