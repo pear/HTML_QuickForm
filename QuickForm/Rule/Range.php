@@ -40,7 +40,7 @@ class HTML_QuickForm_Rule_Range extends HTML_QuickForm_Rule
         switch ($this->name) {
             case 'minlength': return ($length >= $options);
             case 'maxlength': return ($length <= $options);
-            default:          return ($length >= $options[0] && $length >= $options[1]);
+            default:          return ($length >= $options[0] && $length <= $options[1]);
         }
     } // end func validate
 
@@ -59,13 +59,13 @@ class HTML_QuickForm_Rule_Range extends HTML_QuickForm_Rule
     {
         switch ($this->name) {
             case 'minlength': 
-                $test = 'value.length <= '.$options;
+                $test = 'value.length < '.$options;
                 break;
             case 'maxlength': 
-                $test = 'value.length >= '.$options;
+                $test = 'value.length > '.$options;
                 break;
             default: 
-                $test = '(value.length <= '.$options[0].' && value.length >= '.$options[1].')';
+                $test = '(value.length < '.$options[0].' && value.length > '.$options[1].')';
         }
 
         $js = "$jsValue\n" .
@@ -78,5 +78,5 @@ class HTML_QuickForm_Rule_Range extends HTML_QuickForm_Rule
         return $js;
     } // end func getValidationScript
 
-} // end class HTML_QuickForm_Rule_Regex
+} // end class HTML_QuickForm_Rule_Range
 ?>
