@@ -76,6 +76,12 @@ require_once 'HTML/QuickForm/Renderer/Array.php';
 class HTML_QuickForm_Renderer_ArraySmarty extends HTML_QuickForm_Renderer_Array
 {
    /**
+    * The Smarty template engine instance
+    * @var object
+    */
+    var $_tpl = null;
+
+   /**
     * Current element index
     * @var integer
     */
@@ -106,9 +112,10 @@ class HTML_QuickForm_Renderer_ArraySmarty extends HTML_QuickForm_Renderer_Array
     *
     * @access public
     */
-    function HTML_QuickForm_Renderer_ArraySmarty()
+    function HTML_QuickForm_Renderer_ArraySmarty(&$tpl)
     {
         $this->HTML_QuickForm_Renderer_Array(true);
+        $this->_tpl =& $tpl;
     } // end constructor
 
 
@@ -148,11 +155,12 @@ class HTML_QuickForm_Renderer_ArraySmarty extends HTML_QuickForm_Renderer_Array
             // we don't need this field, see the array structure
             unset($ret['elements']);
         }
-        if ($required) {
-            $this->_renderRequired($ret['label'], $ret['html']);
+        if (!empty($this->_required)){
+            $this->_renderRequired($ret['label'], $ret['html'], $required, $error);
         }
-        if (!empty($error)) {
+        if (!empty($this->_error)) {
             $this->_renderError($ret['label'], $ret['html'], $error);
+            $ret['error'] = $error;
         }
         
         // create a simple element key
@@ -195,22 +203,30 @@ class HTML_QuickForm_Renderer_ArraySmarty extends HTML_QuickForm_Renderer_Array
     * Called when an element is required
     *
     * This method will add the required tag to the element label and/or the element html
-    * such as defined with the method setRequiredTemplate
+    * such as defined with the method setRequiredTemplate.
     *
     * @param    string      The element label
     * @param    string      The element html rendering
+    * @param    boolean     The element required
+    * @param    string      The element error
     * @see      setRequiredTemplate()
     * @access   private
     * @return   void
     */
-    function _renderRequired(&$label, &$html)
+    function _renderRequired(&$label, &$html, &$required, &$error)
     {
-        if (!empty($label) && strpos($this->_required, '{$label}') !== false) {
-            $label = str_replace('{$label}', $label, $this->_required);
+        $this->_tpl->assign( array ('label'    => $label,
+                                    'html'     => $html,
+                                    'required' => $required,
+                                    'error'    => $error ));
+
+        if (!empty($label) && strpos($this->_required, '{$label') !== false) {
+            $label = $this->_tplFetch($this->_required);
         }
-        if (!empty($html) && strpos($this->_required, '{$html}') !== false) {
-            $html = str_replace('{$html}', $html, $this->_required);
+        if (!empty($html) && strpos($this->_required, '{$html') !== false) {
+            $html = $this->_tplFetch($this->_required);
         }
+        $this->_tpl->clear_assign(array('label', 'html', 'required'));
     } // end func _renderRequired
 
 
@@ -230,17 +246,37 @@ class HTML_QuickForm_Renderer_ArraySmarty extends HTML_QuickForm_Renderer_Array
     */
     function _renderError(&$label, &$html, &$error)
     {
-        if (!empty($label) && strpos($this->_error, '{$label}') !== false) {
-            $label = str_replace(array('{$label}', '{$error}'), array($label, $error), $this->_error);
-        } elseif (!empty($html) && strpos($this->_error, '{$html}') !== false) {
-            $html = str_replace(array('{$html}', '{$error}'), array($html, $error), $this->_error);
+        $this->_tpl->assign(array('label' => '', 'html' => '', 'error' => $error));
+        $error = $this->_tplFetch($this->_error);
+
+        $this->_tpl->assign(array('label' => $label, 'html'  => $html));
+
+        if (!empty($label) && strpos($this->_error, '{$label') !== false) {
+            $label = $this->_tplFetch($this->_error);
+        } elseif (!empty($html) && strpos($this->_error, '{$html') !== false) {
+            $html = $this->_tplFetch($this->_error);
         }
-        $error = str_replace(
-            array('{$label}', '{$html}' , '{$error}'), 
-            array(''        , ''        , $error    ), 
-            $this->_error
-        );
+        $this->_tpl->clear_assign(array('label', 'html', 'error'));
     }// end func _renderError
+
+
+   /**
+    * Process an template sourced in a string with Smarty
+    *
+    * Smarty has no core function to render	a template given as a string.
+    * So we use the smarty eval plugin function	to do this.
+    *
+    * @param    string      The template source
+    * @access   private
+    * @return   void
+    */
+    function _tplFetch($tplSource)
+    {
+        if (!function_exists('smarty_function_eval')) {
+            require SMARTY_DIR . '/plugins/function.eval.php';
+        }
+        return smarty_function_eval(array('var' => $tplSource), $this->_tpl);
+    }// end func _tplFetch
 
 
    /**
@@ -248,10 +284,13 @@ class HTML_QuickForm_Renderer_ArraySmarty extends HTML_QuickForm_Renderer_Array
     *
     * You can use {$label} or {$html} placeholders to let the renderer know where
     * where the element label or the element html are positionned according to the
-    * required tag. They will be replaced accordingly with the right value.
+    * required tag. They will be replaced accordingly with the right value.	You
+    * can use the full smarty syntax here, especially a custom modifier for I18N.
     * For example:
-    * <span style="color: red;">*</span>{$label}
-    * will put a red star in front of the label if the element is required.
+    * {if $required}<span style="color: red;">*</span>{/if}{$label|translate}
+    * will put a red star in front of the label if the element is required and
+    * translate the label.
+    *
     *
     * @param    string      The required element template
     * @access   public
@@ -271,7 +310,7 @@ class HTML_QuickForm_Renderer_ArraySmarty extends HTML_QuickForm_Renderer_Array
     * error message. They will be replaced accordingly with the right value.
     * The error message will replace the {$error} placeholder.
     * For example:
-    * <span style="color: red;">{$error}</span><br />{$html}
+    * {if $error}<span style="color: red;">{$error}</span>{/if}<br />{$html}
     * will put the error message in red on top of the element html.
     *
     * If you want all error messages to be output in the main error block, use

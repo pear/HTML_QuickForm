@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<!--  $Id: smarty-static.tpl,v 1.1 2003-05-01 10:10:44 avb Exp $ -->
+<!--  $Id: smarty-static.tpl,v 1.2 2003-05-15 19:31:54 avb Exp $ -->
 <html>
 <head>
     <title>Smarty template for ArraySmarty renderer: 2 column layout example</title>
@@ -91,7 +91,7 @@
         
         <td width="50%" valign="top"><!-- Company info -->
             <table width="100%" cellpadding="4">
-                <tr><th colspan="2">{$form.header.company}</th></tr>
+                <tr><th colspan="2">{$form.header.company_info}</th></tr>
                 <tr>
                     <td class="label">{$form.company.label}</td>
                     <td class="element">{$form.company.html}</td>

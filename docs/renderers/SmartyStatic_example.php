@@ -46,7 +46,7 @@ $form->addGroup(array($areaCode, $phoneNo1, $phoneNo2), 'phone', 'Telephone:', '
 
 // Company information
 
-$form->addElement('header', 'company', 'Company Information');
+$form->addElement('header', 'company_info', 'Company Information');
 
 $form->addElement('text', 'company', 'Company:', 'size=20');
 
@@ -96,17 +96,31 @@ if ($form->validate()) {
     $form->freeze();
 }
 
-$renderer =& new HTML_QuickForm_Renderer_ArraySmarty();
-
-$renderer->setRequiredTemplate('{$label}<font color="red" size="1">*</font>');
-$renderer->setErrorTemplate('<font color="orange" size="1">{$error}</font><br />{$html}');
-
-$form->accept($renderer);
-
 // setup a template object
 $tpl =& new Smarty;
 $tpl->template_dir = './templates';
 $tpl->compile_dir  = './templates';
+
+$renderer =& new HTML_QuickForm_Renderer_ArraySmarty($tpl);
+
+$renderer->setRequiredTemplate(
+   '{if $error}
+        <font color="red">{$label|upper}</font>
+    {else}
+        {$label}
+        {if $required}
+            <font color="red" size="1">*</font>
+        {/if}
+    {/if}'
+    );
+
+$renderer->setErrorTemplate(
+   '{if $error}
+        <font color="orange" size="1">{$error}</font><br />
+    {/if}{$html}'
+    );
+
+$form->accept($renderer);
 
 // assign array with form data
 $tpl->assign('form', $renderer->toArray());

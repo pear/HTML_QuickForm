@@ -46,7 +46,7 @@ $form->addGroup(array($areaCode, $phoneNo1, $phoneNo2), 'phone', 'Telephone:', '
 
 // Company information
 
-$form->addElement('header', 'company', 'Company Information');
+$form->addElement('header', 'company_info', 'Company Information');
 
 $form->addElement('text', 'company', 'Company:', 'size=20');
 
