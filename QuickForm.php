@@ -282,8 +282,8 @@ class HTML_QuickForm extends HTML_Common {
      */
     function registerRule($ruleName, $type, $data1, $data2 = null)
     {
-        include_once('HTML/QuickForm/Validate.php');
-        $validate =& HTML_QuickForm_Validate::singleton();
+        include_once('HTML/QuickForm/RuleRegistry.php');
+        $validate =& HTML_QuickForm_RuleRegistry::singleton();
         $validate->registerRule($ruleName, $type, $data1, $data2);
     } // end func registerRule
 
@@ -1392,8 +1392,8 @@ class HTML_QuickForm extends HTML_Common {
             return false;
         }
 
-        include_once('HTML/QuickForm/Validate.php');
-        $validate =& HTML_QuickForm_Validate::singleton();
+        include_once('HTML/QuickForm/RuleRegistry.php');
+        $validate =& HTML_QuickForm_RuleRegistry::singleton();
 
         foreach ($this->_rules as $target => $rules) {
             $submitValue = $this->getSubmitValue($target);
@@ -1593,8 +1593,8 @@ class HTML_QuickForm extends HTML_Common {
             return '';
         }
 
-        include_once('HTML/QuickForm/Validate.php');
-        $validate =& HTML_QuickForm_Validate::singleton();
+        include_once('HTML/QuickForm/RuleRegistry.php');
+        $validate =& HTML_QuickForm_RuleRegistry::singleton();
         $html = '';
         $test = array();
         $js_escape = array(
