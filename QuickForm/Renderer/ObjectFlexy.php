@@ -26,10 +26,11 @@ require_once("HTML/QuickForm/Renderer/Object.php");
  * from the form content suitable for use with a Flexy template
  *
  * Usage:
- * $form = new HTML_QuickForm('form', 'POST');
+ * $form =& new HTML_QuickForm('form', 'POST');
+ * $template =& new HTML_Template_Flexy();
  * $renderer =& new HTML_QuickForm_Renderer_ObjectFlexy(&$template);
- * $renderer->setErrorTemplate("error.html");
- * $renderer->setRequiredTemplate("required.html");
+ * $renderer->setHtmlTemplate("html.html");
+ * $renderer->setLabelTemplate("label.html");
  * $form->accept($renderer);
  * $view = new StdClass;
  * $view->form = $renderer->toObject();
