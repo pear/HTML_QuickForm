@@ -59,12 +59,12 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
     var $_elements = array();
 
     /**
-     * String to seperator elements
+     * String to separate elements
      * @var       mixed
      * @since     2.5
      * @access    private
      */
-    var $_seperator = null;
+    var $_separator = null;
 
     /**
      * Group template
@@ -90,6 +90,14 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
      */
     var $_required = array();
 
+   /**
+    * Whether to change elements' names to $groupName[$elementName] or leave them as is 
+    * @var      bool
+    * @since    3.0
+    * @access   private
+    */
+    var $_appendName = true;
+
     // }}}
     // {{{ constructor
 
@@ -99,15 +107,17 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
      * @param     string    $elementName    (optional)Group name
      * @param     array     $elementLabel   (optional)Group label
      * @param     array     $elements       (optional)Group elements
-     * @param     mixed     $seperator      (optional)Use a string for one seperator,
-     *                                      use an array to alternate the seperators,
-     *                                      don't use seperator if you are using templates.
+     * @param     mixed     $separator      (optional)Use a string for one separator,
+     *                                      use an array to alternate the separators.
+     * @param     bool      $appendName     (optional)whether to change elements' names to
+     *                                      the form $groupName[$elementName] or leave 
+     *                                      them as is.
      * @since     1.0
      * @access    public
      * @return    void
      * @throws    
      */
-    function HTML_QuickForm_group($elementName=null, $elementLabel=null, $elements=null, $seperator=null)
+    function HTML_QuickForm_group($elementName=null, $elementLabel=null, $elements=null, $separator=null, $appendName = null)
     {
         HTML_Common::HTML_Common();
         if (isset($elementName)) {
@@ -120,8 +130,11 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
         if (isset($elements) && is_array($elements)) {
             $this->_elements = $elements;
         }
-        if (isset($seperator)) {
-            $this->_seperator = $seperator;
+        if (isset($separator)) {
+            $this->_separator = $separator;
+        }
+        if (isset($appendName)) {
+            $this->_appendName = $appendName;
         }
     } //end constructor
     
@@ -275,17 +288,14 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
      * 
      * @param     string     $template   Template string
      * @since     2.5
+     * @deprecated deprecated since 3.0, use renderers for controlling the presentation
      * @access    public
      * @return    void
      */
     function setElementTemplate($template)
     {
-        if (!empty($this->_name)) {
-            $renderer =& HTML_QuickForm::defaultRenderer();
-            $renderer->setGroupElementTemplate($template, $this->_name);
-        } else {
-            $this->_elementTemplate = $template;
-        }
+        $renderer =& HTML_QuickForm::defaultRenderer();
+        $renderer->setGroupElementTemplate($template, $this->_name);
     } //end func setElementTemplate
 
     // }}}
@@ -296,17 +306,14 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
      * 
      * @param     string     $template   Template string
      * @since     2.5
+     * @deprecated deprecated since 3.0, use renderers for controlling the presentation
      * @access    public
      * @return    void
      */
     function setGroupTemplate($template)
     {
-        if (!empty($this->_name)) {
-            $renderer =& HTML_QuickForm::defaultRenderer();
-            $renderer->setGroupTemplate($template, $this->_name);
-        } else {
-            $this->_groupTemplate = $template;
-        }
+        $renderer =& HTML_QuickForm::defaultRenderer();
+        $renderer->setGroupTemplate($template, $this->_name);
     } //end func setGroupTemplate
 
     // }}}
@@ -353,7 +360,7 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
         switch ($event) {
             case 'addElement':
             case 'createElement':
-                $this->$className($arg[0], $arg[1], $arg[2], $arg[3]);
+                $this->$className($arg[0], $arg[1], $arg[2], $arg[3], $arg[4]);
                 // need to set the submit value in case setDefault never gets called
                 $elementName = $this->getName();
                 if (isset($caller->_submitValues[$elementName])) {
@@ -420,9 +427,9 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
             $index = (!empty($elementName)) ? $elementName : $key;
             
             $elementType = $element->getType();
-            if (!empty($name) && isset($elementName)) {
+            if (isset($elementName) && $this->_appendName) {
                 $element->setName($name . '['.$elementName.']');
-            } elseif (!empty($name)) {
+            } elseif (!isset($elementName) && $this->_appendName) {
                 $element->setName($name);
             }
             if (is_array($value)) {

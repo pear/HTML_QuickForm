@@ -602,16 +602,22 @@ class HTML_QuickForm extends HTML_Common {
      * @param    string     $name           (optional)group name
      * @param    string     $label          (optional)group label
      * @param    string     $separator      (optional)string to seperate elements
-     * @param    string     $useName        (optional)specify whether the group name should be
+     * @param    string     $appendName     (optional)specify whether the group name should be
      *                                      used in the form element name ex: group[element]
      * @return   reference to added group of elements
      * @since    2.8
      * @access   public
      * @throws   PEAR_Error
      */
-    function &addGroup($elements, $name=null, $groupLabel='', $separator=null)
+    function &addGroup($elements, $name=null, $groupLabel='', $separator=null, $appendName = null)
     {
-        return $this->addElement('group', $name, $groupLabel, $elements, $separator);
+        static $anonGroups = 1;
+
+        if (empty($name)) {
+            $name       = 'qf_group_' . $anonGroups++;
+            $appendName = false;
+        }
+        return $this->addElement('group', $name, $groupLabel, $elements, $separator, $appendName);
     } // end func addGroup
     
     // }}}

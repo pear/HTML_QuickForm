@@ -331,7 +331,7 @@ class HTML_QuickForm_Renderer_Default extends HTML_QuickForm_Renderer
         if (!empty($this->_groupWrap)) {
             $html = str_replace('{content}', implode('', $this->_groupElements), $this->_groupWrap);
         } else {
-            $separator = $group->_seperator;
+            $separator = $group->_separator;
             if (is_array($separator)) {
                 $count = count($separator);
                 $html  = '';
