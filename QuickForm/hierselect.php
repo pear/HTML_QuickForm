@@ -96,7 +96,7 @@ class HTML_QuickForm_hierselect extends HTML_QuickForm_group
      * @var       string
      * @access    private
      */
-    var $_js = "<script type=\"text/javascript\">\n";
+    var $_js = "<script type=\"text/javascript\">\n//<![CDATA[\n";
     
     /**
     * The javascript array name
@@ -396,7 +396,7 @@ class HTML_QuickForm_hierselect extends HTML_QuickForm_group
                              ."}\n";
                 define('HTML_QUICKFORM_HIERSELECT_EXISTS', true);
             }
-            $this->_js .= "</script>\n";
+            $this->_js .= "//]]>\n</script>\n";
         }
         include_once('HTML/QuickForm/Renderer/Default.php');
         $renderer =& new HTML_QuickForm_Renderer_Default();

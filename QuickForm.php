@@ -1600,7 +1600,7 @@ class HTML_QuickForm extends HTML_Common {
         if (count($test) > 0) {
             return
                 "\n<script type=\"text/javascript\">\n" .
-                "<!-- \n" . 
+                "//<![CDATA[\n" . 
                 "function validate_" . $this->_attributes['id'] . "(frm) {\n" .
                 "  var value = '';\n" .
                 "  var errFlag = new Array();\n" .
@@ -1614,7 +1614,7 @@ class HTML_QuickForm extends HTML_Common {
                 "  }\n" .
                 "  return true;\n" .
                 "}\n" .
-                "//-->\n" .
+                "//]]>\n" .
                 "</script>";
         }
         return '';

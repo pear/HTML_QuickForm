@@ -112,7 +112,7 @@ class HTML_QuickForm_autocomplete extends HTML_QuickForm_text
         if ($this->_flagFrozen) {
             $js = '';
         } else {
-            $js = "<script type=\"text/javascript\">\n<!--\n";
+            $js = "<script type=\"text/javascript\">\n//<![CDATA[\n";
             if (!defined('HTML_QUICKFORM_AUTOCOMPLETE_EXISTS')) {
                 $js .= <<<EOS
 
@@ -230,7 +230,7 @@ EOS;
             for ($i = 0; $i < count($this->_options); $i++) {
                 $js .= $arrayName . '[' . $i . "] = '" . strtr($this->_options[$i], $jsEscape) . "';\n";
             }
-            $js .= "//-->\n</script>\n";
+            $js .= "//]]>\n</script>\n";
         }
         return $js . parent::toHtml();
     }// end func toHtml
