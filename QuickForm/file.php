@@ -36,8 +36,8 @@ class HTML_QuickForm_file extends HTML_QuickForm_input
     /**
      * Class constructor
      * 
-     * @param     string    $elementName    (optional)Input field name attribute
-     * @param     string    $value          (optional)Input field value
+     * @param     string    $elementName    Input field name attribute
+     * @param     string    $elementLabel   Input field label
      * @param     mixed     $attributes     (optional)Either a typical HTML attribute string 
      *                                      or an associative array
      * @since     1.0
@@ -126,7 +126,7 @@ class HTML_QuickForm_file extends HTML_QuickForm_input
                     }
                 }
             case 'createElement':
-                $this->$className($args[0], $args[1], $args[2]);
+                $this->$className($arg[0], $arg[1], $arg[2]);
                 break;
         }
         return true;
