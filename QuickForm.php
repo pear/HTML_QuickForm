@@ -1590,7 +1590,7 @@ class HTML_QuickForm extends HTML_Common {
     } // end func freeze
         
     // }}}
-    // {{{ isAllFrozen()
+    // {{{ isFrozen()
 
     /**
      * Returns whether or not the form is frozen
@@ -1603,7 +1603,7 @@ class HTML_QuickForm extends HTML_Common {
     function isFrozen()
     {
          return $this->_freezeAll;
-    } // end func isAllFrozen
+    } // end func isFrozen
 
     // }}}
     // {{{ process()
