@@ -450,10 +450,10 @@ class HTML_QuickForm extends HTML_Common {
         if ($bytes > 0) {
             $this->_maxFileSize = $bytes;
         }
-        $el =& $this->getElement('MAX_FILE_SIZE');
-        if (PEAR::isError($el)) {
+        if (!$this->elementExists('MAX_FILE_SIZE')) {
             $this->addElement('hidden', 'MAX_FILE_SIZE', $this->_maxFileSize);
         } else {
+            $el =& $this->getElement('MAX_FILE_SIZE');
             $el->updateAttributes(array('value' => $this->_maxFileSize));
         }
     } // end func setMaxFileSize
@@ -541,7 +541,7 @@ class HTML_QuickForm extends HTML_Common {
      * @return    element object
      * @throws    
      */
-    function _loadElement($event, $type, $args)
+    function &_loadElement($event, $type, $args)
     {
         $type = strtolower($type);
         if (!HTML_QuickForm::isTypeRegistered($type)) {
