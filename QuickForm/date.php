@@ -384,9 +384,9 @@ class HTML_QuickForm_date extends HTML_QuickForm_group
 
     function setValue($value)
     {
-        if ($this->_options['addEmptyOption'] && empty($value)) {
+        if (empty($value)) {
             $value = array();
-        } else  if (!is_array($value)) {
+        } elseif (is_scalar($value)) {
             if (!is_numeric($value)) {
                 $value = strtotime($value);
             }
