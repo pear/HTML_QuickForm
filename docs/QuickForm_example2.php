@@ -15,7 +15,8 @@ require_once ("HTML/QuickForm.php");
 $form =& new HTML_QuickForm('tmp_form','POST');
 
 // clear all templates so we can give it a custom look
-$form->clearAllTemplates();
+$renderer =& $form->defaultRenderer();
+$renderer->clearAllTemplates();
 
 // select list array
 $selectListArray = array(
@@ -46,7 +47,7 @@ $form->setDefaults($defaultValues);
 $form->setConstants($constantValues);
 
 $form->addElement('hidden','tmp_hidden', 'value');
-$form->addData('
+$form->addElement('html', '
 <table border="0" cellpadding="0" cellspacing="2" bgcolor="#eeeeee">
   <tr>
     <td bgcolor="#cccccc" colspan="2" align="center">
@@ -56,7 +57,7 @@ $form->addData('
   <tr>
     <td align="center" colspan="2">');
 $form->addElement('textarea','tmp_textarea',null,'cols="50" rows="10" wrap="virtual"');
-$form->addData('
+$form->addElement('html', '
     </td>
   </tr>
   <tr>
@@ -70,14 +71,14 @@ $form->addData('
     <td align="left">');
 $form->addElement('text','tmp_text[ab]',null,'size="10"');
 $form->addElement('text','tmp_text[bc]',null,'size="10"');
-$form->addData('
+$form->addElement('html', '
     </td>
     <td align="right">
       Yes: ');
 $form->addElement('radio','tmp_radio',null,null,'Y');
-$form->addData('No: ');
+$form->addElement('html', 'No: ');
 $form->addElement('radio','tmp_radio',null,null,'N');
-$form->addData('
+$form->addElement('html', '
     </td>
   </tr>
   <tr>
@@ -94,12 +95,12 @@ $form->addData('
 $form->addElement('text','tmp_text2[0]',null,'size="3"');
 $form->addElement('text','tmp_text2[1]',null,'size="3"');
 $form->addElement('text','tmp_text2[2]',null,'size="3"');
-$form->addData('
+$form->addElement('html', '
     </td>
     <td align="right">');
 // advanced checkbox will always return a value, even when not checked
 $form->addElement('advcheckbox','tmp_checkbox',null,'Please Check',null,array('not checked', 'checked'));
-$form->addData('
+$form->addElement('html', '
     </td>
   </tr>
   <tr>
@@ -113,18 +114,18 @@ $form->addData('
   <tr>
     <td align="left" valign="top">');
 $form->addElement('select', 'tmp_select', null, $selectListArray);
-$form->addData('
+$form->addElement('html', '
     </td>
     <td align="right">');
 $form->addElement('select', 'tmp_multipleSelect[0]', null, $selectListArray, array('multiple' => 'multiple', 'size' => 4));
-$form->addData('
+$form->addElement('html', '
     </td>
   </tr>
   <tr>
     <td colspan="2" align="center">');
 $form->addElement('reset','tmp_reset','Reset Form');
 $form->addElement('submit','tmp_submit','Submit Form');
-$form->addData('
+$form->addElement('html', '
     </td>
   </tr>
 </table>');

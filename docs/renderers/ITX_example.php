@@ -22,7 +22,7 @@ $form->setDefaults(array(
     'ichkABCD'  => array('A'=>true,'D'=>true)
 ));
 
-$form->addHeader('Normal Elements');
+$form->addElement('header', '', 'Normal Elements');
 
 $form->addElement('hidden', 'ihidTest', 'hiddenField');
 // will be rendered in default qf_element block
@@ -36,7 +36,7 @@ $select->setSize(5);
 $select->setMultiple(true);
 $form->addElement('submit', 'isubTest', 'Test Submit');
 
-$form->addHeader('Grouped Elements');
+$form->addElement('header', '', 'Grouped Elements');
 
 // will be rendered in default qf_group block
 $checkbox[] = &HTML_QuickForm::createElement('checkbox', 'A', null, 'A');

@@ -29,7 +29,7 @@ $constantValues['dateTest3']    = time();
 $form->setConstants($constantValues);
 
 // Elements will be displayed in the order they are declared
-$form->addHeader('Normal Elements');
+$form->addElement('header', '', 'Normal Elements');
 // Classic form elements
 $form->addElement('hidden', 'ihidTest', 'hiddenField');
 $form->addElement('text', 'itxtTest', 'Test Text:');
@@ -48,14 +48,14 @@ $select = &$form->getElement('iselTest');
 $select->setSize(5);
 $select->setMultiple(true);
 
-$form->addHeader('Date Elements');
+$form->addElement('header', '', 'Date Elements');
 // Date elements
 $form->addElement('date', 'dateTest1', 'Date1:', array('format'=>'dmY', 'minYear'=>2000, 'maxYear'=>2004));
 $form->addElement('date', 'dateTest2', 'Date2:', array('format'=>'d-F-Y', 'language'=>'de'));
 $form->addElement('date', 'dateTest3', 'Today is:', array('format'=>'l D d M Y'));
 
 
-$form->addHeader('Grouped Elements');
+$form->addElement('header', '', 'Grouped Elements');
 // Grouped elements
 $name['last'] = &HTML_QuickForm::createElement('text', 'last');
 $name['last']->setSize(30);
@@ -88,7 +88,7 @@ $buttons[] = &HTML_QuickForm::createElement('reset', null, 'Reset');
 $buttons[] = &HTML_QuickForm::createElement('image', 'iimgTest', '/images/apache_pb.gif');
 $buttons[] = &HTML_QuickForm::createElement('button', 'ibutTest', 'Test Button');
 $form->addGroup($buttons);
-$form->addHeader('Using the form element classes directly');
+$form->addElement('header', '', 'Using the form element classes directly');
 $text = new HTML_QuickForm_text('QFText', 'QuickForm Text:');
 $form->addElement($text);
 // applies new filters to the element values

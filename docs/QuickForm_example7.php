@@ -5,11 +5,12 @@
 * @author      Bertrand Mansion <bmansion@mamasam.com>
 * @version     2.5
 */
-// $id:$
+// $Id$
 
 require_once ("HTML/QuickForm.php");
 $form = new HTML_QuickForm('frmTest', 'GET');
 
+$renderer =& $form->defaultRenderer();
 $form->setFormTemplate('<table width="450" border="0" cellpadding="3" cellspacing="2" bgcolor="#CCCC99">
   <form{attributes}>{content}
   </form>
@@ -23,7 +24,7 @@ $defaultValues['ichkABC']   = array('A'=>true,'B'=>true);
 $form->setDefaults($defaultValues);
 
 // Grouped elements
-$form->addHeader('Tests on grouped elements');
+$form->addElement('header', '', 'Tests on grouped elements');
 
 // Creates a group of text inputs with templates
 $id['lastname'] = &HTML_QuickForm::createElement('text', 'lastname', 'Name');
@@ -33,9 +34,8 @@ $id['code']->setSize(5);
 $id['code']->setMaxLength(4);
 $form->addGroup($id, 'id', 'ID:', ',&nbsp');
 
-$idGrp =& $form->getElement('id');
-$idGrp->setGroupTemplate('<table><tr>{content}</tr></table>');
-$idGrp->setElementTemplate('<td>{element}<br /><font size="-2"><!-- BEGIN required --><font color="red">*</font><!-- END required -->{label}</font></td>');
+$renderer->setGroupTemplate('<table><tr>{content}</tr></table>', 'id');
+$renderer->setGroupElementTemplate('<td>{element}<br /><font size="-2"><!-- BEGIN required --><font color="red">*</font><!-- END required -->{label}</font></td>', 'id');
 
 // Creates a group of text inputs
 $areaCode = &HTML_QuickForm::createElement('text', '');
