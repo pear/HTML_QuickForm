@@ -56,7 +56,7 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
      * @since     1.0
      * @access    private
      */
-    var $_elements = '';
+    var $_elements = array();
 
     /**
      * String to seperator elements
@@ -189,6 +189,48 @@ class HTML_QuickForm_group extends HTML_QuickForm_element {
     {
         $this->_elements = $elements;
     } // end func setElements
+
+    // }}}
+    // {{{ getElements()
+
+    /**
+     * Gets the grouped elements
+     *
+     * @param     array     $elements   Array of elements
+     * @since     1.1
+     * @access    public
+     * @return    void
+     * @throws    
+     */
+    function &getElements()
+    {
+        return $this->_elements;
+    } // end func getElements
+
+    // }}}
+    // {{{ getGroupType()
+
+    /**
+     * Gets the group type based on its elements
+     * Will return 'mixed' if elements contained in the group
+     * are of different types.
+     *
+     * @access    public
+     * @return    string    group elements type
+     * @throws    
+     */
+    function getGroupType()
+    {
+        $prevType = '';
+        foreach ($this->_elements as $element) {
+            $type = $element->getType();
+            if ($type != $prevType) {
+                return 'mixed';
+            }
+            $prevType = $type;
+        }
+        return $type;
+    } // end func getGroupType
 
     // }}}
     // {{{ toHtml()
