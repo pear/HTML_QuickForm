@@ -73,7 +73,6 @@ class HTML_QuickForm_radio extends HTML_QuickForm_input {
         $this->setType('radio');
         $this->_text = $text;
         $vars = array_merge($GLOBALS['HTTP_GET_VARS'], $GLOBALS['HTTP_POST_VARS']);
-        $vars = HTML_QuickForm::_formizeArray($vars);
         if (isset($vars[$this->getName()]) && $vars[$this->getName()] == $this->getValue()) {
             $this->setChecked(true);
         }
