@@ -1089,7 +1089,7 @@ class HTML_QuickForm extends HTML_Common {
                                 "$tabs\t\tvar regex = $regex;\n"  .
                                 "$tabs\t\tif (!regex.test(field.value) && !errFlag['$elementName']) {\n" .
                                 "$tabs\t\t\terrFlag['$elementName'] = true;\n" .
-                                "$tabs\t\t\t_qfMsg = unescape(_qfMsg + '\\n - ".rawurlencode($message)."');\n".
+								"$tabs\t\t\t_qfMsg = unescape(_qfMsg + '\\n' + field.value + ' - ".rawurlencode($message)."');\n".
                                 $tmp_reset.
                                 "$tabs\t\t}";
                             break;
