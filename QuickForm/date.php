@@ -309,9 +309,9 @@ class HTML_QuickForm_date extends HTML_QuickForm_element
     {
         if (is_array($date)) {
             $this->_selectedDate = $date;
-        } elseif (is_int($date)) {
+        } else {
             // might be a unix epoch, then we fill all possible values
-            $arr = explode('-', date('w-d-n-Y', $date));
+            $arr = explode('-', date('w-d-n-Y', (int)$date));
             $this->_selectedDate = array('D' => $arr[0],
                                          'l' => $arr[0],
                                          'd' => $arr[1],
