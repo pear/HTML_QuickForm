@@ -72,6 +72,12 @@ $form->addRule('itxaTest', 'Test TextArea must be at least 5 characters', 'minle
 $form->addRule('ipwdTest', 'Password must be between 8 to 10 characters', 'rangelength', '8,10', 'client');
 $form->addRule('itxaTest', 'Test TextArea is a required field', 'required');
 
+// new uploaded file rules
+$form->addRule('ifilTest', 'Cannot exceed 1776 bytes', 'maxfilesize', 1776);
+$form->addRule('ifilTest', 'Must be XML', 'mimetype', 'text/xml');
+$form->addRule('ifilTest', 'Must be *.xml', 'filename', '/^.*\.xml$/');
+$form->addRule('ifilTest', 'Required File Upload', 'uploadedfile');
+
 // Tries to validate the form
 
 if ($form->validate()) {
