@@ -128,6 +128,12 @@ Features:
             <file role="doc">it-dynamic.html</file>
             <file role="doc">it-static.html</file>
             <file role="doc">labels-default.php</file>
+            <dir name="templates">
+              <file role="doc">smarty-dynamic-fancygroup.tpl</file>
+              <file role="doc">smarty-dynamic-green.tpl</file>
+              <file role="doc">smarty-dynamic.tpl</file>
+              <file role="doc">smarty-static.tpl</file>
+            </dir>
           </dir>
         </dir>
       </dir>
