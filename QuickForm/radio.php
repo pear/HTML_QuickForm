@@ -116,9 +116,14 @@ class HTML_QuickForm_radio extends HTML_QuickForm_input
      */
     function toHtml()
     {
-        return HTML_QuickForm_input::toHtml() .
-               ($this->_flagFrozen? $this->_text: 
-               '<label for="' . $this->getAttribute('id') . '">' . $this->_text . '</label>');
+        if (0 == strlen($this->_text)) {
+            $label = '';
+        } elseif ($this->_flagFrozen) {
+            $label = $this->_text;
+        } else {
+            $label = '<label for="' . $this->getAttribute('id') . '">' . $this->_text . '</label>';
+        }
+        return HTML_QuickForm_input::toHtml() . $label;
     } //end func toHtml
     
     // }}}
