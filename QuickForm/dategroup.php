@@ -135,7 +135,13 @@ class HTML_QuickForm_dategroup extends HTML_QuickForm_group
             'weekdays_long' => array ('Søndag', 'Mandag', 'Tirsdag', 'Onsdag', 'Torsdag', 'Fredag', 'Lørdag'),
             'months_short'  => array ('Jan', 'Feb', 'Mar', 'Apr', 'Maj', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dec'),
             'months_long'   => array ('Januar', 'Februar', 'Marts', 'April', 'Maj', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'December')
-        )
+        ),
+        'is'    => array (
+            'weekdays_short'=> array ('Sun', 'Mán', 'Þri', 'Mið', 'Fim', 'Fös', 'Lau'),
+            'weekdays_long' => array ('Sunnudagur', 'Mánudagur', 'Þriðjudagur', 'Miðvikudagur', 'Fimmtudagur', 'Föstudagur', 'Laugardagur'),
+            'months_short'  => array ('Jan', 'Feb', 'Mar', 'Apr', 'Maí', 'Jún', 'Júl', 'Ágú', 'Sep', 'Okt', 'Nóv', 'Des'),
+            'months_long'   => array ('Janúar', 'Febrúar', 'Mars', 'Apríl', 'Maí', 'Júní', 'Júlí', 'Ágúst', 'September', 'Október', 'Nóvember', 'Desember')
+        )   
     );
 
     // }}}
