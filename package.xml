@@ -50,7 +50,34 @@ Features:
     <date>2003-07-??</date>
     <state>stable</state>
     <notes>
+* Changes
+- Rule-registering functions can now be called statically (Alexey Borzov)
+- File-related rules and methods are moved to HTML_QuickForm_file (Alexey Borzov)
+- Moved 'magic quotes' handling to QuickForm's constructor (Alexey Borzov)
+- Use strtr() instead of rawurlencode() for javascript messages (Bertrand Mansion)
+- Changed the nonzero rule to every numbers (negative or positive) except zero (David Sklar)
+
+* Bugfixes
+- Fixed a recent bug in HTML_QuickForm::validate() (Alexey Borzov)
+- Fixed a bug in HTML_QuickForm_group::getFrozenHtml() (Alexey Borzov, Wolfram Kriesing)
+- Fixed a problem in HTML_QuickForm_group::getValue(): value was not changed to array (Alexey Borzov)
+- Correctly set element's index in addElement() if some of the elements were previously removed (Alexey Borzov, Wolfram Kriesing)
+- Fixed notice in _findElementValue() for files (Bertrand Mansion)
+- Fixed passing a 'selected' attribute to addOption() (Alexey Borzov, Wolfram Kriesing)
+
+* Deprecated
+- Date element is now deprecated. Use dategroup instead (Alexey Borzov)
+- Method getAttributesString() is deprecated (Alexey Borzov)
+- HTML_QuickForm's isUploadedFile(), moveUploadedFile(), getUploadeFile() are now deprecated (Alexey Borzov)
+
+* New additions
 - Added a new hierselect element, a group of two selects where the first select changes the options of the second select using javascript (Bertrand Mansion)
+- Added a dategroup element which replaces the date element (Alexey Borzov)
+- Added exportValue() and exportValues() methods (Alexey Borzov)
+- Added addFormRule() method, changed the example to use that (Alexey Borzov)
+- Added Italian date names (Marco Piarulli)
+- Added Slovak date names (Peter Sablica)
+- Added Icelandic date names (Birgir Stefansson)
     </notes>
     <filelist>
       <dir name="/" baseinstalldir="HTML">
