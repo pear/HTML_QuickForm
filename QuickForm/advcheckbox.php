@@ -198,7 +198,7 @@ class HTML_QuickForm_advcheckbox extends HTML_QuickForm_checkbox {
         if ($this->_constantValue == $this->_values[1]) {
             $this->setChecked(true);
         }
-        elseif ($this->_constantValue == $this->_values[0]) {
+        elseif ($this->_constantValue === $this->_values[0]) {
             $this->setChecked(false);
         }
 
