@@ -1080,7 +1080,7 @@ class HTML_QuickForm extends HTML_Common {
                                 "$tabs\t\tvar regex = $regex;\n"  .
                                 "$tabs\t\tif (!regex.test(field.value) && !errFlag['$elementName']) {\n" .
                                 "$tabs\t\t\terrFlag['$elementName'] = true;\n" .
-                                "$tabs\t\t\tmsg = unescape(msg + '\\n - ".rawurlencode($message)."');\n".
+                                "$tabs\t\t\t_qfMsg = unescape(_qfMsg + '\\n - ".rawurlencode($message)."');\n".
                                 $tmp_reset.
                                 "$tabs\t\t}";
                             break;
@@ -1089,7 +1089,7 @@ class HTML_QuickForm extends HTML_Common {
                                 "$tabs\t\tvar field = frm.elements['$elementName'];\n"  .
                                 "$tabs\t\tif (!" . $ruleData[1] . "('$elementName', field.value) && !errFlag['$elementName']) {\n" .
                                 "$tabs\t\t\terrFlag['$elementName'] = true;\n" .
-                                "$tabs\t\t\tmsg = msg + '\\n - $message';\n" .
+                                "$tabs\t\t\t_qfMsg = _qfMsg + '\\n - $message';\n" .
                                 "$tabs\t\t}";
                             break;
                     }
@@ -1099,15 +1099,15 @@ class HTML_QuickForm extends HTML_Common {
         if (is_array($test) && count($test) > 0) {
             $html .=
                 "$tabs\tfunction validate_" . $this->_attributes['name'] . "() {\n" .
-                "$tabs\t\terrFlag = new Array();\n" .
-                "$tabs\t\tmsg = '';\n" .
-                "$tabs\t\tfrm = document.forms['" . $this->_attributes['name'] . "'];\n";
+                "$tabs\t\tvar errFlag = new Array();\n" .
+                "$tabs\t\t_qfMsg = '';\n" .
+                "$tabs\t\tvar frm = document.forms['" . $this->_attributes['name'] . "'];\n";
             $html .= join("\n", $test);
             $html .=
-                "$tabs\t\tif (msg != '') {\n" .
-                "$tabs\t\t\tmsg = '$this->_jsPrefix' + msg;\n" .
-                "$tabs\t\t\tmsg = msg + '\\n$this->_jsPostfix';\n" .
-                "$tabs\t\t\talert(msg);\n" .
+                "$tabs\t\tif (_qfMsg != '') {\n" .
+                "$tabs\t\t\t_qfMsg = '$this->_jsPrefix' + _qfMsg;\n" .
+                "$tabs\t\t\t_qfMsg = _qfMsg + '\\n$this->_jsPostfix';\n" .
+                "$tabs\t\t\talert(_qfMsg);\n" .
                 "$tabs\t\t\treturn false;\n" .
                 "$tabs\t\t}\n" .
                 "$tabs\t\treturn true;\n" .
