@@ -565,9 +565,9 @@ class HTML_QuickForm extends HTML_Common {
             }
         }
         $elementName = $elementObject->getName();
-        
+
         // Add the element if it is not an incompatible duplicate
-        if (isset($this->_elementIndex[$elementName])) {
+        if (!empty($elementName) && isset($this->_elementIndex[$elementName])) {
             if ($this->_elements[$this->_elementIndex[$elementName]]->getType() ==
                 $elementObject->getType()) {
                 $this->_elements[] =& $elementObject;
