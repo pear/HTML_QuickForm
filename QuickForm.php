@@ -44,8 +44,25 @@ $GLOBALS['HTML_QUICKFORM_ELEMENT_TYPES'] =
             'static'        =>array('HTML/QuickForm/static.php','HTML_QuickForm_static'),
             'header'        =>array('HTML/QuickForm/header.php', 'HTML_QuickForm_header'),
             'html'          =>array('HTML/QuickForm/html.php', 'HTML_QuickForm_html'),
-            'hierselect'    =>array('HTML/QuickForm/hierselect.php', 'HTML_QuickForm_hierselect')
+            'hierselect'    =>array('HTML/QuickForm/hierselect.php', 'HTML_QuickForm_hierselect'),
+            'autocomplete'  =>array('HTML/QuickForm/autocomplete.php', 'HTML_QuickForm_autocomplete')
         );
+
+$GLOBALS['_HTML_QuickForm_registered_rules'] = array(
+    'required'      => array('html_quickform_rule_required', 'HTML/QuickForm/Rule/Required.php'),
+    'maxlength'     => array('html_quickform_rule_range',    'HTML/QuickForm/Rule/Range.php'),
+    'minlength'     => array('html_quickform_rule_range',    'HTML/QuickForm/Rule/Range.php'),
+    'rangelength'   => array('html_quickform_rule_range',    'HTML/QuickForm/Rule/Range.php'),
+    'email'         => array('html_quickform_rule_email',    'HTML/QuickForm/Rule/Email.php'),
+    'regex'         => array('html_quickform_rule_regex',    'HTML/QuickForm/Rule/Regex.php'),
+    'lettersonly'   => array('html_quickform_rule_regex',    'HTML/QuickForm/Rule/Regex.php'),
+    'alphanumeric'  => array('html_quickform_rule_regex',    'HTML/QuickForm/Rule/Regex.php'),
+    'numeric'       => array('html_quickform_rule_regex',    'HTML/QuickForm/Rule/Regex.php'),
+    'nopunctuation' => array('html_quickform_rule_regex',    'HTML/QuickForm/Rule/Regex.php'),
+    'nonzero'       => array('html_quickform_rule_regex',    'HTML/QuickForm/Rule/Regex.php'),
+    'callback'      => array('html_quickform_rule_callback', 'HTML/QuickForm/Rule/Callback.php'),
+    'compare'       => array('html_quickform_rule_compare',  'HTML/QuickForm/Rule/Compare.php')
+);
 
 // {{{ error codes
 
@@ -290,8 +307,8 @@ class HTML_QuickForm extends HTML_Common {
     function registerRule($ruleName, $type, $data1, $data2 = null)
     {
         include_once('HTML/QuickForm/RuleRegistry.php');
-        $validate =& HTML_QuickForm_RuleRegistry::getInstance();
-        $validate->registerRule($ruleName, $type, $data1, $data2);
+        $registry =& HTML_QuickForm_RuleRegistry::singleton();
+        $registry->registerRule($ruleName, $type, $data1, $data2);
     } // end func registerRule
 
     // }}}
@@ -1208,12 +1225,13 @@ class HTML_QuickForm extends HTML_Common {
      */
     function isRuleRegistered($name, $autoRegister = false)
     {
-        include_once('HTML/QuickForm/RuleRegistry.php');
         if (is_scalar($name) && isset($GLOBALS['_HTML_QuickForm_registered_rules'][$name])) {
             return true;
         } elseif (!$autoRegister) {
             return false;
         }
+        // automatically register the rule if requested
+        include_once 'HTML/QuickForm/RuleRegistry.php';
         $ruleName = false;
         if (is_object($name) && is_a($name, 'html_quickform_rule')) {
             $ruleName = !empty($name->name)? $name->name: get_class($name);
@@ -1227,7 +1245,7 @@ class HTML_QuickForm extends HTML_Common {
             } while ($parent = get_parent_class($parent));
         }
         if ($ruleName) {
-            $registry =& HTML_QuickForm_RuleRegistry::getInstance();
+            $registry =& HTML_QuickForm_RuleRegistry::singleton();
             $registry->registerRule($ruleName, null, $name);
         }
         return $ruleName;
@@ -1245,7 +1263,6 @@ class HTML_QuickForm extends HTML_Common {
      */
     function getRegisteredRules()
     {
-        include_once('HTML/QuickForm/RuleRegistry.php');
         return array_keys($GLOBALS['_HTML_QuickForm_registered_rules']);
     } // end func getRegisteredRules
 
@@ -1453,7 +1470,7 @@ class HTML_QuickForm extends HTML_Common {
         }
 
         include_once('HTML/QuickForm/RuleRegistry.php');
-        $registry =& HTML_QuickForm_RuleRegistry::getInstance();
+        $registry =& HTML_QuickForm_RuleRegistry::singleton();
 
         foreach ($this->_rules as $target => $rules) {
             $submitValue = $this->getSubmitValue($target);
@@ -1720,7 +1737,7 @@ class HTML_QuickForm extends HTML_Common {
         }
 
         include_once('HTML/QuickForm/RuleRegistry.php');
-        $registry =& HTML_QuickForm_RuleRegistry::getInstance();
+        $registry =& HTML_QuickForm_RuleRegistry::singleton();
         $test = array();
         $js_escape = array(
             "\r"    => '\r',

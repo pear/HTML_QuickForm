@@ -20,22 +20,6 @@
 //
 // $Id$
 
-$GLOBALS['_HTML_QuickForm_registered_rules'] = array(
-    'required'      => array('html_quickform_rule_required', 'HTML/QuickForm/Rule/Required.php'),
-    'maxlength'     => array('html_quickform_rule_range',    'HTML/QuickForm/Rule/Range.php'),
-    'minlength'     => array('html_quickform_rule_range',    'HTML/QuickForm/Rule/Range.php'),
-    'rangelength'   => array('html_quickform_rule_range',    'HTML/QuickForm/Rule/Range.php'),
-    'email'         => array('html_quickform_rule_email',    'HTML/QuickForm/Rule/Email.php'),
-    'regex'         => array('html_quickform_rule_regex',    'HTML/QuickForm/Rule/Regex.php'),
-    'lettersonly'   => array('html_quickform_rule_regex',    'HTML/QuickForm/Rule/Regex.php'),
-    'alphanumeric'  => array('html_quickform_rule_regex',    'HTML/QuickForm/Rule/Regex.php'),
-    'numeric'       => array('html_quickform_rule_regex',    'HTML/QuickForm/Rule/Regex.php'),
-    'nopunctuation' => array('html_quickform_rule_regex',    'HTML/QuickForm/Rule/Regex.php'),
-    'nonzero'       => array('html_quickform_rule_regex',    'HTML/QuickForm/Rule/Regex.php'),
-    'callback'      => array('html_quickform_rule_callback', 'HTML/QuickForm/Rule/Callback.php'),
-    'compare'       => array('html_quickform_rule_compare',  'HTML/QuickForm/Rule/Compare.php')
-);
-
 /**
 * Registers rule objects and uses them for validation
 *
@@ -60,14 +44,14 @@ class HTML_QuickForm_RuleRegistry
      * @static
      * @return    object    Reference to the HTML_QuickForm_RuleRegistry singleton
      */
-    function &getInstance()
+    function &singleton()
     {
         static $obj;
         if (!isset($obj)) {
             $obj = new HTML_QuickForm_RuleRegistry();
         }
         return $obj;
-    } // end func getInstance
+    } // end func singleton
 
     /**
      * Registers a new validation rule
@@ -102,7 +86,7 @@ class HTML_QuickForm_RuleRegistry
         } elseif ($type == 'function' || $type == 'callback') {
             // Callback function
             $rule =& $this->getRule('callback');
-            $rule->addData($ruleName, $data1, $data2);
+            $rule->addData($ruleName, $data1, $data2, 'function' == $type);
             $GLOBALS['_HTML_QuickForm_registered_rules'][$ruleName] = $GLOBALS['_HTML_QuickForm_registered_rules']['callback'];
 
         } elseif (is_object($data1)) {
