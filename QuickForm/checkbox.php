@@ -231,14 +231,16 @@ class HTML_QuickForm_checkbox extends HTML_QuickForm_input {
                 // need to set the submit value in case setDefault never gets called
                 $elementName = $this->getName();
                 if (count($caller->_submitValues) > 0) {
-                    $this->setChecked(isset($caller->_submitValues[$elementName]));
+                    $tmp_checked = isset($caller->_submitValues[$elementName]) ? $caller->_submitValues[$elementName] : false;
+                    $this->setChecked($tmp_checked);
                 }
                 break;
             case 'setDefault':
                 // In form display, default value is always overidden by submitted value
                 $elementName = $this->getName();
                 if (count($caller->_submitValues) > 0) {
-                    $this->setChecked(isset($caller->_submitValues[$elementName]));
+                    $tmp_checked = isset($caller->_submitValues[$elementName]) ? $caller->_submitValues[$elementName] : false;
+                    $this->setChecked($tmp_checked);
                 } else {
                     $this->setChecked($arg);
                 }
@@ -254,6 +256,5 @@ class HTML_QuickForm_checkbox extends HTML_QuickForm_input {
     } // end func onQuickFormEvent
 
     // }}}
-
 } //end class HTML_QuickForm_checkbox
 ?>
