@@ -148,7 +148,7 @@ class HTML_QuickForm_Renderer_Object extends HTML_QuickForm_Renderer {
         $this->_currentGroup = $this->_elementToObject($group, $required, $error);
         if(!empty($error)) {
             $name = $this->_currentGroup->name;
-            $this->_view->errors->$name = $error;
+            $this->_obj->errors->$name = $error;
         }
     } // end func startGroup
 
