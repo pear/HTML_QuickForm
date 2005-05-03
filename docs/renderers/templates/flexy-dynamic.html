@@ -5,27 +5,30 @@
     <title>Flexy template for Object renderer</title> 
     <style type="text/css"> 
     body, td, th { 
-       font-family: sans-serif; 
-       color : Navy; 
-       background-color : #EEE; 
-       font-size : smaller; 
-       white-space: nowrap; 
+        font-family: sans-serif; 
+        color: Navy; 
+        background-color: #EEE; 
+        font-size: smaller; 
+        white-space: nowrap; 
     } 
      
     .maintable { 
-       border : thin dashed #D0D0D0; 
-       background-color : #EEE; 
+        border: thin dashed #D0D0D0; 
+        background-color: #EEE; 
     } 
      
     .header { 
-       color : #FFF; 
-       background-color : #999; 
+        color: #FFF; 
+        background-color: #999; 
     } 
      
     .green { 
-       background-color : #CFC; 
-       color : black; 
-    } 
+        background-color : #CFC; 
+        color: black; 
+    }
+    .error { 
+        color: red; 
+    }
     </style> 
      
 </head> 
@@ -59,17 +62,24 @@
                     <tr> 
                     {if:elem.isType(#textarea#)}                
                         <td colspan="2"> 
-                            {if:elem.required}<font color="red">*</font>{end:}<b>{elem.label:h}</b><br /> 
+                            {if:elem.required}<span class="error">*</span>{end:}
+                            {if:elem.error}<span class="error">{end:}
+                            <b>{elem.label:h}:</b><br />
+                            {if:elem.error}</span>{end:}
                     {else:} 
                         <td align="right" valign="top"> 
-                            {if:elem.required}<font color="red">*</font>{end:}<b>{elem.label:h}:</b></td> 
+                            {if:elem.required}<span class="error">*</span>{end:}
+                            {if:elem.error}<span class="error">{end:}
+                            <b>{elem.label:h}:</b>
+                            {if:elem.error}</span>{end:}
+                        </td> 
                         <td> 
                     {end:}  
-                    {if:elem.error}<font color="red">{elem.error}</font><br />{end:} 
+                    {if:elem.error}<div class="error">{elem.error}</div>{end:} 
                     {if:elem.isType(#group#)} 
                         {foreach:elem.elements,gitem} 
                             {gitem.label:h} 
-                            {gitem.html:h}{if:gitem.required}<font color="red">*</font>{end:}
+                            {gitem.html:h}{if:gitem.required}<span class="error">*</span>*</span>{end:}
                             {if:elem.separator}{elem.separator:h}{end:}
                         {end:} 
                     {else:} 
@@ -94,7 +104,7 @@
 &nbsp; 
 <p><b>Collected Errors:</b><br /> 
 {foreach:form.errors,name,error} 
-    <font color="red">{error:h}</font> in element [{name:h}]<br /> 
+    <span class="error">{error:h}</span> in element [{name:h}]<br /> 
 {end:} 
 </p> 
  
