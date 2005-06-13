@@ -246,12 +246,12 @@ class HTML_QuickForm extends HTML_Common {
      * @param    bool        $trackSubmit       (optional)Whether to track if the form was submitted by adding a special hidden field
      * @access   public
      */
-    function HTML_QuickForm($formName='', $method='post', $action='', $target='_self', $attributes=null, $trackSubmit = false)
+    function HTML_QuickForm($formName='', $method='post', $action='', $target='', $attributes=null, $trackSubmit = false)
     {
         HTML_Common::HTML_Common($attributes);
         $method = (strtoupper($method) == 'GET') ? 'get' : 'post';
         $action = ($action == '') ? $_SERVER['PHP_SELF'] : $action;
-        $target = (empty($target) || $target == '_self') ? array() : array('target' => $target);
+        $target = empty($target) ? array() : array('target' => $target);
         $attributes = array('action'=>$action, 'method'=>$method, 'name'=>$formName, 'id'=>$formName) + $target;
         $this->updateAttributes($attributes);
         if (!$trackSubmit || isset($_REQUEST['_qf__' . $formName])) {
@@ -773,19 +773,6 @@ class HTML_QuickForm extends HTML_Common {
         } elseif ('file' == $this->getElementType($elementName)) {
             return $this->getElementValue($elementName);
 
-        } elseif ('group' == $this->getElementType($elementName)) {
-            $group    =& $this->getElement($elementName);
-            $elements =& $group->getElements();
-            foreach (array_keys($elements) as $key) {
-                $name = $group->getElementName($key);
-                // filter out radios
-                if ($name != $elementName) {
-                    if (null !== ($v = $this->getSubmitValue($name))) {
-                        $value[$name] = $v;
-                    }
-                }
-            }
-
         } elseif (false !== ($pos = strpos($elementName, '['))) {
             $base = substr($elementName, 0, $pos);
             $idx  = "['" . str_replace(array(']', '['), array('', "']['"), substr($elementName, $pos + 1, -1)) . "']";
@@ -793,16 +780,34 @@ class HTML_QuickForm extends HTML_Common {
                 $value = eval("return (isset(\$this->_submitValues['{$base}']{$idx})) ? \$this->_submitValues['{$base}']{$idx} : null;");
             }
 
-            if (null === $value && isset($this->_submitFiles[$base])) {
+            if ((is_array($value) || null === $value) && isset($this->_submitFiles[$base])) {
                 $props = array('name', 'type', 'size', 'tmp_name', 'error');
                 $code  = "if (!isset(\$this->_submitFiles['{$base}']['name']{$idx})) {\n" .
                          "    return null;\n" .
                          "} else {\n" .
                          "    \$v = array();\n";
                 foreach ($props as $prop) {
-                    $code .= "    \$v['{$prop}'] = \$this->_submitFiles['{$base}']['{$prop}']{$idx};\n";
+                    $code .= "    \$v = HTML_QuickForm::arrayMerge(\$v, \$this->_reindexFiles(\$this->_submitFiles['{$base}']['{$prop}']{$idx}, '{$prop}'));\n";
                 }
-                $value = eval($code . "    return \$v;\n}\n");
+                $fileValue = eval($code . "    return \$v;\n}\n");
+                if (null !== $fileValue) {
+                    $value = null === $value? $fileValue: HTML_QuickForm::arrayMerge($value, $fileValue);
+                }
+            }
+        }
+        
+        // This is only supposed to work for groups with appendName = false
+        if (null === $value && 'group' == $this->getElementType($elementName)) {
+            $group    =& $this->getElement($elementName);
+            $elements =& $group->getElements();
+            foreach (array_keys($elements) as $key) {
+                $name = $group->getElementName($key);
+                // prevent endless recursion in case of radios and such
+                if ($name != $elementName) {
+                    if (null !== ($v = $this->getSubmitValue($name))) {
+                        $value[$name] = $v;
+                    }
+                }
             }
         }
         return $value;
@@ -1641,6 +1646,8 @@ class HTML_QuickForm extends HTML_Common {
         foreach ($this->_rules as $elementName => $rules) {
             foreach ($rules as $rule) {
                 if ('client' == $rule['validation']) {
+                    unset($element);
+
                     $dependent  = isset($rule['dependent']) && is_array($rule['dependent']);
                     $rule['message'] = strtr($rule['message'], $js_escape);
 
@@ -1678,7 +1685,6 @@ class HTML_QuickForm extends HTML_Common {
                     }
 
                     $test[] = $registry->getValidationScript($element, $elementName, $rule);
-                    unset($element);
                 }
             }
         }
