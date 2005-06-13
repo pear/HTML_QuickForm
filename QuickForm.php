@@ -1695,6 +1695,7 @@ class HTML_QuickForm extends HTML_Common {
                 "function validate_" . $this->_attributes['id'] . "(frm) {\n" .
                 "  var value = '';\n" .
                 "  var errFlag = new Array();\n" .
+                "  var _qfGroups = {};\n" .
                 "  _qfMsg = '';\n\n" .
                 join("\n", $test) .
                 "\n  if (_qfMsg != '') {\n" .
