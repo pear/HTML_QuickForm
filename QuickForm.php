@@ -1435,10 +1435,25 @@ class HTML_QuickForm extends HTML_Common {
                      isset($this->_errors[$target])) {
                     continue 2;
                 }
-                if ((!isset($submitValue) || $submitValue == '') && 
-                     !$this->isElementRequired($target)) {
-                    // Element is not required
-                    continue 2;
+                // If element is not required and is empty, we shouldn't validate it
+                if (!$this->isElementRequired($target)) {
+                    if (!isset($submitValue) || '' == $submitValue) {
+                        continue 2;
+                    // Fix for bug #3501: we shouldn't validate not uploaded files, either.
+                    // Unfortunately, we can't just use $element->isUploadedFile() since
+                    // the element in question can be buried in group. Thus this hack.
+                    } elseif (is_array($submitValue)) {
+                        if (false === ($pos = strpos($target, '['))) {
+                            $isUpload = !empty($this->_submitFiles[$target]);
+                        } else {
+                            $base = substr($target, 0, $pos);
+                            $idx  = "['" . str_replace(array(']', '['), array('', "']['"), substr($target, $pos + 1, -1)) . "']";
+                            eval("\$isUpload = isset(\$this->_submitFiles['{$base}']['name']{$idx});");
+                        }
+                        if ($isUpload && (!isset($submitValue['error']) || 0 != $submitValue['error'])) {
+                            continue 2;
+                        }
+                    }
                 }
                 if (isset($rule['dependent']) && is_array($rule['dependent'])) {
                     $values = array($submitValue);
