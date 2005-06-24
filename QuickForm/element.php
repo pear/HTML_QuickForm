@@ -245,10 +245,11 @@ class HTML_QuickForm_element extends HTML_Common
             return '';
         } else {
             $id = $this->getAttribute('id');
-            return '<input type="hidden"' .
-                   (isset($id)? ' id="' . $id . '"': '') .
-                   ' name="' . $this->getName() . '"' .
-                   ' value="' . htmlspecialchars($this->getValue()) . '" />';
+            return '<input' . $this->_getAttrString(array(
+                       'type'  => 'hidden',
+                       'name'  => $this->getName(),
+                       'value' => $this->getValue()
+                   ) + (isset($id)? array('id' => $id): array())) . ' />';
         }
     }
 

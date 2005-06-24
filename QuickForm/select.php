@@ -525,13 +525,16 @@ class HTML_QuickForm_select extends HTML_QuickForm_element {
             // Only use id attribute if doing single hidden input
             if (1 == count($value)) {
                 $id     = $this->getAttribute('id');
-                $idAttr = isset($id)? ' id="' . $id . '"': '';
+                $idAttr = isset($id)? array('id' => $id): array();
             } else {
-                $idAttr = '';
+                $idAttr = array();
             }
             foreach ($value as $key => $item) {
-                $html .= '<input type="hidden"' . $idAttr . ' name="' . 
-                    $name . '" value="' . $this->_values[$key] . '" />';
+                $html .= '<input' . $this->_getAttrString(array(
+                             'type'  => 'hidden',
+                             'name'  => $name,
+                             'value' => $this->_values[$key]
+                         ) + $idAttr) . ' />';
             }
         }
         return $html;
