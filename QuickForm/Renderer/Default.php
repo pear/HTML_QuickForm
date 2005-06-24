@@ -154,7 +154,9 @@ class HTML_QuickForm_Renderer_Default extends HTML_QuickForm_Renderer
     */
     function toHtml()
     {
-        return $this->_html;
+        // _hiddenHtml is cleared in finishForm(), so this only matters when
+        // finishForm() was not called (e.g. group::toHtml(), bug #3511)
+        return $this->_hiddenHtml . $this->_html;
     } // end func toHtml
     
    /**
@@ -191,6 +193,7 @@ class HTML_QuickForm_Renderer_Default extends HTML_QuickForm_Renderer
         } else {
             $this->_html .= $this->_hiddenHtml;
         }
+        $this->_hiddenHtml = '';
         $this->_html = str_replace('{content}', $this->_html, $html);
         // add a validation script
         if ('' != ($script = $form->getValidationScript())) {
