@@ -142,7 +142,7 @@ class HTML_QuickForm_date extends HTML_QuickForm_group
             'weekdays_short'=> array ('Dom', 'Lun', 'Mar', 'Mi&#xe9;', 'Jue', 'Vie', 'S&#xe1;b'),
             'weekdays_long' => array ('Domingo', 'Lunes', 'Martes', 'Mi&#xe9;rcoles', 'Jueves', 'Viernes', 'S&#xe1;bado'),
             'months_short'  => array ('Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'),
-            'months_long'   => array ('Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septimbre', 'Octubre', 'Noviembre', 'Diciembre')
+            'months_long'   => array ('Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre')
         ),
         'da'    => array (
             'weekdays_short'=> array ('S&#xf8;n', 'Man', 'Tir', 'Ons', 'Tor', 'Fre', 'L&#xf8;r'),
@@ -322,6 +322,10 @@ class HTML_QuickForm_date extends HTML_QuickForm_group
                     case 'h':
                         $options = $this->_createOptionList(1, 12);
                         break;
+                    case 'g':
+                        $options = $this->_createOptionList(1, 12);
+                        array_walk($options, create_function('&$v,$k', '$v = intval($v);'));
+                        break;
                     case 'H':
                         $options = $this->_createOptionList(0, 23);
                         break;
@@ -336,6 +340,9 @@ class HTML_QuickForm_date extends HTML_QuickForm_group
                         break;
                     case 'A':
                         $options = array('AM' => 'AM', 'PM' => 'PM');
+                        break;
+                    case 'W':
+                        $options = $this->_createOptionList(1, 53);
                         break;
                     case '\\':
                         $backslash  = true;
@@ -354,9 +361,15 @@ class HTML_QuickForm_date extends HTML_QuickForm_group
                     }
                     $separator = '';
                     // Should we add an empty option to the top of the select?
-                    if ($this->_options['addEmptyOption']) {
-                        // Preserve the keys
-                        $options = array($this->_options['emptyOptionValue'] => $this->_options['emptyOptionText']) + $options;
+                    if (!is_array($this->_options['addEmptyOption']) && $this->_options['addEmptyOption'] || 
+                        is_array($this->_options['addEmptyOption']) && !empty($this->_options['addEmptyOption'][$sign])) {
+
+                        // Using '+' array operator to preserve the keys
+                        if (is_array($this->_options['emptyOptionText']) && !empty($this->_options['emptyOptionText'][$sign])) {
+                            $options = array($this->_options['emptyOptionValue'] => $this->_options['emptyOptionText'][$sign]) + $options;
+                        } else {
+                            $options = array($this->_options['emptyOptionValue'] => $this->_options['emptyOptionText']) + $options;
+                        }
                     }
                     $this->_elements[] =& new HTML_QuickForm_select($sign, null, $options, $this->getAttributes());
                 }
@@ -397,7 +410,7 @@ class HTML_QuickForm_date extends HTML_QuickForm_group
                 $value = strtotime($value);
             }
             // might be a unix epoch, then we fill all possible values
-            $arr = explode('-', date('w-d-n-Y-h-H-i-s-a-A', (int)$value));
+            $arr = explode('-', date('w-d-n-Y-h-H-i-s-a-A-W', (int)$value));
             $value = array(
                 'D' => $arr[0],
                 'l' => $arr[0],
@@ -408,11 +421,13 @@ class HTML_QuickForm_date extends HTML_QuickForm_group
                 'Y' => $arr[3],
                 'y' => $arr[3],
                 'h' => $arr[4],
+                'g' => $arr[4],
                 'H' => $arr[5],
                 'i' => $arr[6],
                 's' => $arr[7],
                 'a' => $arr[8],
-                'A' => $arr[9]
+                'A' => $arr[9],
+                'W' => $arr[10]
             );
         }
         parent::setValue($value);
