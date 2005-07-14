@@ -1021,7 +1021,7 @@ class HTML_QuickForm extends HTML_Common {
             $this->_rules[$element] = array();
         }
         if ($validation == 'client') {
-            $this->updateAttributes(array('onsubmit'=>'return validate_'.$this->_attributes['id'] . '(this);'));
+            $this->updateAttributes(array('onsubmit' => 'try { var myValidator = validate_' . $this->_attributes['id'] . '; } catch(e) { return true; } return myValidator(this);'));
         }
         $this->_rules[$element][] = array(
             'type'        => $type,
@@ -1092,7 +1092,7 @@ class HTML_QuickForm extends HTML_Common {
                         $required++;
                     }
                     if ('client' == $validation) {
-                        $this->updateAttributes(array('onsubmit'=>'return validate_'.$this->_attributes['id'] . '(this);'));
+                        $this->updateAttributes(array('onsubmit' => 'try { var myValidator = validate_' . $this->_attributes['id'] . '; } catch(e) { return true; } return myValidator(this);'));
                     }
                 }
             }
@@ -1126,7 +1126,7 @@ class HTML_QuickForm extends HTML_Common {
                 $this->_required[] = $group;
             }
             if ($validation == 'client') {
-                $this->updateAttributes(array('onsubmit'=>'return validate_'.$this->_attributes['id'] . '(this);'));
+                $this->updateAttributes(array('onsubmit' => 'try { var myValidator = validate_' . $this->_attributes['id'] . '; } catch(e) { return true; } return myValidator(this);'));
             }
         }
     } // end func addGroupRule
