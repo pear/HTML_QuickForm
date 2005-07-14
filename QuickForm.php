@@ -585,13 +585,15 @@ class HTML_QuickForm extends HTML_Common {
             if ($this->_elements[$this->_elementIndex[$elementName]]->getType() ==
                 $elementObject->getType()) {
                 $this->_elements[] =& $elementObject;
-                $this->_duplicateIndex[$elementName][] = end(array_keys($this->_elements));
+                $elKeys = array_keys($this->_elements);
+                $this->_duplicateIndex[$elementName][] = end($elKeys);
             } else {
                 return PEAR::raiseError(null, QUICKFORM_INVALID_ELEMENT_NAME, null, E_USER_WARNING, "Element '$elementName' already exists in HTML_QuickForm::addElement()", 'HTML_QuickForm_Error', true);
             }
         } else {
             $this->_elements[] =& $elementObject;
-            $this->_elementIndex[$elementName] = end(array_keys($this->_elements));
+            $elKeys = array_keys($this->_elements);
+            $this->_elementIndex[$elementName] = end($elKeys);
         }
         if ($this->_freezeAll) {
             $elementObject->freeze();
@@ -636,7 +638,8 @@ class HTML_QuickForm extends HTML_Common {
             $duplicate = true;
         }
         // Move all the elements after added back one place, reindex _elementIndex and/or _duplicateIndex
-        for ($i = end(array_keys($this->_elements)); $i >= $targetIdx; $i--) {
+        $elKeys = array_keys($this->_elements);
+        for ($i = end($elKeys); $i >= $targetIdx; $i--) {
             if (isset($this->_elements[$i])) {
                 $currentName = $this->_elements[$i]->getName();
                 $this->_elements[$i + 1] =& $this->_elements[$i];
