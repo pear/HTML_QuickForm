@@ -338,25 +338,6 @@ function _hs_setValue(ctl, value)
     }
 }
 
-function _hs_getValues(form, groupName)
-{
-    var ret = [];
-    for (var i = 0; i <= _hs_options[groupName].length; i++) {
-        var ctl = _hs_findSelect(form, groupName, i);
-        if ('select-multiple' == ctl.type) {
-            ret[i] = [];
-            for (var j = 0; j < ctl.options.length; j++) {
-                if (ctl.options[j].selected) {
-                    ret[i].push(ctl.options[j].value);
-                }
-            }
-        } else {
-            ret[i] = ctl.value;
-        }
-    }
-    return ret;
-}
-
 function _hs_swapOptions(form, groupName, selectIndex)
 {
     var hsValue = [];
@@ -371,33 +352,28 @@ function _hs_swapOptions(form, groupName, selectIndex)
     }
 }
 
-function _hs_onReset(form, groupName)
+function _hs_onReset(form, groupNames)
 {
-    var currVal   = _hs_getValues(form, groupName);
-    var unchanged = true;
-    for (var i = 0; i < currVal.length; i++) {
-        if (currVal[i].toString() != _hs_values[groupName][i].toString()) {
-            unchanged = false;
-            break;
-        }
-    }
-    if (unchanged) {
-        return true;
-    }
-
-    for (i = 0; i <= _hs_options[groupName].length; i++) {
-        _hs_setValue(_hs_findSelect(form, groupName, i), _hs_defaults[groupName][i]);
-        if (i < _hs_options[groupName].length) {
-            _hs_replaceOptions(_hs_findSelect(form, groupName, i + 1), 
-                               _hs_findOptions(_hs_options[groupName][i], _hs_defaults[groupName].slice(0, i + 1)));
+    for (var i = 0; i < groupNames.length; i++) {
+        try {
+            for (var j = 0; j <= _hs_options[groupNames[i]].length; j++) {
+                _hs_setValue(_hs_findSelect(form, groupNames[i], j), _hs_defaults[groupNames[i]][j]);
+                if (j < _hs_options[groupNames[i]].length) {
+                    _hs_replaceOptions(_hs_findSelect(form, groupNames[i], j + 1), 
+                                       _hs_findOptions(_hs_options[groupNames[i]][j], _hs_defaults[groupNames[i]].slice(0, j + 1)));
+                }
+            }
+        } catch (e) {
+            if (!(e instanceof TypeError)) {
+                throw e;
+            }
         }
     }
 }
 
-function _hs_setupOnReset(form, groupName)
+function _hs_setupOnReset(form, groupNames)
 {
-    _hs_values[groupName] = _hs_getValues(form, groupName);
-    setTimeout(function() { _hs_onReset(form, groupName); }, 50);
+    setTimeout(function() { _hs_onReset(form, groupNames); }, 25);
 }
 
 function _hs_onReload()
@@ -426,7 +402,6 @@ window.onload = _hs_onReload;
 
 var _hs_options = {};
 var _hs_defaults = {};
-var _hs_values = {};
 
 JAVASCRIPT;
                 define('HTML_QUICKFORM_HIERSELECT_EXISTS', true);
@@ -491,7 +466,16 @@ JAVASCRIPT;
             $ret = parent::onQuickFormEvent($event, $arg, $caller);
             // add onreset handler to form to properly reset hierselect (see bug #2970)
             if ('addElement' == $event) {
-                $caller->updateAttributes(array('onreset' => "if (typeof _hs_setupOnReset != 'undefined') { _hs_setupOnReset(this, '" . $this->_escapeString($this->getName()) . "'); } " . $caller->getAttribute('onreset')));
+                $onReset = $caller->getAttribute('onreset');
+                if (strlen($onReset)) {
+                    if (strpos($onReset, '_hs_setupOnReset')) {
+                        $caller->updateAttributes(array('onreset' => str_replace('_hs_setupOnReset(this, [', "_hs_setupOnReset(this, ['" . $this->_escapeString($this->getName()) . "', ", $onReset)));
+                    } else {
+                        $caller->updateAttributes(array('onreset' => "var temp = function() { {$onReset} } ; if (!temp()) { return false; } ; if (typeof _hs_setupOnReset != 'undefined') { return _hs_setupOnReset(this, ['" . $this->_escapeString($this->getName()) . "']); } "));
+                    }
+                } else {
+                    $caller->updateAttributes(array('onreset' => "if (typeof _hs_setupOnReset != 'undefined') { return _hs_setupOnReset(this, ['" . $this->_escapeString($this->getName()) . "']); } "));
+                }
             }
             return $ret;
         }
