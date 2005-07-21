@@ -30,6 +30,7 @@ require_once 'HTML/QuickForm/Renderer/Array.php';
  *   'javascript'       => 'javascript for client-side validation',
  *   'attributes'       => 'attributes for <form> tag',
  *   'requirednote      => 'note about the required elements',
+ *   'hasrequired       => 'whether the form contains any required fields',
  *   // if we set the option to collect hidden elements
  *   'hidden'           => 'collected html of all hidden elements',
  *   // if there were some validation errors:
@@ -110,18 +111,18 @@ class HTML_QuickForm_Renderer_Savant extends HTML_QuickForm_Renderer_Array
     * Constructor
     *
     * @param  bool    true: collect all hidden elements into string; false: process them as usual form elements
-    * @param  bool    true: render an array of labels to many labels, $key 0 to 'label' and the oterh to "label_$key"
     * @access public
     */
-    function HTML_QuickForm_Renderer_Savant($collectHidden = false, $staticLabels = false)
+    function HTML_QuickForm_Renderer_Savant($collectHidden = false)
     {
-        parent::HTML_QuickForm_Renderer_Array($collectHidden, $staticLabels);
+        parent::HTML_QuickForm_Renderer_Array($collectHidden);
     } // end constructor
 
 
     function startForm(&$form)
     {
-        parent::startForm(&$form);
+        parent::startForm($form);
+        $this->_ary['hasrequired'] = false;
         $this->_currentSection = 0;
         $this->_sectionCount   = 1;
     } // end func startForm
@@ -141,6 +142,10 @@ class HTML_QuickForm_Renderer_Savant extends HTML_QuickForm_Renderer_Array
     {
         $this->_groupElementIdx = 0;
         $this->_groupElementCount = count($group->getElements());
+        if ($required) {
+	        $this->_ary['hasrequired'] = true;
+	    }
+
         $this->_currentGroup = $this->_elementToArray($group, $required, $error);
         if (!empty($error)) {
             $this->_ary['errors'][$this->_currentGroup['name']] = $error;
@@ -175,9 +180,14 @@ class HTML_QuickForm_Renderer_Savant extends HTML_QuickForm_Renderer_Array
             'required'  => $required,
             'error'     => $error
         );
+
+        if ($required) {
+	        $this->_ary['hasrequired'] = true;
+	    }
+
         // render label(s)
         $labels = $element->getLabel();
-        if (is_array($labels) && $this->_staticLabels) {
+        if (is_array($labels)) {
             foreach($labels as $key => $label) {
                 $key = is_int($key)? $key + 1: $key;
                 if (1 === $key) {
