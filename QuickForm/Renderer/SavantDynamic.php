@@ -86,7 +86,7 @@ require_once 'HTML/QuickForm/Renderer/Array.php';
  * 
  * @access public
  */
-class HTML_QuickForm_Renderer_Savant extends HTML_QuickForm_Renderer_Array
+class HTML_QuickForm_Renderer_SavantDynamic extends HTML_QuickForm_Renderer_Array
 {
     
    /**
@@ -113,7 +113,7 @@ class HTML_QuickForm_Renderer_Savant extends HTML_QuickForm_Renderer_Array
     * @param  bool    true: collect all hidden elements into string; false: process them as usual form elements
     * @access public
     */
-    function HTML_QuickForm_Renderer_Savant($collectHidden = false)
+    function HTML_QuickForm_Renderer_SavantDynamic($collectHidden = false)
     {
         parent::HTML_QuickForm_Renderer_Array($collectHidden);
     } // end constructor
@@ -143,8 +143,8 @@ class HTML_QuickForm_Renderer_Savant extends HTML_QuickForm_Renderer_Array
         $this->_groupElementIdx = 0;
         $this->_groupElementCount = count($group->getElements());
         if ($required) {
-	        $this->_ary['hasrequired'] = true;
-	    }
+            $this->_ary['hasrequired'] = true;
+        }
 
         $this->_currentGroup = $this->_elementToArray($group, $required, $error);
         if (!empty($error)) {
@@ -182,8 +182,8 @@ class HTML_QuickForm_Renderer_Savant extends HTML_QuickForm_Renderer_Array
         );
 
         if ($required) {
-	        $this->_ary['hasrequired'] = true;
-	    }
+            $this->_ary['hasrequired'] = true;
+        }
 
         // render label(s)
         $labels = $element->getLabel();
