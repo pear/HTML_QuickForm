@@ -302,7 +302,7 @@ class HTML_QuickForm_RuleRegistry
                     "    }\n";
             }
 
-        } elseif ($element->getType() == 'checkbox') {
+        } elseif ($element->getType() == 'checkbox' && !is_a($element, 'html_quickform_advcheckbox')) {
             $value = "  if (frm.elements['$elementName'].checked) {\n" .
                      "    value{$jsIndex} = '1';\n" .
                      "  } else {\n" .
