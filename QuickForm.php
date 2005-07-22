@@ -229,9 +229,16 @@ class HTML_QuickForm extends HTML_Common {
      * Note for required fields in the form
      * @var       string
      * @since     1.0
-     * @access    public
+     * @access    private
      */
     var $_requiredNote = '<span style="font-size:80%; color:#ff0000;">*</span><span style="font-size:80%;"> denotes required field</span>';
+
+    /**
+     * Whether the form was submitted
+     * @var       boolean
+     * @access    private
+     */
+    var $_flagSubmitted = false;
 
     // }}}
     // {{{ constructor
@@ -270,6 +277,7 @@ class HTML_QuickForm extends HTML_Common {
                 $this->_submitValues = 'get' == $method? $_GET: $_POST;
                 $this->_submitFiles  = $_FILES;
             }
+            $this->_flagSubmitted = count($this->_submitValues) > 0 || count($this->_submitFiles) > 0;
         }
         if ($trackSubmit) {
             unset($this->_submitValues['_qf__' . $formName]);
@@ -1431,9 +1439,9 @@ class HTML_QuickForm extends HTML_Common {
     function validate()
     {
         if (count($this->_rules) == 0 && count($this->_formRules) == 0 && 
-            (count($this->_submitValues) > 0 || count($this->_submitFiles) > 0)) {
+            $this->isSubmitted()) {
             return true;
-        } elseif (count($this->_submitValues) == 0 && count($this->_submitFiles) == 0) {
+        } elseif (!$this->isSubmitted()) {
             return false;
         }
 
@@ -1851,6 +1859,24 @@ class HTML_QuickForm extends HTML_Common {
         }
         return $values;
     }
+
+    // }}}
+    // {{{ isSubmitted()
+
+   /**
+    * Tells whether the form was already submitted
+    *
+    * This is useful since the _submitFiles and _submitValues arrays
+    * may be completely empty after the trackSubmit value is removed.
+    *
+    * @access public
+    * @return bool
+    */
+    function isSubmitted()
+    {
+        return $this->_flagSubmitted;
+    }
+
 
     // }}}
     // {{{ isError()

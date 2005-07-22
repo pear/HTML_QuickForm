@@ -576,5 +576,29 @@ class HTML_QuickForm_select extends HTML_QuickForm_element {
     }
     
     // }}}
+    // {{{ onQuickFormEvent()
+
+    function onQuickFormEvent($event, $arg, &$caller)
+    {
+        if ('updateValue' == $event) {
+            $value = $this->_findValue($caller->_constantValues);
+            if (null === $value) {
+                $value = $this->_findValue($caller->_submitValues);
+                // Fix for bug #4465
+                // XXX: should we push this to element::onQuickFormEvent()?
+                if (null === $value && !$caller->isSubmitted()) {
+                    $value = $this->_findValue($caller->_defaultValues);
+                }
+            }
+            if (null !== $value) {
+                $this->setValue($value);
+            }
+            return true;
+        } else {
+            return parent::onQuickFormEvent($event, $arg, $caller);
+        }
+    }
+
+    // }}}
 } //end class HTML_QuickForm_select
 ?>
