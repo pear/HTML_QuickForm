@@ -161,7 +161,7 @@ class HTML_QuickForm_group extends HTML_QuickForm_element
 
             } else {
                 $elementName = $this->_elements[$key]->getName();
-                $index       = (!empty($elementName)) ? $elementName : $key;
+                $index       = strlen($elementName) ? $elementName : $key;
                 if (is_array($value)) {
                     if (isset($value[$index])) {
                         $this->_elements[$key]->onQuickFormEvent('setGroupValue', $value[$index], $this);
@@ -206,7 +206,7 @@ class HTML_QuickForm_group extends HTML_QuickForm_element
                     if (!is_array($value)) {
                         $value = is_null($value)? array(): array($value);
                     }
-                    if ('' == $elementName) {
+                    if ('' === $elementName) {
                         $value[] = $v;
                     } else {
                         $value[$elementName] = $v;
@@ -391,7 +391,7 @@ class HTML_QuickForm_group extends HTML_QuickForm_element
                         $elementName = $this->_elements[$key]->getName();
                         if (is_null($elementName)) {
                             $this->_elements[$key]->setName($this->getName());
-                        } elseif ('' == $elementName) {
+                        } elseif ('' === $elementName) {
                             $this->_elements[$key]->setName($this->getName() . '[' . $key . ']');
                         } else {
                             $this->_elements[$key]->setName($this->getName() . '[' . $elementName . ']');
@@ -466,7 +466,7 @@ class HTML_QuickForm_group extends HTML_QuickForm_element
             if ($this->_appendName) {
                 if (is_null($elementName)) {
                     $this->_elements[$key]->setName($this->getName());
-                } elseif ('' == $elementName) {
+                } elseif ('' === $elementName) {
                     $this->_elements[$key]->setName($this->getName() . '[' . $key . ']');
                 } else {
                     $this->_elements[$key]->setName($this->getName() . '[' . $elementName . ']');
@@ -488,7 +488,7 @@ class HTML_QuickForm_group extends HTML_QuickForm_element
                     // just like getValue(), but should work OK every time here
                     if (is_null($elementName)) {
                         $value = $v;
-                    } elseif ('' == $elementName) {
+                    } elseif ('' === $elementName) {
                         $value[] = $v;
                     } else {
                         $value[$elementName] = $v;
