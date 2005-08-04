@@ -58,7 +58,7 @@ Features:
   </maintainers>
   <release>
     <version>3.2.5</version>
-    <date>2005-07-??</date>
+    <date>2005-08-05</date>
     <license>PHP License</license>
     <state>stable</state>
     <notes>
@@ -78,6 +78,7 @@ in PHP versions 4.4 and 5.1 (see bugs #4725 and #4799).
 - Added Romanian translation (request #2884)
 - Added Hebrew translation (request #3366)
 - Added Swedish translation (request #4821)
+- Added Portuguese translation (request #4963)
 - Removed extra copy of French translation
 - Fixed typos in French (bug #3947) and Spanish (bug #4531) translations
 - Implemented #3733 ('g' format support)
