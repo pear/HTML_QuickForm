@@ -283,6 +283,22 @@ class HTML_QuickForm extends HTML_Common {
             unset($this->_submitValues['_qf__' . $formName]);
             $this->addElement('hidden', '_qf__' . $formName, null);
         }
+        if (preg_match('/^([0-9]+)([a-zA-Z]*)$/', ini_get('upload_max_filesize'), $matches)) {
+            // see http://www.php.net/manual/en/faq.using.php#faq.using.shorthandbytes
+            switch (strtoupper($matches['2'])) {
+                case 'G':
+                    $this->_maxFileSize = $matches['1'] * 1073741824;
+                    break;
+                case 'M':
+                    $this->_maxFileSize = $matches['1'] * 1048576;
+                    break;
+                case 'K':
+                    $this->_maxFileSize = $matches['1'] * 1024;
+                    break;
+                default:
+                    $this->_maxFileSize = $matches['1'];
+            }
+        }    
     } // end constructor
 
     // }}}

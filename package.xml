@@ -106,6 +106,8 @@ in PHP versions 4.4 and 5.1 (see bugs #4725 and #4799).
 
 * Other additions and fixes
 - Added HTML_QuickForm::isSubmitted() method
+- Implemented #4930 (value of upload_max_filesize php.ini directive is
+  used as default value for MAX_FILE_SIZE form element)
 - Fixed #2806 (Typo in rules-builtin.php example)
 - Fixed #4219 (ArraySmarty renderer should only render required and error 
   template if the element has errors or is required, this gives significant
