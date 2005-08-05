@@ -53,6 +53,14 @@ class HTML_QuickForm_autocomplete extends HTML_QuickForm_text
      */
     var $_options = array();
 
+    /**
+     * "One-time" javascript (containing functions), see bug #4611
+     *
+     * @var     string
+     * @access  private
+     */
+    var $_js = '';
+
     // }}}
     // {{{ constructor
 
@@ -114,7 +122,7 @@ class HTML_QuickForm_autocomplete extends HTML_QuickForm_text
         } else {
             $js = "<script type=\"text/javascript\">\n//<![CDATA[\n";
             if (!defined('HTML_QUICKFORM_AUTOCOMPLETE_EXISTS')) {
-                $js .= <<<EOS
+                $this->_js .= <<<EOS
 
 /* begin javascript for autocomplete */
 function setSelectionRange(input, selectionStart, selectionEnd) {
@@ -225,7 +233,8 @@ EOS;
                 '"'     => '\"',
                 '\\'    => '\\\\'
             );
-            
+
+            $js .= $this->_js;
             $js .= 'var ' . $arrayName . " = new Array();\n";
             for ($i = 0; $i < count($this->_options); $i++) {
                 $js .= $arrayName . '[' . $i . "] = '" . strtr($this->_options[$i], $jsEscape) . "';\n";

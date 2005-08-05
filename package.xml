@@ -127,6 +127,8 @@ in PHP versions 4.4 and 5.1 (see bugs #4725 and #4799).
 - Fixed #4465 (Default values incorrectly used for select multiple elements
   if all options were unselected)
 - Fixed #3193 (frozen select elements could display incorrect value)
+- Fixed #4611 (javascript for grouped autocomplete elements not output
+  properly)
     </notes>
     <filelist>
       <dir name="/" baseinstalldir="HTML">
