@@ -269,7 +269,7 @@ class HTML_QuickForm_RuleRegistry
                     "            _element.checked = _element.defaultChecked;\n" .
                     "            break;\n" .
                     "          case 'select-one':\n" .
-                    "          case 'select-multiple:\n" .
+                    "          case 'select-multiple':\n" .
                     "            for (var j = 0; j < _element.options.length; j++) {\n" .
                     "              _element.options[j].selected = _element.options[j].defaultSelected;\n" .
                     "            }\n" .
