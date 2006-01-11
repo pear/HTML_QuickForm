@@ -19,7 +19,7 @@
 //
 // $Id$
 
-require_once("HTML/QuickForm/element.php");
+require_once 'HTML/QuickForm/element.php';
 
 /**
  * HTML class for a form element group
@@ -151,7 +151,7 @@ class HTML_QuickForm_group extends HTML_QuickForm_element
      */
     function setValue($value)
     {
-        $this->_createElementsIfNotExist();
+        $this->_createElementsIfNotExist($value);
         foreach (array_keys($this->_elements) as $key) {
             if (!$this->_appendName) {
                 $v = $this->_elements[$key]->_findValue($value);
@@ -514,7 +514,7 @@ class HTML_QuickForm_group extends HTML_QuickForm_element
     * @access private
     * @abstract
     */
-    function _createElements()
+    function _createElements($value = null)
     {
         // abstract
     }
@@ -531,10 +531,10 @@ class HTML_QuickForm_group extends HTML_QuickForm_element
     *
     * @access private
     */
-    function _createElementsIfNotExist()
+    function _createElementsIfNotExist($value = null)
     {
         if (empty($this->_elements)) {
-            $this->_createElements();
+            $this->_createElements($value);
             if ($this->_flagFrozen) {
                 $this->freeze();
             }
