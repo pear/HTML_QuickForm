@@ -897,14 +897,18 @@ class HTML_QuickForm extends HTML_Common {
      * Set error message for a form element
      *
      * @param     string    $element    Name of form element to set error for
-     * @param     string    $message    Error message
+     * @param     string    $message    Error message, if empty then removes the current error message
      * @since     1.0       
      * @access    public
      * @return    void
      */
-    function setElementError($element,$message)
+    function setElementError($element, $message = null)
     {
-        $this->_errors[$element] = $message;
+        if (!empty($message)) {
+            $this->_errors[$element] = $message;
+        } else {
+            unset($this->_errors[$element]);
+        }
     } // end func setElementError
          
      // }}}
@@ -988,7 +992,7 @@ class HTML_QuickForm extends HTML_Common {
             $this->_elementIndex[$elementName] = array_shift($this->_duplicateIndex[$elementName]);
         }
         if ($removeRules) {
-            unset($this->_rules[$elementName]);
+            unset($this->_rules[$elementName], $this->_errors[$elementName]);
         }
         return $el;
     } // end func removeElement
@@ -1231,7 +1235,7 @@ class HTML_QuickForm extends HTML_Common {
         if (is_array($value)) {
             $cleanValues = array();
             foreach ($value as $k => $v) {
-                $cleanValues[$k] = $this->_recursiveFilter($filter, $value[$k]);
+                $cleanValues[$k] = $this->_recursiveFilter($filter, $v);
             }
             return $cleanValues;
         } else {
@@ -1286,7 +1290,7 @@ class HTML_QuickForm extends HTML_Common {
      */
     function isTypeRegistered($type)
     {
-        return isset($GLOBALS['HTML_QUICKFORM_ELEMENT_TYPES'][$type]);
+        return isset($GLOBALS['HTML_QUICKFORM_ELEMENT_TYPES'][strtolower($type)]);
     } // end func isTypeRegistered
 
     // }}}
@@ -1456,7 +1460,7 @@ class HTML_QuickForm extends HTML_Common {
     {
         if (count($this->_rules) == 0 && count($this->_formRules) == 0 && 
             $this->isSubmitted()) {
-            return true;
+            return (0 == count($this->_errors));
         } elseif (!$this->isSubmitted()) {
             return false;
         }
@@ -1467,7 +1471,7 @@ class HTML_QuickForm extends HTML_Common {
         foreach ($this->_rules as $target => $rules) {
             $submitValue = $this->getSubmitValue($target);
 
-            foreach ($rules as $elementName => $rule) {
+            foreach ($rules as $rule) {
                 if ((isset($rule['group']) && isset($this->_errors[$rule['group']])) ||
                      isset($this->_errors[$target])) {
                     continue 2;
@@ -1719,7 +1723,7 @@ class HTML_QuickForm extends HTML_Common {
                     } elseif ($dependent) {
                         $element   =  array();
                         $element[] =& $this->getElement($elementName);
-                        foreach ($rule['dependent'] as $idx => $elName) {
+                        foreach ($rule['dependent'] as $elName) {
                             $element[] =& $this->getElement($elName);
                         }
                     } else {
