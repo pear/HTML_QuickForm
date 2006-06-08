@@ -192,6 +192,7 @@ class HTML_QuickForm_file extends HTML_QuickForm_input
      * @param    string  Destination directory path
      * @param    string  New file name
      * @access   public
+     * @return   bool    Whether the file was moved successfully
      */
     function moveUploadedFile($dest, $fileName = '')
     {
