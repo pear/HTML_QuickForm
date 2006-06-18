@@ -72,8 +72,13 @@ Bugfixes:
 * Default values for single-selects were ignored if form was considered
   submitted (bug #5269)
 * Fixed array-based options for HTML_QuickForm_date (bug #5364)
-* Incorrect fetch mode used in HTML_QuickForm_select::loadDbResult (bug #5705)
+* Javascript validation of single radiobutton failed (bug #5644)
+* Incorrect fetch mode used in HTML_QuickForm_select::loadDbResult() (bug #5705)
 * Removed unused variables found by code analysis (bug #5920)
+* hierselect now works correctly with HTML entities in option texts,
+  fix idea borrowed from Prototype JS library (bug #5974)
+* HTML_QuickForm_hierselect::setValue() should not change the number of
+  select elements in hierselect (bug #6766)
 * HTML_QuickForm::isTypeRegistered() is now case-insensitive (bug #7342)
 * Form is considered not valid after explicitly adding error via
   HTML_QuickForm::setElementError() (bug #7470)
@@ -83,7 +88,7 @@ Bugfixes:
 Additions and changes:
 * Traditional Chinese translation for date element (request #5165)
 * Brazilian Portuguese translation for date element (request #5541)
-* An error message for element can be removed if removing the element via
+* An error message for element is now removed if removing the element via
   HTML_QuickForm::removeElement(..., true) or passing an empty argument to
   HTML_QuickForm::setElementError().
     </notes>
