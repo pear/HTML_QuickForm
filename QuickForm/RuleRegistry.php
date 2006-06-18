@@ -312,9 +312,11 @@ class HTML_QuickForm_RuleRegistry
 
         } elseif ($element->getType() == 'radio') {
             $value = "  value{$jsIndex} = '';\n" .
-                     "  for (var i = 0; i < frm.elements['$elementName'].length; i++) {\n" .
-                     "    if (frm.elements['$elementName'][i].checked) {\n" .
-                     "      value{$jsIndex} = frm.elements['$elementName'][i].value;\n" .
+                     // Fix for bug #5644
+                     "  var els = 'length' in frm.elements['$elementName']? frm.elements['$elementName']: [ frm.elements['$elementName'] ];\n" .
+                     "  for (var i = 0; i < els.length; i++) {\n" .
+                     "    if (els[i].checked) {\n" .
+                     "      value{$jsIndex} = els[i].value;\n" .
                      "    }\n" .
                      "  }";
             if ($reset) {
