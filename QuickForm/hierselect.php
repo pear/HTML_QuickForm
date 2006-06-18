@@ -166,6 +166,7 @@ class HTML_QuickForm_hierselect extends HTML_QuickForm_group
      * @param     array     $array    Options for the first select element
      *
      * @access    public
+     * @deprecated          Deprecated since release 3.2.2
      * @return    void
      */
     function setMainOptions($array)
@@ -188,6 +189,7 @@ class HTML_QuickForm_hierselect extends HTML_QuickForm_group
      * @param     array     $array    Options for the second select element
      *
      * @access    public
+     * @deprecated          Deprecated since release 3.2.2
      * @return    void
      */
     function setSecOptions($array)
@@ -249,7 +251,9 @@ class HTML_QuickForm_hierselect extends HTML_QuickForm_group
      */
     function setValue($value)
     {
-        $this->_nbElements = count($value);
+        // fix for bug #6766. Hope this doesn't break anything, I don't like 
+        // this whole _nbElements stupidity at all 
+        // $this->_nbElements = count($value);
         parent::setValue($value);
         $this->_setOptions();
     } // end func setValue
@@ -312,12 +316,20 @@ function _hs_findSelect(form, groupName, selectIndex)
     }
 }
 
+function _hs_unescapeEntities(str)
+{
+    var div = document.createElement('div');
+    div.innerHTML = str;
+    return div.childNodes[0] ? div.childNodes[0].nodeValue : '';
+}
+
 function _hs_replaceOptions(ctl, optionList)
 {
     var j = 0;
     ctl.options.length = 0;
     for (i in optionList) {
-        ctl.options[j++] = new Option(optionList[i], i, false, false);
+        var optionText = (-1 == optionList[i].indexOf('&'))? optionList[i]: _hs_unescapeEntities(optionList[i]);
+        ctl.options[j++] = new Option(optionText, i, false, false);
     }
 }
 
