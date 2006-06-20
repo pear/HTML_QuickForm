@@ -60,12 +60,12 @@ Features:
   </maintainers>
   <release>
     <version>3.2.6</version>
-    <date>2006-06-??</date>
+    <date>2006-06-20</date>
     <license>PHP License</license>
     <state>stable</state>
     <notes>
-Development of QuickForm version 3 is now frozen. Only bug fixing will be done.
-All feature requests should be submitted for HTML_QuickForm2 package.
+Development of QuickForm version 3 is now frozen. Only bug fixing will be
+done. All feature requests should be submitted for HTML_QuickForm2 package.
 
 Bugfixes:
 * Typo in javascript generated for form validation (bug #5205)
@@ -73,15 +73,20 @@ Bugfixes:
   submitted (bug #5269)
 * Fixed array-based options for HTML_QuickForm_date (bug #5364)
 * Javascript validation of single radiobutton failed (bug #5644)
-* Incorrect fetch mode used in HTML_QuickForm_select::loadDbResult() (bug #5705)
+* Incorrect fetch mode used in HTML_QuickForm_select::loadDbResult()
+  (bug #5705)
 * Removed unused variables found by code analysis (bug #5920)
 * hierselect now works correctly with HTML entities in option texts,
   fix idea borrowed from Prototype JS library (bug #5974)
+* advcheckbox failed to submit properly if its id attribute was set equal 
+  to its name, due to javascript problems (bug #6134)
 * HTML_QuickForm_hierselect::setValue() should not change the number of
   select elements in hierselect (bug #6766)
 * HTML_QuickForm::isTypeRegistered() is now case-insensitive (bug #7342)
 * Form is considered not valid after explicitly adding error via
   HTML_QuickForm::setElementError() (bug #7470)
+* Regexps for 'error' and 'required' blocks in Default renderer now match
+  ungreedy, this allows having several such blocks in a template (bug #7820)
 * Document the return value of HTML_QuickForm_file::moveUploadedFile()
   (bug #7832)
 
@@ -91,6 +96,9 @@ Additions and changes:
 * An error message for element is now removed if removing the element via
   HTML_QuickForm::removeElement(..., true) or passing an empty argument to
   HTML_QuickForm::setElementError().
+* advcheckbox element no longer uses any javascript, therefore its JS-related
+  methods getOnclickJS() and getPrivateName() are no longer used internally
+  and are deprecated.
     </notes>
     <deps>
        <dep type="php" rel="ge" version="4.2"/>
