@@ -251,9 +251,10 @@ class HTML_QuickForm_hierselect extends HTML_QuickForm_group
      */
     function setValue($value)
     {
-        // fix for bug #6766. Hope this doesn't break anything, I don't like 
-        // this whole _nbElements stupidity at all 
-        // $this->_nbElements = count($value);
+        // fix for bug #6766. Hope this doesn't break anything more 
+        // after bug #7961. Forgot that _nbElements was used in
+        // _createElements() called in several places... 
+        $this->_nbElements = max($this->_nbElements, count($value));
         parent::setValue($value);
         $this->_setOptions();
     } // end func setValue
