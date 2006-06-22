@@ -60,7 +60,7 @@ Features:
   </maintainers>
   <release>
     <version>3.2.6</version>
-    <date>2006-06-20</date>
+    <date>2006-06-22</date>
     <license>PHP License</license>
     <state>stable</state>
     <notes>
@@ -80,7 +80,7 @@ Bugfixes:
   fix idea borrowed from Prototype JS library (bug #5974)
 * advcheckbox failed to submit properly if its id attribute was set equal 
   to its name, due to javascript problems (bug #6134)
-* HTML_QuickForm_hierselect::setValue() should not change the number of
+* HTML_QuickForm_hierselect::setValue() should not decrease the number of
   select elements in hierselect (bug #6766)
 * HTML_QuickForm::isTypeRegistered() is now case-insensitive (bug #7342)
 * Form is considered not valid after explicitly adding error via
