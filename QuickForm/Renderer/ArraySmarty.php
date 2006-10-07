@@ -180,17 +180,22 @@ class HTML_QuickForm_Renderer_ArraySmarty extends HTML_QuickForm_Renderer_Array
         }
         // create keys for elements grouped by native group or name
         if (strstr($ret['name'], '[') or $this->_currentGroup) {
+            // Fix for bug #8123: escape backslashes and quotes to prevent errors 
+            // in eval(). The code below seems to handle the case where element
+            // name has unbalanced square brackets. Dunno whether we really
+            // need this after the fix for #8123, but I'm wary of making big
+            // changes to this code.  
             preg_match('/([^]]*)\\[([^]]*)\\]/', $ret['name'], $matches);
             if (isset($matches[1])) {
                 $sKeysSub = substr_replace($ret['name'], '', 0, strlen($matches[1]));
                 $sKeysSub = str_replace(
-                    array('['  ,   ']', '[\'\']'),
-                    array('[\'', '\']', '[]'    ),
+                    array('\\',   '\'',   '['  ,   ']', '[\'\']'),
+                    array('\\\\', '\\\'', '[\'', '\']', '[]'    ),
                     $sKeysSub
                 );
-                $sKeys = '[\'' . $matches[1]  . '\']' . $sKeysSub;
+                $sKeys = '[\'' . str_replace(array('\\', '\''), array('\\\\', '\\\''), $matches[1]) . '\']' . $sKeysSub;
             } else {
-                $sKeys = '[\'' . $ret['name'] . '\']';
+                $sKeys = '[\'' . str_replace(array('\\', '\''), array('\\\\', '\\\''), $ret['name']) . '\']';
             }
             // special handling for elements in native groups
             if ($this->_currentGroup) {
@@ -209,11 +214,11 @@ class HTML_QuickForm_Renderer_ArraySmarty extends HTML_QuickForm_Renderer_Array
             $sKeys = '[\'element_' . $this->_elementIdx . '\']';
         // other elements
         } else {
-            $sKeys = '[\'' . $ret['name'] . '\']';
+            $sKeys = '[\'' . str_replace(array('\\', '\''), array('\\\\', '\\\''), $ret['name']) . '\']';
         }
         // for radios: add extra key from value
         if ('radio' == $ret['type'] and substr($sKeys, -2) != '[]') {
-            $sKeys .= '[\'' . $ret['value'] . '\']';
+            $sKeys .= '[\'' . str_replace(array('\\', '\''), array('\\\\', '\\\''), $ret['value']) . '\']';
         }
         $this->_elementIdx++;
         $ret['keys'] = $sKeys;

@@ -322,8 +322,14 @@ class HTML_QuickForm_file extends HTML_QuickForm_input
         if (isset($_FILES[$elementName])) {
             return $_FILES[$elementName];
         } elseif (false !== ($pos = strpos($elementName, '['))) {
-            $base  = substr($elementName, 0, $pos);
-            $idx   = "['" . str_replace(array(']', '['), array('', "']['"), substr($elementName, $pos + 1, -1)) . "']";
+            $base  = str_replace(
+                        array('\\', '\''), array('\\\\', '\\\''),
+                        substr($elementName, 0, $pos)
+                    ); 
+            $idx   = "['" . str_replace(
+                        array('\\', '\'', ']', '['), array('\\\\', '\\\'', '', "']['"),
+                        substr($elementName, $pos + 1, -1)
+                     ) . "']";
             $props = array('name', 'type', 'size', 'tmp_name', 'error');
             $code  = "if (!isset(\$_FILES['{$base}']['name']{$idx})) {\n" .
                      "    return null;\n" .

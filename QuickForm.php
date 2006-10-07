@@ -810,8 +810,14 @@ class HTML_QuickForm extends HTML_Common {
             return $this->getElementValue($elementName);
 
         } elseif (false !== ($pos = strpos($elementName, '['))) {
-            $base = substr($elementName, 0, $pos);
-            $idx  = "['" . str_replace(array(']', '['), array('', "']['"), substr($elementName, $pos + 1, -1)) . "']";
+            $base = str_replace(
+                        array('\\', '\''), array('\\\\', '\\\''), 
+                        substr($elementName, 0, $pos)
+                    );
+            $idx  = "['" . str_replace(
+                        array('\\', '\'', ']', '['), array('\\\\', '\\\'', '', "']['"), 
+                        substr($elementName, $pos + 1, -1)
+                    ) . "']";
             if (isset($this->_submitValues[$base])) {
                 $value = eval("return (isset(\$this->_submitValues['{$base}']{$idx})) ? \$this->_submitValues['{$base}']{$idx} : null;");
             }
@@ -1210,7 +1216,10 @@ class HTML_QuickForm extends HTML_Common {
                     if (false === strpos($elName, '[')) {
                         $this->_submitValues[$elName] = $this->_recursiveFilter($filter, $value);
                     } else {
-                        $idx  = "['" . str_replace(array(']', '['), array('', "']['"), $elName) . "']";
+                        $idx  = "['" . str_replace(
+                                    array('\\', '\'', ']', '['), array('\\\\', '\\\'', '', "']['"), 
+                                    $elName
+                                ) . "']";
                         eval("\$this->_submitValues{$idx} = \$this->_recursiveFilter(\$filter, \$value);");
                     }
                 }
@@ -1487,8 +1496,14 @@ class HTML_QuickForm extends HTML_Common {
                         if (false === ($pos = strpos($target, '['))) {
                             $isUpload = !empty($this->_submitFiles[$target]);
                         } else {
-                            $base = substr($target, 0, $pos);
-                            $idx  = "['" . str_replace(array(']', '['), array('', "']['"), substr($target, $pos + 1, -1)) . "']";
+                            $base = str_replace(
+                                        array('\\', '\''), array('\\\\', '\\\''),
+                                        substr($target, 0, $pos) 
+                                    ); 
+                            $idx  = "['" . str_replace(
+                                        array('\\', '\'', ']', '['), array('\\\\', '\\\'', '', "']['"), 
+                                        substr($target, $pos + 1, -1)
+                                    ) . "']";
                             eval("\$isUpload = isset(\$this->_submitFiles['{$base}']['name']{$idx});");
                         }
                         if ($isUpload && (!isset($submitValue['error']) || 0 != $submitValue['error'])) {
