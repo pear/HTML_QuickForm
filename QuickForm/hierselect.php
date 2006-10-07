@@ -329,7 +329,7 @@ function _hs_replaceOptions(ctl, optionList)
     var j = 0;
     ctl.options.length = 0;
     for (i in optionList) {
-        var optionText = (-1 == optionList[i].indexOf('&'))? optionList[i]: _hs_unescapeEntities(optionList[i]);
+        var optionText = (-1 == String(optionList[i]).indexOf('&'))? optionList[i]: _hs_unescapeEntities(optionList[i]);
         ctl.options[j++] = new Option(optionText, i, false, false);
     }
 }
