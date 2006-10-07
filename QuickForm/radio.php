@@ -203,7 +203,7 @@ class HTML_QuickForm_radio extends HTML_QuickForm_input
                         $value = $this->_findValue($caller->_defaultValues);
                     }
                 }
-                if ($value == $this->getValue()) {
+                if (!is_null($value) && $value == $this->getValue()) {
                     $this->setChecked(true);
                 } else {
                     $this->setChecked(false);
