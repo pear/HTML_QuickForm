@@ -200,11 +200,7 @@ class HTML_QuickForm_file extends HTML_QuickForm_input
             $dest .= '/';
         }
         $fileName = ($fileName != '') ? $fileName : basename($this->_value['name']);
-        if (move_uploaded_file($this->_value['tmp_name'], $dest . $fileName)) {
-            return true;
-        } else {
-            return false;
-        }
+        return move_uploaded_file($this->_value['tmp_name'], $dest . $fileName); 
     } // end func moveUploadedFile
     
     // }}}
