@@ -72,6 +72,10 @@ class HTML_QuickForm_hiddenselect extends HTML_QuickForm_select
      */
     function toHtml()
     {
+        if (empty($this->_values)) {
+            return '';
+        }
+
         $tabs    = $this->_getTabs();
         $name    = $this->getPrivateName();
         $strHtml = '';
