@@ -3,9 +3,11 @@
  * Example of usage for HTML_QuickForm Object renderer
  * with Flexy template engine and dynamic template
  *
- * @author Ron McClain <mixtli@cats.ucsc.edu>
- *
- * $Id$ 
+ * @category    HTML
+ * @package     HTML_QuickForm
+ * @author      Ron McClain <mixtli@cats.ucsc.edu>
+ * @version     CVS: $Id$
+ * @ignore
  */
 
 require_once 'HTML/QuickForm.php';

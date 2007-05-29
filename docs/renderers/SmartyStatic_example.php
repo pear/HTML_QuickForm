@@ -2,10 +2,12 @@
 /**
  * Example of usage for HTML_QuickForm with Smarty renderer
  *
- * @author Bertrand Mansion <bmansion@mamasam.com>
- * @author Thomas Schulz <ths@4bconsult.de>
- *
- * $Id$
+ * @category    HTML
+ * @package     HTML_QuickForm
+ * @author      Bertrand Mansion <bmansion@mamasam.com>
+ * @author      Thomas Schulz <ths@4bconsult.de>
+ * @version     CVS: $Id$
+ * @ignore
  */
 
 require_once 'HTML/QuickForm.php';

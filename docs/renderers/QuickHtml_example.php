@@ -1,4 +1,3 @@
-<?php /** $Id$ */ ?>
 <html>
   <title>QuickForm Using QuickHtml Renderer</title>
 <body>
@@ -13,7 +12,11 @@
 * widget-based template systems.  See the online documentation for more
 * info.
 *
+* @category    HTML
+* @package     HTML_QuickForm
 * @author      Jason Rust <jrust@rustyparts.com> 
+* @version     CVS: $Id$
+* @ignore
 */
 
 require_once ("HTML/QuickForm.php");

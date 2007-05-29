@@ -2,10 +2,12 @@
 /**
  * Example of usage for HTML_QuickForm Array renderer with Smarty template engine
  *
- * @author Thomas Schulz <ths@4bconsult.de>
- * @author Alexey Borzov <borz_off@cs.msu.su>
- *
- * $Id$
+ * @category    HTML
+ * @package     HTML_QuickForm
+ * @author      Thomas Schulz <ths@4bconsult.de>
+ * @author      Alexey Borzov <avb@php.net>
+ * @version     CVS: $Id$
+ * @ignore
  */
 
 require_once 'HTML/QuickForm.php';

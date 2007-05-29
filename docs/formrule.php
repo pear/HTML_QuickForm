@@ -4,8 +4,11 @@
 *
 * $Id$
 * 
+* @category    HTML
+* @package     HTML_QuickForm
 * @author      Alexey Borzov <avb@php.net>
-* @version     3.2
+* @version     CVS: $Id$
+* @ignore
 */
 
 require_once 'HTML/QuickForm.php';

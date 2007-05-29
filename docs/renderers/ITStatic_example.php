@@ -2,8 +2,11 @@
 /**
 * Example of usage for PEAR class HTML_QuickForm
 *
+* @category    HTML
+* @package     HTML_QuickForm
 * @author      Bertrand Mansion <bmansion@mamasam.com>
-* @version     2.0
+* @version     CVS: $Id$
+* @ignore
 */
 
 // $Id$

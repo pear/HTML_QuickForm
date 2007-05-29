@@ -1,11 +1,14 @@
 <?php
 /**
-*Example of usage for HTML_QuickForm with ITDynamic renderer (2-column layout)
+* Example of usage for HTML_QuickForm with ITDynamic renderer (2-column layout)
 *
+* @category    HTML
+* @package     HTML_QuickForm
 * @author      Adam Daniel <adaniel1@eesus.jnj.com>
 * @author      Bertrand Mansion <bmansion@mamasam.com>
-* @author      Alexey Borzov <borz_off@cs.msu.su>
-* @version     3.0
+* @author      Alexey Borzov <avb@php.net>
+* @version     CVS: $Id$
+* @ignore
 */
 require_once 'HTML/QuickForm.php';
 require_once 'HTML/QuickForm/Renderer/ITDynamic.php';

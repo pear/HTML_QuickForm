@@ -3,9 +3,12 @@
 * Example of usage for PEAR class HTML_QuickForm. 
 * Using filters to clean up the submitted values.
 *
-* @version 3.2
-*
-* $Id$ 
+* @category    HTML
+* @package     HTML_QuickForm
+* @author      Bertrand Mansion <bmansion@mamasam.com>
+* @author      Alexey Borzov <avb@php.net>
+* @version     CVS: $Id$
+* @ignore
 */
 
 require_once 'HTML/QuickForm.php';

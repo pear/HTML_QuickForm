@@ -2,9 +2,11 @@
 /**
  * Example of usage for QuickForm elements with multiple labels (using Default renderer)
  *
- * @author Jon Wood <jon@jellybob.co.uk>
- *
- * $Id$ 
+ * @category    HTML
+ * @package     HTML_QuickForm
+ * @author      Jon Wood <jon@jellybob.co.uk>
+ * @version     CVS: $Id$
+ * @ignore
  */
 
 require_once 'HTML/QuickForm.php';

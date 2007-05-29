@@ -2,9 +2,11 @@
 /**
  * Usage example for HTML_QuickForm, built-in validation rules.
  *
- * @author Alexey Borzov <avb@php.net>
- *
- * $Id$ 
+ * @category    HTML
+ * @package     HTML_QuickForm
+ * @author      Alexey Borzov <avb@php.net>
+ * @version     CVS: $Id$
+ * @ignore
  */
 
 require_once 'HTML/QuickForm.php';

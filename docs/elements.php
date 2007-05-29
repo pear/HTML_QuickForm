@@ -2,12 +2,13 @@
 /**
 * Example of usage for PEAR class HTML_QuickForm
 *
+* @category    HTML
+* @package     HTML_QuickForm
 * @author      Adam Daniel <adaniel1@eesus.jnj.com>
 * @author      Bertrand Mansion <bmansion@mamasam.com>
 * @author      Alexey Borzov <avb@php.net>
-* @version     3.2
-*
-* $Id$ 
+* @version     CVS: $Id$
+* @ignore
 */
 
 require_once 'HTML/QuickForm.php';

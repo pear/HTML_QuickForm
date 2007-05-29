@@ -2,9 +2,11 @@
 /**
  * Example of usage for HTML_QuickForm with ITDynamic renderer
  *
- * @author Alexey Borzov <borz_off@cs.msu.su>
- *
- * $Id$ 
+ * @category    HTML
+ * @package     HTML_QuickForm
+ * @author      Alexey Borzov <avb@php.net>
+ * @version     CVS: $Id$
+ * @ignore
  */
 
 require_once 'HTML/QuickForm.php';

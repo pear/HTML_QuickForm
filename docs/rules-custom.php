@@ -2,14 +2,22 @@
 /**
  * Usage example for HTML_QuickForm, using custom validation rules.
  *
- * @author Alexey Borzov <avb@php.net>
- *
- * $Id$ 
+ * @category    HTML
+ * @package     HTML_QuickForm
+ * @author      Alexey Borzov <avb@php.net>
+ * @version     CVS: $Id$
+ * @ignore
  */
 
 require_once 'HTML/QuickForm.php';
 require_once 'HTML/QuickForm/Rule.php';
 
+/**
+ * Checks that a numeric value is within range 
+ *
+ * @package HTML_QuickForm
+ * @ignore
+ */
 class RuleNumericRange extends HTML_QuickForm_Rule
 {
     function validate($value, $options)

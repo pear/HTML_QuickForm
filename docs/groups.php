@@ -2,11 +2,12 @@
 /**
 * Examples of usage for grouped elements in HTML_QuickForm
 *
-* $Id$
-* 
+* @category    HTML
+* @package     HTML_QuickForm
 * @author      Bertrand Mansion <bmansion@mamasam.com>
 * @author      Alexey Borzov <avb@php.net>
-* @version     3.2
+* @version     CVS: $Id$
+* @ignore
 */
 
 require_once 'HTML/QuickForm.php';
