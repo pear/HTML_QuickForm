@@ -61,7 +61,7 @@ Features:
   <email>ron@humaniq.com</email>
   <active>no</active>
  </developer>
- <date>2007-06-xx</date>
+ <date>2007-06-03</date>
  <version>
   <release>3.2.8</release>
   <api>3.2.6</api>
@@ -80,7 +80,16 @@ Changes:
 * Proper header comment blocks
 
 Bugfixes:
-    
+* Possible segfault when using Default Renderer due to sub-optimal regexps
+  (bug #9977)
+* Validation of elements containing numeric strings by &apos;compare&apos; rule
+  could give wrong results (bug #10754)
+* Regexp-based rules incorrectly allowed trailing newlines in values being
+  validated (bug #10799)
+* Wrong options could be selected in &lt;select&gt; elements if numeric strings
+  were used as options&apos; values (bug #10837, bug #11138)
+* &apos;checked&apos; attribute of checkbox was not cleared if adding checkbox to 
+  a form submitted with this box unchecked (bug #11047)
  </notes>
  <contents>
   <dir name="/" baseinstalldir="HTML">
