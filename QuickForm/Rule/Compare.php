@@ -46,8 +46,8 @@ class HTML_QuickForm_Rule_Compare extends HTML_QuickForm_Rule
     * @access private
     */
     var $_operators = array(
-        'eq'  => '==',
-        'neq' => '!=',
+        'eq'  => '===',
+        'neq' => '!==',
         'gt'  => '>',
         'gte' => '>=',
         'lt'  => '<',
@@ -65,13 +65,13 @@ class HTML_QuickForm_Rule_Compare extends HTML_QuickForm_Rule
     function _findOperator($name)
     {
         if (empty($name)) {
-            return '==';
+            return '===';
         } elseif (isset($this->_operators[$name])) {
             return $this->_operators[$name];
         } elseif (in_array($name, $this->_operators)) {
             return $name;
         } else {
-            return '==';
+            return '===';
         }
     }
 
@@ -79,10 +79,10 @@ class HTML_QuickForm_Rule_Compare extends HTML_QuickForm_Rule
     function validate($values, $operator = null)
     {
         $operator = $this->_findOperator($operator);
-        if ('==' != $operator && '!=' != $operator) {
+        if ('===' != $operator && '!==' != $operator) {
             $compareFn = create_function('$a, $b', 'return floatval($a) ' . $operator . ' floatval($b);');
         } else {
-            $compareFn = create_function('$a, $b', 'return $a ' . $operator . ' $b;');
+            $compareFn = create_function('$a, $b', 'return strval($a) ' . $operator . ' strval($b);');
         }
         
         return $compareFn($values[0], $values[1]);
@@ -92,10 +92,10 @@ class HTML_QuickForm_Rule_Compare extends HTML_QuickForm_Rule
     function getValidationScript($operator = null)
     {
         $operator = $this->_findOperator($operator);
-        if ('==' != $operator && '!=' != $operator) {
+        if ('===' != $operator && '!==' != $operator) {
             $check = "!(Number({jsVar}[0]) {$operator} Number({jsVar}[1]))";
         } else {
-            $check = "!({jsVar}[0] {$operator} {jsVar}[1])";
+            $check = "!(String({jsVar}[0]) {$operator} String({jsVar}[1]))";
         }
         return array('', "'' != {jsVar}[0] && {$check}");
     }
