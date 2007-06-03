@@ -244,7 +244,7 @@ class HTML_QuickForm_checkbox extends HTML_QuickForm_input
                         $value = $this->_findValue($caller->_defaultValues);
                     }
                 }
-                if (null !== $value) {
+                if (null !== $value || $caller->isSubmitted()) {
                     $this->setChecked($value);
                 }
                 break;
