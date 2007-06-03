@@ -49,7 +49,8 @@ class HTML_QuickForm_Rule_Email extends HTML_QuickForm_Rule
      */
     function validate($email, $checkDomain = false)
     {
-        if (preg_match($this->regex, $email)) {
+        // Fix for bug #10799: add 'D' modifier to regex
+        if (preg_match($this->regex . 'D', $email)) {
             if ($checkDomain && function_exists('checkdnsrr')) {
                 $tokens = explode('@', $email);
                 if (checkdnsrr($tokens[1], 'MX') || checkdnsrr($tokens[1], 'A')) {

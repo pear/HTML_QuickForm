@@ -64,12 +64,13 @@ class HTML_QuickForm_Rule_Regex extends HTML_QuickForm_Rule
      */
     function validate($value, $regex = null)
     {
+        // Fix for bug #10799: add 'D' modifier to regex
         if (isset($this->_data[$this->name])) {
-            if (!preg_match($this->_data[$this->name], $value)) {
+            if (!preg_match($this->_data[$this->name] . 'D', $value)) {
                 return false;
             }
         } else {
-            if (!preg_match($regex, $value)) {
+            if (!preg_match($regex . 'D', $value)) {
                 return false;
             }
         }
