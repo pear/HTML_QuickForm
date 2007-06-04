@@ -61,9 +61,9 @@ Features:
   <email>ron@humaniq.com</email>
   <active>no</active>
  </developer>
- <date>2007-06-03</date>
+ <date>2007-06-04</date>
  <version>
-  <release>3.2.8</release>
+  <release>3.2.8pl1</release>
   <api>3.2.6</api>
  </version>
  <stability>
@@ -72,24 +72,8 @@ Features:
  </stability>
  <license uri="http://www.php.net/license">PHP License</license>
  <notes>
-Development of QuickForm version 3 is now frozen. Only bug fixing will be
-done. All feature requests should be submitted for HTML_QuickForm2 package.
-
-Changes:
-* Moved to package.xml version 2
-* Proper header comment blocks
-
-Bugfixes:
-* Possible segfault when using Default Renderer due to sub-optimal regexps
-  (bug #9977)
-* Validation of elements containing numeric strings by &apos;compare&apos; rule
-  could give wrong results (bug #10754)
-* Regexp-based rules incorrectly allowed trailing newlines in values being
-  validated (bug #10799)
-* Wrong options could be selected in &lt;select&gt; elements if numeric strings
-  were used as options&apos; values (bug #10837, bug #11138)
-* &apos;checked&apos; attribute of checkbox was not cleared if adding checkbox to 
-  a form submitted with this box unchecked (bug #11047)
+Fixes to bug #10837 and bug #11138 in release 3.2.8 could prevent setting the
+values of &apos;date&apos; elements. Thanks to Massimiliano Arione for reporting.
  </notes>
  <contents>
   <dir name="/" baseinstalldir="HTML">
@@ -283,6 +267,38 @@ Bugfixes:
  </dependencies>
  <phprelease />
  <changelog>
+  <release>
+   <version>
+    <release>3.2.8</release>
+    <api>3.2.6</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2007-06-03</date>
+   <license uri="http://www.php.net/license">PHP License</license>
+   <notes>
+Development of QuickForm version 3 is now frozen. Only bug fixing will be
+done. All feature requests should be submitted for HTML_QuickForm2 package.
+
+Changes:
+* Moved to package.xml version 2
+* Proper header comment blocks
+
+Bugfixes:
+* Possible segfault when using Default Renderer due to sub-optimal regexps
+  (bug #9977)
+* Validation of elements containing numeric strings by &apos;compare&apos; rule
+  could give wrong results (bug #10754)
+* Regexp-based rules incorrectly allowed trailing newlines in values being
+  validated (bug #10799)
+* Wrong options could be selected in &lt;select&gt; elements if numeric strings
+  were used as options&apos; values (bug #10837, bug #11138)
+* &apos;checked&apos; attribute of checkbox was not cleared if adding checkbox to 
+  a form submitted with this box unchecked (bug #11047)
+   </notes>
+  </release>
   <release>
    <version>
     <release>3.2.7</release>
