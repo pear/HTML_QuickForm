@@ -446,7 +446,7 @@ class HTML_QuickForm_date extends HTML_QuickForm_group
                 $value = strtotime($value);
             }
             // might be a unix epoch, then we fill all possible values
-            $arr = explode('-', date('w-d-n-Y-h-H-i-s-a-A-W', (int)$value));
+            $arr = explode('-', date('w-j-n-Y-g-G-i-s-a-A-W', (int)$value));
             $value = array(
                 'D' => $arr[0],
                 'l' => $arr[0],
@@ -459,11 +459,16 @@ class HTML_QuickForm_date extends HTML_QuickForm_group
                 'h' => $arr[4],
                 'g' => $arr[4],
                 'H' => $arr[5],
-                'i' => $arr[6],
-                's' => $arr[7],
+                'i' => ltrim($arr[6], '0'),
+                's' => ltrim($arr[7], '0'),
                 'a' => $arr[8],
                 'A' => $arr[9],
-                'W' => $arr[10]
+                'W' => ltrim($arr[10], '0')
+            );
+        } else {
+            $value = array_map(
+                create_function('$a', 'return ltrim($a, \'0\');'),
+                $value 
             );
         }
         parent::setValue($value);
