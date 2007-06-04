@@ -439,6 +439,7 @@ class HTML_QuickForm_date extends HTML_QuickForm_group
 
     function setValue($value)
     {
+        $trimLeadingZeros = create_function('$a', '$b = ltrim($a, \'0\'); return strlen($b)? $b: \'0\';');
         if (empty($value)) {
             $value = array();
         } elseif (is_scalar($value)) {
@@ -459,17 +460,14 @@ class HTML_QuickForm_date extends HTML_QuickForm_group
                 'h' => $arr[4],
                 'g' => $arr[4],
                 'H' => $arr[5],
-                'i' => ltrim($arr[6], '0'),
-                's' => ltrim($arr[7], '0'),
+                'i' => $trimLeadingZeros($arr[6]),
+                's' => $trimLeadingZeros($arr[7]),
                 'a' => $arr[8],
                 'A' => $arr[9],
-                'W' => ltrim($arr[10], '0')
+                'W' => $trimLeadingZeros($arr[10])
             );
         } else {
-            $value = array_map(
-                create_function('$a', 'return ltrim($a, \'0\');'),
-                $value 
-            );
+            $value = array_map($trimLeadingZeros, $value);
         }
         parent::setValue($value);
     }
