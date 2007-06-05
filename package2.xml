@@ -61,7 +61,7 @@ Features:
   <email>ron@humaniq.com</email>
   <active>no</active>
  </developer>
- <date>2007-06-04</date>
+ <date>2007-06-05</date>
  <version>
   <release>3.2.9</release>
   <api>3.2.6</api>
@@ -72,8 +72,11 @@ Features:
  </stability>
  <license uri="http://www.php.net/license">PHP License</license>
  <notes>
-Fixes to bug #10837 and bug #11138 in release 3.2.8 could prevent setting the
-values of &apos;date&apos; elements. Thanks to Massimiliano Arione for reporting.
+This release fixes problems introduced in release 3.2.8:
+* Fixes to bug #10837 and bug #11138 could prevent setting the values 
+  of &apos;date&apos; elements. Thanks to Massimiliano Arione for reporting.
+* Fix to bug #10754 broke &apos;compare&apos; rules with &apos;!=&apos; operators
+  (see bug #11229)
  </notes>
  <contents>
   <dir name="/" baseinstalldir="HTML">

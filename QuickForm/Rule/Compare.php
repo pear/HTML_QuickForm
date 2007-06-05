@@ -51,7 +51,9 @@ class HTML_QuickForm_Rule_Compare extends HTML_QuickForm_Rule
         'gt'  => '>',
         'gte' => '>=',
         'lt'  => '<',
-        'lte' => '<='
+        'lte' => '<=',
+        '=='  => '===',
+        '!='  => '!=='
     );
 
 
