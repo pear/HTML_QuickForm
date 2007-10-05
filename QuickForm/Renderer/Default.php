@@ -256,14 +256,14 @@ class HTML_QuickForm_Renderer_Default extends HTML_QuickForm_Renderer
             $html = str_replace('<!-- BEGIN required -->', '', $html);
             $html = str_replace('<!-- END required -->', '', $html);
         } else {
-            $html = preg_replace("/([ \t\n\r]*)?<!-- BEGIN required -->.*<!-- END required -->([ \t\n\r]*)?/iU", '', $html);
+            $html = preg_replace("/([ \t\n\r]*)?<!-- BEGIN required -->.*<!-- END required -->([ \t\n\r]*)?/isU", '', $html);
         }
         if (isset($error)) {
             $html = str_replace('{error}', $error, $html);
             $html = str_replace('<!-- BEGIN error -->', '', $html);
             $html = str_replace('<!-- END error -->', '', $html);
         } else {
-            $html = preg_replace("/([ \t\n\r]*)?<!-- BEGIN error -->.*<!-- END error -->([ \t\n\r]*)?/iU", '', $html);
+            $html = preg_replace("/([ \t\n\r]*)?<!-- BEGIN error -->.*<!-- END error -->([ \t\n\r]*)?/isU", '', $html);
         }
         if (is_array($label)) {
             foreach($label as $key => $text) {
@@ -274,7 +274,7 @@ class HTML_QuickForm_Renderer_Default extends HTML_QuickForm_Renderer
             }
         }
         if (strpos($html, '{label_')) {
-            $html = preg_replace('/\s*<!-- BEGIN label_(\S+) -->.*<!-- END label_\1 -->\s*/i', '', $html);
+            $html = preg_replace('/\s*<!-- BEGIN label_(\S+) -->.*<!-- END label_\1 -->\s*/is', '', $html);
         }
         return $html;
     } // end func _prepareTemplate
@@ -301,7 +301,7 @@ class HTML_QuickForm_Renderer_Default extends HTML_QuickForm_Renderer
                 $html = str_replace('<!-- BEGIN required -->', '', $html);
                 $html = str_replace('<!-- END required -->', '', $html);
             } else {
-                $html = preg_replace("/([ \t\n\r]*)?<!-- BEGIN required -->.*<!-- END required -->([ \t\n\r]*)?/iU", '', $html);
+                $html = preg_replace("/([ \t\n\r]*)?<!-- BEGIN required -->.*<!-- END required -->([ \t\n\r]*)?/isU", '', $html);
             }
             $this->_groupElements[] = str_replace('{element}', $element->toHtml(), $html);
 
