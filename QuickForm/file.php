@@ -307,7 +307,7 @@ class HTML_QuickForm_file extends HTML_QuickForm_input
         if (!HTML_QuickForm_file::_ruleIsUploadedFile($elementValue)) {
             return true;
         }
-        return preg_match($regex, $elementValue['name']);
+        return (bool)preg_match($regex, $elementValue['name']);
     } // end func _ruleCheckFileName
     
     // }}}
