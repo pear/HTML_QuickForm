@@ -435,11 +435,28 @@ class HTML_QuickForm_date extends HTML_QuickForm_group
     }
 
     // }}}
+    // {{{ _trimLeadingZeros()
+
+   /**
+    * Trims leading zeros from the (numeric) string
+    *
+    * @param    string  A numeric string, possibly with leading zeros
+    * @return   string  String with leading zeros removed
+    */
+    function _trimLeadingZeros($str)
+    {
+        if (0 == strcmp($str, $this->_options['emptyOptionValue'])) {
+            return $str;
+        }
+        $trimmed = ltrim($str, '0');
+        return strlen($trimmed)? $trimmed: '0';
+    }
+
+    // }}}
     // {{{ setValue()
 
     function setValue($value)
     {
-        $trimLeadingZeros = create_function('$a', '$b = ltrim($a, \'0\'); return strlen($b)? $b: \'0\';');
         if (empty($value)) {
             $value = array();
         } elseif (is_scalar($value)) {
@@ -460,14 +477,14 @@ class HTML_QuickForm_date extends HTML_QuickForm_group
                 'h' => $arr[4],
                 'g' => $arr[4],
                 'H' => $arr[5],
-                'i' => $trimLeadingZeros($arr[6]),
-                's' => $trimLeadingZeros($arr[7]),
+                'i' => $this->_trimLeadingZeros($arr[6]),
+                's' => $this->_trimLeadingZeros($arr[7]),
                 'a' => $arr[8],
                 'A' => $arr[9],
-                'W' => $trimLeadingZeros($arr[10])
+                'W' => $this->_trimLeadingZeros($arr[10])
             );
         } else {
-            $value = array_map($trimLeadingZeros, $value);
+            $value = array_map(array($this, '_trimLeadingZeros'), $value);
         }
         parent::setValue($value);
     }
