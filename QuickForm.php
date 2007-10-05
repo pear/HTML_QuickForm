@@ -1526,6 +1526,11 @@ class HTML_QuickForm extends HTML_Common
                     // Fix for bug #3501: we shouldn't validate not uploaded files, either.
                     // Unfortunately, we can't just use $element->isUploadedFile() since
                     // the element in question can be buried in group. Thus this hack.
+                    // See also bug #12014, we should only consider a file that has
+                    // status UPLOAD_ERR_NO_FILE as not uploaded, in all other cases
+                    // validation should be performed, so that e.g. 'maxfilesize' rule
+                    // will display an error if status is UPLOAD_ERR_INI_SIZE 
+                    // or UPLOAD_ERR_FORM_SIZE
                     } elseif (is_array($submitValue)) {
                         if (false === ($pos = strpos($target, '['))) {
                             $isUpload = !empty($this->_submitFiles[$target]);
@@ -1540,7 +1545,7 @@ class HTML_QuickForm extends HTML_Common
                                     ) . "']";
                             eval("\$isUpload = isset(\$this->_submitFiles['{$base}']['name']{$idx});");
                         }
-                        if ($isUpload && (!isset($submitValue['error']) || 0 != $submitValue['error'])) {
+                        if ($isUpload && (!isset($submitValue['error']) || UPLOAD_ERR_NO_FILE == $submitValue['error'])) {
                             continue 2;
                         }
                     }
