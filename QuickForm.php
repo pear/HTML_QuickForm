@@ -1031,6 +1031,11 @@ class HTML_QuickForm extends HTML_Common
         }
         if ($removeRules) {
             unset($this->_rules[$elementName], $this->_errors[$elementName]);
+            if ('group' == $el->getType()) {
+                foreach (array_keys($el->getElements()) as $key) {
+                    unset($this->_rules[$el->getElementName($key)]);
+                }
+            }
         }
         return $el;
     } // end func removeElement
