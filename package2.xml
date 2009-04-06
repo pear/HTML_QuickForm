@@ -61,9 +61,9 @@ Features:
   <email>ron@humaniq.com</email>
   <active>no</active>
  </developer>
- <date>2007-10-05</date>
+ <date>2009-04-06</date>
  <version>
-  <release>3.2.10</release>
+  <release>3.2.11</release>
   <api>3.2.6</api>
  </version>
  <stability>
@@ -72,14 +72,16 @@ Features:
  </stability>
  <license uri="http://www.php.net/license">PHP License</license>
  <notes>
-  * An error in date's setValue() method prevented setting the 'empty' value
-    as the default one (bug #11717)
-  * A space could be displayed instead of '0' for frozen elements with value
-    set to '0' (bug #11995)
-  * Validation rules on file uploads will be skipped only if no upload was
-    attempted, not if it failed for some reason (bug #12014)
-  * 'filename' rule returned integer instead of expected boolean (bug #12015)
-  * Regexps in Default renderer missed necessary 's' modifier (bug #12026)
+ * PHP-style Unicode escape codes in regular expressions are translated to
+   Javascript-style ones when using client-side validation (bug #12736)
+ * Rules for grouped elements were not removed when removing a group via
+   removeElement() method (bug #14540)
+ * Allow setting $collectHidden parameter in constructor of ArraySmarty
+   renderer, as allowed in constructor of Array renderer (bug #14995)
+ * Element name was not removed from $_required array in removeElement()
+   (bug #15520)
+ * Third and subsequent selects in hierselect could be not cleared under some
+   circumstances (bug #15955)
  </notes>
  <contents>
   <dir name="/" baseinstalldir="HTML">
@@ -273,6 +275,28 @@ Features:
  </dependencies>
  <phprelease />
  <changelog>
+ <release>
+ <version>
+  <release>3.2.10</release>
+  <api>3.2.6</api>
+ </version>
+ <stability>
+  <release>stable</release>
+  <api>stable</api>
+ </stability>
+ <date>2007-10-05</date>
+ <license uri="http://www.php.net/license">PHP License</license>
+ <notes>
+  * An error in date's setValue() method prevented setting the 'empty' value
+    as the default one (bug #11717)
+  * A space could be displayed instead of '0' for frozen elements with value
+    set to '0' (bug #11995)
+  * Validation rules on file uploads will be skipped only if no upload was
+    attempted, not if it failed for some reason (bug #12014)
+  * 'filename' rule returned integer instead of expected boolean (bug #12015)
+  * Regexps in Default renderer missed necessary 's' modifier (bug #12026)
+ </notes>
+ </release>
  <release>
  <version>
   <release>3.2.9</release>
