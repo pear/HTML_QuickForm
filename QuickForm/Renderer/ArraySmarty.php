@@ -133,11 +133,12 @@ class HTML_QuickForm_Renderer_ArraySmarty extends HTML_QuickForm_Renderer_Array
     *
     * @param  Smarty  reference to the Smarty template engine instance
     * @param  bool    true: render an array of labels to many labels, $key 0 to 'label' and the oterh to "label_$key"
+    * @param  bool    true: collect all hidden elements into string; false: process them as usual form elements
     * @access public
     */
-    function HTML_QuickForm_Renderer_ArraySmarty(&$tpl, $staticLabels = false)
+    function HTML_QuickForm_Renderer_ArraySmarty(&$tpl, $staticLabels = false, $collectHidden = true)
     {
-        $this->HTML_QuickForm_Renderer_Array(true, $staticLabels);
+        $this->HTML_QuickForm_Renderer_Array($collectHidden, $staticLabels);
         $this->_tpl =& $tpl;
     } // end constructor
 
