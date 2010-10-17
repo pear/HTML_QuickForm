@@ -17,7 +17,7 @@
  * @author      Adam Daniel <adaniel1@eesus.jnj.com>
  * @author      Bertrand Mansion <bmansion@mamasam.com>
  * @author      Alexey Borzov <avb@php.net>
- * @copyright   2001-2009 The PHP Group
+ * @copyright   2001-2010 The PHP Group
  * @license     http://www.php.net/license/3_01.txt PHP License 3.01
  * @version     CVS: $Id$
  * @link        http://pear.php.net/package/HTML_QuickForm

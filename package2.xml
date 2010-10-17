@@ -61,9 +61,9 @@ Features:
   <email>ron@humaniq.com</email>
   <active>no</active>
  </developer>
- <date>2009-04-07</date>
+ <date>2010-10-17</date>
  <version>
-  <release>3.2.11</release>
+  <release>3.2.12</release>
   <api>3.2.6</api>
  </version>
  <stability>
@@ -72,16 +72,11 @@ Features:
  </stability>
  <license uri="http://www.php.net/license">PHP License</license>
  <notes>
- * PHP-style Unicode escape codes in regular expressions are translated to
-   Javascript-style ones when using client-side validation (bug #12736)
- * Rules for grouped elements were not removed when removing a group via
-   removeElement() method (bug #14540)
- * Allow setting $collectHidden parameter in constructor of ArraySmarty
-   renderer, as allowed in constructor of Array renderer (bug #14995)
- * Element name was not removed from $_required array in removeElement()
-   (bug #15520)
- * Third and subsequent selects in hierselect could be not cleared under some
-   circumstances (bug #15955)
+ * Added Serbian translation for date element (sent by Milos Tijanic)
+ * Added Greek translation for date element (sent by Pantelis Evgenidis)
+ * Got rid of deprecated split() function (thanks to Daniel O'Connor)
+ * Rewritten Javascript for hierselect element to not rely on "for in" loop
+   (bug #16603)
  </notes>
  <contents>
   <dir name="/" baseinstalldir="HTML">
@@ -275,6 +270,30 @@ Features:
  </dependencies>
  <phprelease />
  <changelog>
+ <release>
+ <version>
+  <release>3.2.11</release>
+  <api>3.2.6</api>
+ </version>
+ <stability>
+  <release>stable</release>
+  <api>stable</api>
+ </stability>
+ <date>2009-04-07</date>
+ <license uri="http://www.php.net/license">PHP License</license>
+ <notes>
+ * PHP-style Unicode escape codes in regular expressions are translated to
+   Javascript-style ones when using client-side validation (bug #12736)
+ * Rules for grouped elements were not removed when removing a group via
+   removeElement() method (bug #14540)
+ * Allow setting $collectHidden parameter in constructor of ArraySmarty
+   renderer, as allowed in constructor of Array renderer (bug #14995)
+ * Element name was not removed from $_required array in removeElement()
+   (bug #15520)
+ * Third and subsequent selects in hierselect could be not cleared under some
+   circumstances (bug #15955)
+ </notes>
+ </release>
  <release>
  <version>
   <release>3.2.10</release>
