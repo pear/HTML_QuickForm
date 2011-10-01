@@ -15,7 +15,7 @@
  * @category    HTML
  * @package     HTML_QuickForm
  * @author      Wojciech Gdela <eltehaem@poczta.onet.pl>
- * @copyright   2001-2010 The PHP Group
+ * @copyright   2001-2011 The PHP Group
  * @license     http://www.php.net/license/3_01.txt PHP License 3.01
  * @version     CVS: $Id$
  * @link        http://pear.php.net/package/HTML_QuickForm
