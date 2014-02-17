@@ -45,7 +45,8 @@
     },
     "type": "library",
     "require": {
-        "pear/pear_exception": "*"
+        "pear/pear_exception": "*",
+        "pear/html_common": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "*"
