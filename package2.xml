@@ -252,7 +252,7 @@ Features:
  <dependencies>
   <required>
    <php>
-    <min>4.3</min>
+    <min>5.4</min>
    </php>
    <pearinstaller>
     <min>1.5.4</min>
