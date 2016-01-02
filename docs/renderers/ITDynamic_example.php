@@ -75,13 +75,13 @@ if ($form->validate()) {
 
 // create a template object and load the template file
 // can use either HTML_Template_Sigma or HTML_Template_ITX
-$tpl =& new HTML_Template_ITX('./templates');
-// $tpl =& new HTML_Template_Sigma('./templates');
+$tpl =new HTML_Template_ITX('./templates');
+// $tpl =new HTML_Template_Sigma('./templates');
 
 $tpl->loadTemplateFile('it-dynamic.html', true, true);
 
 // create a renderer
-$renderer =& new HTML_QuickForm_Renderer_ITDynamic($tpl);
+$renderer =new HTML_QuickForm_Renderer_ITDynamic($tpl);
 
 // assign elements to blocks
 $renderer->setElementBlock(array(

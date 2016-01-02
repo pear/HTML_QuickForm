@@ -72,7 +72,7 @@ if ($form->validate()) {
     $form->freeze();
 }
 
-$renderer =& new HTML_QuickForm_Renderer_Object(true);
+$renderer =new HTML_QuickForm_Renderer_Object(true);
 
 // give some elements aditional style informations
 $renderer->setElementStyle(array(
@@ -90,7 +90,7 @@ $options = array(
 	'compileDir' => './templates/build',
 	'debug' => 0
 );
-$tpl =& new HTML_Template_Flexy($options);
+$tpl =new HTML_Template_Flexy($options);
 
 //$tpl->compile("styles/green.html");
 //$tpl->compile("styles/fancygroup.html");

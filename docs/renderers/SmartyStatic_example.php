@@ -99,11 +99,11 @@ if ($form->validate()) {
 }
 
 // setup a template object
-$tpl =& new Smarty;
+$tpl =new Smarty;
 $tpl->template_dir = './templates';
 $tpl->compile_dir  = './templates';
 
-$renderer =& new HTML_QuickForm_Renderer_ArraySmarty($tpl, true);
+$renderer =new HTML_QuickForm_Renderer_ArraySmarty($tpl, true);
 
 $renderer->setRequiredTemplate(
    '{if $error}

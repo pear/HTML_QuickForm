@@ -11,7 +11,7 @@
 
 require_once 'HTML/QuickForm.php';
 
-$form =& new HTML_QuickForm('builtin');
+$form =new HTML_QuickForm('builtin');
 
 // We need an additional label below the element
 $renderer =& $form->defaultRenderer();
