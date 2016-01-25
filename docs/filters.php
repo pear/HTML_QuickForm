@@ -18,7 +18,7 @@ function _filterAustin($value)
     return strtoupper($value).', GROOVY BABY!';
 }
 
-$form =new HTML_QuickForm('frmTest', 'get');
+$form = new HTML_QuickForm('frmTest', 'get');
 
 $form->addElement('text', 'txtTest', 'Test Text to trim:');
 $form->addRule('txtTest', 'Test text is required', 'required');

@@ -78,7 +78,7 @@ if ($form->validate()) {
     $form->freeze();
 }
 
-$renderer =new HTML_QuickForm_Renderer_Array(true, true);
+$renderer = new HTML_QuickForm_Renderer_Array(true, true);
 
 // give some elements aditional style informations
 $renderer->setElementStyle(array(
@@ -90,7 +90,7 @@ $renderer->setElementStyle(array(
 $form->accept($renderer);
 
 // setup a template object
-$tpl =new Smarty;
+$tpl = new Smarty;
 $tpl->template_dir = './templates';
 $tpl->compile_dir  = './templates';
 

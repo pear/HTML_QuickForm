@@ -100,10 +100,10 @@ if ($form->validate()) {
 }
 
 // Could be HTML_Template_Sigma('./templates')
-$tpl =new HTML_Template_ITX('./templates');
+$tpl = new HTML_Template_ITX('./templates');
 $tpl->loadTemplateFile('it-static.html');
 
-$renderer =new HTML_QuickForm_Renderer_ITStatic($tpl);
+$renderer = new HTML_QuickForm_Renderer_ITStatic($tpl);
 $renderer->setRequiredTemplate('{label}<font color="red" size="1">*</font>');
 $renderer->setErrorTemplate('<font color="orange" size="1">{error}</font><br />{html}');
 

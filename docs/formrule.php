@@ -59,7 +59,7 @@ function _validate_shipping($values)
     return empty($errors)? true: $errors;
 }
 
-$form =new HTML_QuickForm('frmFancy');
+$form = new HTML_QuickForm('frmFancy');
 $form->setDefaults(array(
     'profile'     => 'existing',
     'stuffAmount' => '1'

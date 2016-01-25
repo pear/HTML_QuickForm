@@ -71,7 +71,7 @@ function countUpper_old($name, $value, $limit = null)
     return (count($upper) / strlen($value)) <= $limit;
 }
 
-$form =new HTML_QuickForm('custom');
+$form = new HTML_QuickForm('custom');
 
 $form->addElement('header', null, 'Custom rule class');
 

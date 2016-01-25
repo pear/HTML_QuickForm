@@ -12,7 +12,7 @@
 
 require_once 'HTML/QuickForm.php';
 
-$form =new HTML_QuickForm('frmGroups');
+$form = new HTML_QuickForm('frmGroups');
 $form->setDefaults(array(
     'id'        => array('lastname' => 'Mamasam', 'code' => '1234'),
     'phoneNo'   => array('513', '123', '3456'),
