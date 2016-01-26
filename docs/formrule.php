@@ -64,7 +64,7 @@ $form->setDefaults(array(
     'profile'     => 'existing',
     'stuffAmount' => '1'
 ));
-$renderer =& $form->defaultRenderer();
+$renderer = $form->defaultRenderer();
 $renderer->setElementTemplate("\n\t<tr>\n\t\t<td style=\"white-space: nowrap; background-color: #F0F0F0;\" align=\"left\" valign=\"top\" colspan=\"2\"><b>{element}</b></td>\n\t</tr>", 'profile');
 
 $form->addElement('header', null, 'Choose stuff');
@@ -80,8 +80,8 @@ $form->addElement('text',   'profileName', 'Profile name:', array('size' => 32, 
 
 $form->addElement('radio',  'profile', null, 'New personal profile', 'personal');
 $form->addElement('text',   'persProfileName', 'Profile name:', array('size' => 32, 'maxlength' => 32));
-$name[] =& $form->createElement('text', 'first', null, array('size' => 14, 'maxlength' => 100));
-$name[] =& $form->createElement('text', 'last', null, array('size' => 14, 'maxlength' => 100));
+$name[] = $form->createElement('text', 'first', null, array('size' => 14, 'maxlength' => 100));
+$name[] = $form->createElement('text', 'last', null, array('size' => 14, 'maxlength' => 100));
 $form->addGroup($name, 'persName', 'Name (first, last):', ' ');
 $form->addElement('text',   'persAddress', 'Address:', array('size' => 32, 'maxlength' => 255));
 

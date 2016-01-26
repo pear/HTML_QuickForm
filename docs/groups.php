@@ -19,7 +19,7 @@ $form->setDefaults(array(
     'ichkABC'   => array('A'=>true)
 ));
 
-$renderer =& $form->defaultRenderer();
+$renderer = $form->defaultRenderer();
 
 // Setting templates for form and headers
 $renderer->setFormTemplate("<form{attributes}>\n<table width=\"450\" border=\"0\" cellpadding=\"3\" cellspacing=\"2\" bgcolor=\"#CCCC99\">\n{content}\n</table>\n</form>");
@@ -78,9 +78,9 @@ $form->addGroup($radio,  'iradYesNo', 'Yes/No:');
 $form->addRule('iradYesNo', 'Check Yes or No', 'required', null, 'client');
 
 // Creates a group of buttons to be displayed at the bottom of the form
-$buttons[] =& $form->createElement('submit', null, 'Submit');
-$buttons[] =& $form->createElement('reset', null, 'Reset');
-$buttons[] =& $form->createElement('checkbox', 'clientSide', null, 'use client-side validation', array('checked' => 'checked', 'onclick' => "if (this.checked) {this.form.onsubmit = validate_" . $form->getAttribute('id') . ";} else {this.form.onsubmit = null;}"));
+$buttons[] = $form->createElement('submit', null, 'Submit');
+$buttons[] = $form->createElement('reset', null, 'Reset');
+$buttons[] = $form->createElement('checkbox', 'clientSide', null, 'use client-side validation', array('checked' => 'checked', 'onclick' => "if (this.checked) {this.form.onsubmit = validate_" . $form->getAttribute('id') . ";} else {this.form.onsubmit = null;}"));
 $form->addGroup($buttons);
 
 

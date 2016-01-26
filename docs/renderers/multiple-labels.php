@@ -40,7 +40,7 @@ if ($form->validate()) {
 }
 
 // customize the element template
-$renderer =& $form->defaultRenderer();
+$renderer = $form->defaultRenderer();
 $renderer->setElementTemplate($template);
 
 // output the form

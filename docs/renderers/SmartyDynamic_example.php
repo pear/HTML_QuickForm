@@ -36,7 +36,7 @@ $form->addElement('textarea', 'itxaTest', 'Test TextArea', 'cols="40" rows="2"')
 
 // will be later assigned to style green
 $form->addElement('password', 'ipwdTest', 'Test Password');
-$select =& $form->addElement(
+$select = $form->addElement(
     'select',
     'iselTest',
     array('Test Select', 'note' => 'We recommend to check at least two categories!'),

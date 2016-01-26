@@ -23,9 +23,9 @@ $form = new HTML_QuickForm('frmTest', 'get');
 $form->addElement('text', 'txtTest', 'Test Text to trim:');
 $form->addRule('txtTest', 'Test text is required', 'required');
 
-$phoneGrp[] =& $form->createElement('text', '', null, array('size' => 3, 'maxlength' => 3));
-$phoneGrp[] =& $form->createElement('text', '', null, array('size' => 3, 'maxlength' => 3));
-$phoneGrp[] =& $form->createElement('text', '', null, array('size' => 4, 'maxlength' => 4));
+$phoneGrp[] = $form->createElement('text', '', null, array('size' => 3, 'maxlength' => 3));
+$phoneGrp[] = $form->createElement('text', '', null, array('size' => 3, 'maxlength' => 3));
+$phoneGrp[] = $form->createElement('text', '', null, array('size' => 4, 'maxlength' => 4));
 $form->addGroup($phoneGrp, 'phone', 'Telephone (will be converted to numbers):', '-');
 $form->addGroupRule('phone', 'The phone is required', 'required', null, 3);
 

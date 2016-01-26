@@ -28,7 +28,7 @@ $twoLabel = <<<_HTML
 </tr>
 _HTML;
 
-$renderer =& $form->defaultRenderer();
+$renderer = $form->defaultRenderer();
 $renderer->setElementTemplate($twoLabel, 'iadvChk');
 $renderer->setElementTemplate($twoLabel, 'iautoComp');
 
@@ -64,7 +64,7 @@ $form->addElement('button', 'ibtnTest', 'Test Button', array('onclick' => "alert
 $form->addElement('reset', 'iresTest', 'Test Reset');
 $form->addElement('submit', 'isubTest', 'Test Submit');
 $form->addElement('image', 'iimgTest', 'http://pear.php.net/gifs/pear-icon.gif');
-$select =& $form->addElement('select', 'iselTest', 'Test Select:', array('A'=>'A', 'B'=>'B','C'=>'C','D'=>'D'));
+$select = $form->addElement('select', 'iselTest', 'Test Select:', array('A'=>'A', 'B'=>'B','C'=>'C','D'=>'D'));
 $select->setSize(5);
 $select->setMultiple(true);
 
@@ -90,7 +90,7 @@ $secondary[2][7] = "Beethoven";
 $opts[] = $main;
 $opts[] = $secondary;
 
-$hs =& $form->addElement('hierselect', 'ihsTest', 'Hierarchical select:', array('style' => 'width: 20em;'), '<br />');
+$hs = $form->addElement('hierselect', 'ihsTest', 'Hierarchical select:', array('style' => 'width: 20em;'), '<br />');
 $hs->setOptions($opts);
 
 $form->addElement('advcheckbox', 'iadvChk', array('Advanced checkbox:', 'Unlike standard checkbox, this element <b>has</b> a value<br />when it is not checked.'), 'Check the box', null, array('off', 'on'));

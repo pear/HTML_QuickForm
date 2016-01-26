@@ -35,7 +35,7 @@ $form->addElement('textarea', 'itxaTest', 'Test TextArea');
 
 // will be later assigned to style green
 $form->addElement('password', 'ipwdTest', array('Test Password', 'Please choose a password which is hard to guess'));
-$select =& $form->addElement('select', 'iselTest', 'Test Select', array('A'=>'A', 'B'=>'B','C'=>'C','D'=>'D'));
+$select = $form->addElement('select', 'iselTest', 'Test Select', array('A'=>'A', 'B'=>'B','C'=>'C','D'=>'D'));
 $select->setSize(5);
 $select->setMultiple(true);
 

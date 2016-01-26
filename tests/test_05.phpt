@@ -6,8 +6,8 @@ See http://pear.php.net/manual/en/package.html.html-quickform.html-quickform.add
 <?php
 require_once 'HTML/QuickForm.php';
 $form = new HTML_QuickForm('firstForm');
-$group[] =& HTML_QuickForm::createElement('text', 'first', 'First');
-$group[] =& HTML_QuickForm::createElement('text', 'last', 'Last');
+$group[] = HTML_QuickForm::createElement('text', 'first', 'First');
+$group[] = HTML_QuickForm::createElement('text', 'last', 'Last');
 $form->addGroup($group, 'name', 'Name:', ',&nbsp;');
 $form->addElement('submit');
 $form->display();

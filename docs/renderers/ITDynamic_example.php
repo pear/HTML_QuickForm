@@ -35,7 +35,7 @@ $form->addElement('text', 'itxtTest', 'Test Text:');
 $form->addElement('textarea', 'itxaTest', 'Test TextArea:', array('rows' => 5, 'cols' => 40));
 // will be later assigned to qf_green, note that an array of labels is passed
 $form->addElement('password', 'ipwdTest', array('Test Password:', 'The password is expected to be long enough.'));
-$select =& $form->addElement('select', 'iselTest', 'Test Select:', array('A'=>'A', 'B'=>'B','C'=>'C','D'=>'D'));
+$select = $form->addElement('select', 'iselTest', 'Test Select:', array('A'=>'A', 'B'=>'B','C'=>'C','D'=>'D'));
 $select->setSize(5);
 $select->setMultiple(true);
 $form->addElement('submit', 'isubTest', 'Test Submit');

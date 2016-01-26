@@ -14,7 +14,7 @@ require_once 'HTML/QuickForm.php';
 $form = new HTML_QuickForm('builtin');
 
 // We need an additional label below the element
-$renderer =& $form->defaultRenderer();
+$renderer = $form->defaultRenderer();
 $renderer->setElementTemplate(<<<EOT
 <tr>
     <td align="right" valign="top" nowrap="nowrap"><!-- BEGIN required --><span style="color: #ff0000">*</span><!-- END required --><b>{label}</b></td>
@@ -77,8 +77,8 @@ $form->addRule('tstUpload', 'File type should be text/xml', 'mimetype', 'text/xm
 $form->addRule('tstUpload', 'File name should be *.xml', 'filename', '/\\.xml$/');
 
 $form->addElement('header', null, 'Submit the form');
-$submit[] =& $form->createElement('submit', null, 'Send');
-$submit[] =& $form->createElement('checkbox', 'clientSide', null, 'use client-side validation', array('checked' => 'checked', 'onclick' => "if (this.checked) {this.form.onsubmit = oldHandler;} else {oldHandler = this.form.onsubmit; this.form.onsubmit = null;}"));
+$submit[] = $form->createElement('submit', null, 'Send');
+$submit[] = $form->createElement('checkbox', 'clientSide', null, 'use client-side validation', array('checked' => 'checked', 'onclick' => "if (this.checked) {this.form.onsubmit = oldHandler;} else {oldHandler = this.form.onsubmit; this.form.onsubmit = null;}"));
 $form->addGroup($submit, null, null, '&nbsp;', false);
 
 $form->applyFilter('__ALL__', 'trim');

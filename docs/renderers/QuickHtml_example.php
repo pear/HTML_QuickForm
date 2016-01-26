@@ -86,9 +86,9 @@ function createElements(&$form)
     $form->addElement('radio','tmp_radio',null,null,'Y');
     $form->addElement('radio','tmp_radio',null,null,'N');
     $text = array();
-    $text[] =& HTML_QuickForm::createElement('text','',null,array('size' => 3));
-    $text[] =& HTML_QuickForm::createElement('text','',null,array('size' => 4));
-    $text[] =& HTML_QuickForm::createElement('text','',null,array('size' => 3));
+    $text[] = HTML_QuickForm::createElement('text','',null,array('size' => 3));
+    $text[] = HTML_QuickForm::createElement('text','',null,array('size' => 4));
+    $text[] = HTML_QuickForm::createElement('text','',null,array('size' => 3));
     $form->addGroup($text, 'phone_num', null, '-');
     $form->addElement('advcheckbox','tmp_checkbox',null,'Please Check',null,array('not checked', 'checked'));
     $form->addElement('date', 'tmp_date', null, array('format'=>'D d M Y'));
