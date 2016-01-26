@@ -89,7 +89,7 @@ class HTML_QuickForm_element extends HTML_Common
      * @access    public
      * @return    void
      */
-    function HTML_QuickForm_element($elementName=null, $elementLabel=null, $attributes=null)
+    function __construct($elementName=null, $elementLabel=null, $attributes=null)
     {
         HTML_Common::HTML_Common($attributes);
         if (isset($elementName)) {
@@ -98,6 +98,24 @@ class HTML_QuickForm_element extends HTML_Common
         if (isset($elementLabel)) {
             $this->setLabel($elementLabel);
         }
+    } //end constructor
+    
+    // }}}
+    // {{{ constructor
+    
+    /**
+     * Old constructor; kept for BC reasons
+     * 
+     * @param    string     Name of the element
+     * @param    mixed      Label(s) for the element
+     * @param    mixed      Associative array of tag attributes or HTML attributes name="value" pairs
+     * @since     1.0
+     * @access    public
+     * @return    void
+     */
+    function HTML_QuickForm_element($elementName=null, $elementLabel=null, $attributes=null)
+    {
+        self::__construct($elementName, $elementLabel, $attributes);
     } //end constructor
     
     // }}}

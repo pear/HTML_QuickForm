@@ -52,9 +52,27 @@ class HTML_QuickForm_input extends HTML_QuickForm_element
      * @access    public
      * @return    void
      */
-    function HTML_QuickForm_input($elementName=null, $elementLabel=null, $attributes=null)
+    function __construct($elementName=null, $elementLabel=null, $attributes=null)
     {
         $this->HTML_QuickForm_element($elementName, $elementLabel, $attributes);
+    } //end constructor
+
+    // }}}
+    // {{{ constructor
+
+    /**
+     * Old constructor; kept for BC reasons
+     * 
+     * @param    string     Input field name attribute
+     * @param    mixed      Label(s) for the input field
+     * @param    mixed      Either a typical HTML attribute string or an associative array
+     * @since     1.0
+     * @access    public
+     * @return    void
+     */
+    function HTML_QuickForm_input($elementName=null, $elementLabel=null, $attributes=null)
+    {
+        self::__construct($elementName, $elementLabel, $attributes);
     } //end constructor
 
     // }}}

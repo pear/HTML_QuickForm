@@ -101,7 +101,7 @@ class HTML_QuickForm_group extends HTML_QuickForm_element
      * @access    public
      * @return    void
      */
-    function HTML_QuickForm_group($elementName=null, $elementLabel=null, $elements=null, $separator=null, $appendName = true)
+    function __construct($elementName=null, $elementLabel=null, $elements=null, $separator=null, $appendName = true)
     {
         $this->HTML_QuickForm_element($elementName, $elementLabel);
         $this->_type = 'group';
@@ -114,6 +114,29 @@ class HTML_QuickForm_group extends HTML_QuickForm_element
         if (isset($appendName)) {
             $this->_appendName = $appendName;
         }
+    } //end constructor
+    // {{{ constructor
+
+    /**
+     * Old constructor; kept for BC reasons
+     * 
+     * @param     string    $elementName    (optional)Group name
+     * @param     array     $elementLabel   (optional)Group label
+     * @param     array     $elements       (optional)Group elements
+     * @param     mixed     $separator      (optional)Use a string for one separator,
+     *                                      use an array to alternate the separators.
+     * @param     bool      $appendName     (optional)whether to change elements' names to
+     *                                      the form $groupName[$elementName] or leave 
+     *                                      them as is.
+     * @since     1.0
+     * @access    public
+     * @return    void
+     */
+    function HTML_QuickForm_group($elementName=null, $elementLabel=null, $elements=null, $separator=null, $appendName = true)
+    {
+        self::__construct(
+            $elementName, $elementLabel, $elements, $separator, $appendName
+        );
     } //end constructor
     
     // }}}

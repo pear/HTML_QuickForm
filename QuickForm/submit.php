@@ -51,11 +51,27 @@ class HTML_QuickForm_submit extends HTML_QuickForm_input
      * @access    public
      * @return    void
      */
-    function HTML_QuickForm_submit($elementName=null, $value=null, $attributes=null)
+    function __construct($elementName=null, $value=null, $attributes=null)
     {
         HTML_QuickForm_input::HTML_QuickForm_input($elementName, null, $attributes);
         $this->setValue($value);
         $this->setType('submit');
+    } //end constructor
+    // {{{ constructor
+
+    /**
+     * Old constructor; kept for BC reasons
+     * 
+     * @param     string    Input field name attribute
+     * @param     string    Input field value
+     * @param     mixed     Either a typical HTML attribute string or an associative array
+     * @since     1.0
+     * @access    public
+     * @return    void
+     */
+    function HTML_QuickForm_submit($elementName=null, $value=null, $attributes=null)
+    {
+        self::__construct($elementName, $value, $attributes);
     } //end constructor
     
     // }}}
