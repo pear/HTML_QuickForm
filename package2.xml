@@ -240,6 +240,9 @@ Features:
     <file name="textarea.php" role="php">
      <tasks:replace from="@package_version@" to="version" type="package-info" />
     </file>
+    <file name="utils.php" role="php">
+     <tasks:replace from="@package_version@" to="version" type="package-info" />
+    </file>
     <file name="xbutton.php" role="php">
      <tasks:replace from="@package_version@" to="version" type="package-info" />
     </file>

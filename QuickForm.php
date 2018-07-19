@@ -31,6 +31,10 @@ require_once 'PEAR.php';
  * Base class for all HTML classes
  */
 require_once 'HTML/Common.php';
+/**
+ * Static utility methods
+ */
+require_once 'HTML/QuickForm/utils.php';
 
 /**
  * Element types known to HTML_QuickForm
@@ -843,15 +847,19 @@ class HTML_QuickForm extends HTML_Common
 
         } elseif (false !== ($pos = strpos($elementName, '['))) {
             $base = str_replace(
-                        array('\\', '\''), array('\\\\', '\\\''), 
+                        array('\\', '\''), array('\\\\', '\\\''),
                         substr($elementName, 0, $pos)
                     );
-            $idx  = "['" . str_replace(
-                        array('\\', '\'', ']', '['), array('\\\\', '\\\'', '', "']['"), 
-                        substr($elementName, $pos + 1, -1)
-                    ) . "']";
+
+            $keys = str_replace(
+                array('\\', '\'', ']', '['), array('\\\\', '\\\'', '', "']['"),
+                substr($elementName, $pos + 1, -1)
+                );
+            $idx  = "['" . $keys . "']";
+            $keyArray = explode("']['", $keys);
+
             if (isset($this->_submitValues[$base])) {
-                $value = eval("return (isset(\$this->_submitValues['{$base}']{$idx})) ? \$this->_submitValues['{$base}']{$idx} : null;");
+                $value = HTML_QuickForm_utils::recursiveValue($this->_submitValues[$base], $keyArray, NULL);
             }
 
             if ((is_array($value) || null === $value) && isset($this->_submitFiles[$base])) {
