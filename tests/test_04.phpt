@@ -2,6 +2,11 @@
 Test 04 Ouptput of tutorial form with applyFilter() and addRule()
 --FILE--
 <?php
+if (defined('E_DEPRECATED')) {
+    error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT & ~E_DEPRECATED);
+} else {
+    error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
+}
 require_once 'HTML/QuickForm.php';
 $form = new HTML_QuickForm('firstForm');
 $form->setDefaults(array(

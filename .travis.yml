@@ -1,7 +1,17 @@
 language: php
 install:
-  - pear install package.xml
-php:
-  - 5.4
+  - pear install package2.xml
+matrix:
+  include:
+  - php: 5.2
+    dist: precise
+  - php: 5.3
+    dist: precise
+  - php: 5.4
+    dist: trusty
+  - php: 5.5
+    dist: trusty
+  - php: 5.6
+    dist: trusty
 sudo: false
 script: phpunit tests/
