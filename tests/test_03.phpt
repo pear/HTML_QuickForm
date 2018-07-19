@@ -2,6 +2,11 @@
 Test 03 Output of tutoral form
 --FILE--
 <?php
+if (defined('E_DEPRECATED')) {
+    error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT & ~E_DEPRECATED);
+} else {
+    error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
+}
 require_once 'HTML/QuickForm.php';
 $form = new HTML_QuickForm('firstForm');
 $form->addElement('header', null, 'QuickForm tutorial example');

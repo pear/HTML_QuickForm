@@ -4,6 +4,11 @@ Test 05 Test of addGroup()
 See http://pear.php.net/manual/en/package.html.html-quickform.html-quickform.addgroup.php
 --FILE--
 <?php
+if (defined('E_DEPRECATED')) {
+    error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT & ~E_DEPRECATED);
+} else {
+    error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
+}
 require_once 'HTML/QuickForm.php';
 $form = new HTML_QuickForm('firstForm');
 $group[] =& HTML_QuickForm::createElement('text', 'first', 'First');
