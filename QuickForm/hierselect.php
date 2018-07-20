@@ -242,7 +242,7 @@ class HTML_QuickForm_hierselect extends HTML_QuickForm_group
      */
     function _setOptions()
     {
-        $arrayKeys = [];
+        $arrayKeys = array();
         foreach (array_keys($this->_elements) AS $key) {
             if (isset($this->_options[$key])) {
                 if ((empty($arrayKeys)) || HTML_QuickForm_utils::recursiveIsset($this->_options[$key], $arrayKeys)) {
